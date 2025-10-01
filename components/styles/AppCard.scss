@@ -1,0 +1,51 @@
+.app-card-container {
+  &.MuiCard-root {
+    width: 100%;
+    display: block;
+    border-radius: 20px;
+  }
+}
+
+.app-card-content-title {
+  &.MuiTypography-root {
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+}
+
+.app-card-content-subtitle {
+  &.MuiTypography-root {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+}
+
+.app-card-content-body {
+  &.MuiTypography-root {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+}
+
+.app-card-content-footer {
+  &.MuiTypography-root {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+}
+
+.scrollable-stack {
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  border-radius: 20px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+.app-card-image {
+  width: 400px;
+}

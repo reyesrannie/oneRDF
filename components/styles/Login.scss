@@ -1,0 +1,87 @@
+.login-paper-container {
+  &.MuiBox-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    min-height: 80vh;
+    overflow: hidden;
+  }
+}
+.login-stack-logo {
+  &.MuiStack-root {
+    display: none;
+  }
+}
+
+.login-form {
+}
+
+.login-logo {
+  display: none;
+}
+
+.login-textField {
+  &.MuiFormControl-root {
+    min-height: 4rem;
+    min-width: 270px;
+    max-width: 270px;
+    .MuiFormLabel-root {
+      font-family: "Roboto";
+      letter-spacing: 1px;
+    }
+    .MuiInputBase-root {
+      border-radius: 10px;
+      font-family: "Roboto";
+      letter-spacing: 1px;
+    }
+    .MuiFormHelperText-root {
+      font-family: "Roboto";
+      letter-spacing: 1px;
+    }
+  }
+}
+
+.login-button {
+  &.MuiButtonBase-root {
+    text-transform: capitalize;
+    max-width: fit-content;
+  }
+}
+
+@media (min-width: 1024px) {
+  .login-paper-container {
+    &.MuiBox-root {
+      min-height: 100vh;
+    }
+  }
+  .login-stack-logo {
+    &.MuiStack-root {
+      display: flex;
+
+      .system-title {
+        &.MuiTypography-root {
+          font-size: 50px;
+          font-weight: 800;
+          background-image: linear-gradient(to bottom right, #d32e12, #299826);
+          background-clip: text;
+          color: transparent;
+        }
+      }
+      .system-sub-title {
+        &.MuiTypography-root {
+          font-size: 50px;
+          font-weight: 400;
+          background-image: linear-gradient(to bottom right, #d32e12, #299826);
+          background-clip: text;
+          color: transparent;
+          letter-spacing: -3px;
+        }
+      }
+    }
+  }
+  .login-logo {
+    display: block;
+    width: 80%;
+  }
+}

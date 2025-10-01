@@ -1,0 +1,16 @@
+.carousel-container {
+  &.MuiBox-root {
+    display: flex;
+    flex-direction: column; // 🔹 Ensures stepper is below the slider
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 100%;
+  }
+}
+
+.carousel-slider-container {
+  &.MuiBox-root {
+    width: 100%;
+  }
+}

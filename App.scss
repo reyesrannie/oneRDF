@@ -1,0 +1,12 @@
+#root {
+  margin: 0;
+  overflow: hidden;
+}
+
+.app-bar-content {
+  &.MuiBox-root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
