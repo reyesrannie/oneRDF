@@ -36,6 +36,7 @@ import {
   useUpdateUserMutation,
 } from "../../services/server/api/usersAPI";
 import { objectError } from "../../services/functions/errorResponse";
+import { useCoaQuery } from "../../services/server/api/coaAPI";
 
 const UserModal = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,11 @@ const UserModal = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const { data: systemData, isLoading: loadingSystems } = useSystemsQuery({
+    status: "active",
+    pagination: "none",
+  });
+
+  const { data: charging, isLoading: loadingCharging } = useCoaQuery({
     status: "active",
     pagination: "none",
   });
@@ -87,8 +93,8 @@ const UserModal = () => {
       const newData = {
         ...userData,
         access_permission: filteredAccess,
-        systems: systemData?.filter((item) =>
-          userData?.access_permission?.includes(item?.system_name)
+        systems: userData?.user_system?.map((us) =>
+          systemData?.find((s) => s?.id === us?.id)
         ),
       };
 
@@ -153,10 +159,6 @@ const UserModal = () => {
         variant: "error",
       });
     }
-    const combinedPermissions = [
-      ...(data?.access_permission || []),
-      ...(data?.systems?.map((item) => item?.system_name) || []),
-    ];
 
     const payload = {
       id: userData?.id,
@@ -165,6 +167,9 @@ const UserModal = () => {
       username: data?.username,
       systems: data?.systems?.map((item) => ({ system_id: item?.id })) || [],
       password: userData ? null : data?.username,
+      charging_id: data?.charging?.id,
+      charging_code: data?.charging?.code,
+      charging_name: data?.charging?.name,
     };
 
     try {
@@ -225,6 +230,29 @@ const UserModal = () => {
                   error={Boolean(errors?.username)}
                   helperText={errors?.username?.message}
                   fullWidth
+                />
+              </Stack>
+              <Stack>
+                <Autocomplete
+                  control={control}
+                  name={"charging"}
+                  options={charging || []}
+                  getOptionLabel={(option) =>
+                    `${option?.code} - ${option?.name}`
+                  }
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Charging"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors?.charging)}
+                      helperText={errors?.charging?.message}
+                    />
+                  )}
                 />
               </Stack>
               <Stack>
@@ -322,13 +350,14 @@ const UserModal = () => {
                 </Typography>
                 <Divider />
               </Stack>
+
               <Stack>
                 <Autocomplete
                   multiple
                   control={control}
                   name={"systems"}
                   options={systemData || []}
-                  getOptionLabel={(option) => `${option.system_name}`}
+                  getOptionLabel={(option) => `${option?.system_name}`}
                   isOptionEqualToValue={(option, value) =>
                     option?.id === value?.id
                   }
