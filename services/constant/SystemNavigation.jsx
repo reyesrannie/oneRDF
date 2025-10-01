@@ -24,14 +24,20 @@ import TitleOutlinedIcon from "@mui/icons-material/TitleOutlined";
 import HowToVoteOutlinedIcon from "@mui/icons-material/HowToVoteOutlined";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
 const UserManagement = lazy(() => import("../../screens/user/UserManagement"));
 const Masterlist = lazy(() => import("../../screens/masterlist/Masterlist"));
+
 const Systems = lazy(() => import("../../screens/masterlist/system/Systems"));
 const Category = lazy(
   () => import("../../screens/masterlist/category/Category")
 );
+const Customer = lazy(
+  () => import("../../screens/masterlist/customer/Customer")
+);
+
 const Company = lazy(() => import("../../screens/charging/company/Company"));
 const BusinessUnit = lazy(
   () => import("../../screens/charging/business-unit/BusinessUnit")
@@ -109,7 +115,7 @@ const SystemNavigation = () => {
       icon: <ListAltOutlinedIcon />,
       route: "/masterlist",
       element: <Masterlist />,
-      permission: ["system", "category"],
+      permission: ["system", "category", "customer"],
 
       children: [
         {
@@ -127,6 +133,14 @@ const SystemNavigation = () => {
           element: <Category />,
           route: "/masterlist/category",
           permission: ["category"],
+        },
+        {
+          segment: "customer",
+          title: "Customer",
+          icon: <SupportAgentIcon />,
+          element: <Customer />,
+          route: "/masterlist/customer",
+          permission: ["customer"],
         },
       ],
     },

@@ -32,6 +32,7 @@ import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
 import { setArchive } from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
+import { useCustomerQuery } from "../../../services/server/api/customerAPI";
 
 const Customer = () => {
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const Customer = () => {
     onSelectPage,
     onStatusChange,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useCategoryQuery(params);
+  const { data, isLoading, isError, isFetching } = useCustomerQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
   const categoryData = useSelector((state) => state.modal.categoryData);
 
