@@ -15,6 +15,7 @@ const userRoles = [
       { name: "System", value: "system" },
       { name: "Category", value: "category" },
       { name: "Customer", value: "customer" },
+      { name: "Geographics", value: "geo" },
     ],
   },
 

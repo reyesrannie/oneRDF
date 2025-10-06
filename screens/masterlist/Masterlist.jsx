@@ -26,9 +26,10 @@ const Masterlist = () => {
         </Stack>
         {location?.pathname === "/masterlist" && (
           <Stack
+            gap={1}
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(4, 1fr)",
             }}
           >
             <CardList
