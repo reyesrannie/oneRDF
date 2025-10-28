@@ -32,9 +32,9 @@ import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
 import { setArchive } from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
-import { useBarangayQuery } from "../../../services/server/api/geoAPI";
+import { useSubMunicipalityQuery } from "../../../services/server/api/geoAPI";
 
-const Barangay = () => {
+const SubMunicipality = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const {
@@ -45,7 +45,8 @@ const Barangay = () => {
     onSelectPage,
     onStatusChange,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useBarangayQuery(params);
+  const { data, isLoading, isError, isFetching } =
+    useSubMunicipalityQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
   const categoryData = useSelector((state) => state.modal.categoryData);
 
@@ -89,7 +90,7 @@ const Barangay = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"20px"} fontWeight={600}>
-            Barangay
+            Sub Municipality
           </Typography>
 
           <Stack flexDirection={"row"} gap={2}>
@@ -123,7 +124,7 @@ const Barangay = () => {
         paddingBottom={3}
         sx={{
           background: "#FFFFFF",
-          border: "1px solid #1A75BB",
+          border: "2px solid #1A75BB",
         }}
       >
         <Stack flexDirection={"row"} m={2} gap={1} alignItems={"center"}>
@@ -215,4 +216,4 @@ const Barangay = () => {
   );
 };
 
-export default Barangay;
+export default SubMunicipality;

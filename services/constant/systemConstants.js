@@ -14,8 +14,6 @@ const userRoles = [
     child: [
       { name: "System", value: "system" },
       { name: "Category", value: "category" },
-      { name: "Customer", value: "customer" },
-      { name: "Geographics", value: "geo" },
     ],
   },
 
@@ -44,6 +42,14 @@ const userRoles = [
       { name: "Allocation", value: "allocation" },
       { name: "Credit", value: "credit" },
       { name: "Charge", value: "charge" },
+    ],
+  },
+
+  {
+    name: "Customer Listing",
+    child: [
+      { name: "Customer", value: "customer" },
+      { name: "Geographics", value: "geo" },
     ],
   },
   {

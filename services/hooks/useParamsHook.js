@@ -47,6 +47,14 @@ const useParamsHook = () => {
     }));
   };
 
+  const onSort = (sorts) => {
+    setParams((currentValue) => ({
+      ...currentValue,
+      page: 1,
+      sorts: sorts,
+    }));
+  };
+
   const onReset = () => {
     setParams(() => ({
       status: "active",
@@ -64,6 +72,7 @@ const useParamsHook = () => {
     onSearchData,
     onStatusChange,
     onSelectPage,
+    onSort,
     onReset,
   };
 };

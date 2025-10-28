@@ -35,6 +35,14 @@ export const customerAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Customer"],
     }),
+    syncArcana: builder.mutation({
+      query: (payload) => ({
+        url: `/sync_arcana`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Customer"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useAddCustomerMutation,
   useUpdateCustomerMutation,
   useArchiveCustomerMutation,
+  useSyncArcanaMutation,
 } = customerAPI;

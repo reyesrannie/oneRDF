@@ -118,14 +118,14 @@ const Login = () => {
             <Typography
               sx={{
                 fontSize: "35px",
-                fontWeight: "500",
+                fontWeight: "600",
               }}
             >
               Log In
             </Typography>
             <Typography
               sx={{
-                fontSize: "12px",
+                fontSize: "16px",
               }}
             >
               Welcome back! Please enter your details.
@@ -133,12 +133,12 @@ const Login = () => {
           </Stack>
           <Stack
             marginTop={"35px"}
-            gap={1}
+            gap={3}
             sx={{
               minWidth: "60%",
             }}
           >
-            <Stack>
+            <Stack gap={1}>
               <Typography
                 sx={{
                   fontSize: "12px",
@@ -156,7 +156,7 @@ const Login = () => {
                 helperText={errors?.username?.message}
               />
             </Stack>
-            <Stack>
+            <Stack gap={1}>
               <Typography
                 sx={{
                   fontSize: "12px",
@@ -189,6 +189,7 @@ const Login = () => {
                 type="submit"
                 loading={isLoading}
                 variant="contained"
+                color="info"
                 sx={{
                   color: "white",
                 }}
@@ -220,7 +221,7 @@ const Login = () => {
               </Button>
             </Stack>
           </Stack>
-          <Stack marginTop={"40px"} gap={1} alignItems={"center"}>
+          <Stack marginTop={"40px"} alignItems={"center"}>
             <img
               src={misLogo}
               style={{
@@ -230,6 +231,7 @@ const Login = () => {
             <Typography
               sx={{
                 fontSize: "12px",
+                fontWeight: "500",
               }}
             >
               Powered By MIS All rights reserved
@@ -237,6 +239,7 @@ const Login = () => {
             <Typography
               sx={{
                 fontSize: "12px",
+                fontWeight: "500",
               }}
             >
               Copyrights © 2021

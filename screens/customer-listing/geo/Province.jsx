@@ -21,7 +21,10 @@ import useParamsHook from "../../../services/hooks/useParamsHook";
 import MobileLoading from "../../../components/custom/MobileLoading";
 import NoDataFound from "../../../components/custom/NoDataFound";
 import TableGrid from "../../../components/custom/TableGrid";
-import { useArchiveCategoryMutation } from "../../../services/server/api/categoryAPI";
+import {
+  useArchiveCategoryMutation,
+  useCategoryQuery,
+} from "../../../services/server/api/categoryAPI";
 import CategoryModal from "../../../components/modal/CategoryModal";
 import MenuPopper from "../../../components/custom/MenuPopper";
 import AppPrompt from "../../../components/custom/AppPrompt";
@@ -29,9 +32,9 @@ import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
 import { setArchive } from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
-import { useCityMunicipalityQuery } from "../../../services/server/api/geoAPI";
+import { useProvinceQuery } from "../../../services/server/api/geoAPI";
 
-const CityMunicipality = () => {
+const Province = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const {
@@ -42,8 +45,7 @@ const CityMunicipality = () => {
     onSelectPage,
     onStatusChange,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } =
-    useCityMunicipalityQuery(params);
+  const { data, isLoading, isError, isFetching } = useProvinceQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
   const categoryData = useSelector((state) => state.modal.categoryData);
 
@@ -57,14 +59,14 @@ const CityMunicipality = () => {
       value: "name",
       alignValue: "center",
     },
-    // {
-    //   name: "Region",
-    //   alignHeader: "center",
-    //   type: "parent",
-    //   child: "name",
-    //   value: "region",
-    //   alignValue: "center",
-    // },
+    {
+      name: "Region",
+      alignHeader: "center",
+      type: "parent",
+      child: "name",
+      value: "region",
+      alignValue: "center",
+    },
   ];
 
   const onClickHandler = async () => {
@@ -87,7 +89,7 @@ const CityMunicipality = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"20px"} fontWeight={600}>
-            City Municipality
+            Province
           </Typography>
 
           <Stack flexDirection={"row"} gap={2}>
@@ -121,7 +123,7 @@ const CityMunicipality = () => {
         paddingBottom={3}
         sx={{
           background: "#FFFFFF",
-          border: "1px solid #1A75BB",
+          border: "2px solid #1A75BB",
         }}
       >
         <Stack flexDirection={"row"} m={2} gap={1} alignItems={"center"}>
@@ -213,4 +215,4 @@ const CityMunicipality = () => {
   );
 };
 
-export default CityMunicipality;
+export default Province;

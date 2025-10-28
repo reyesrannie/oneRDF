@@ -1,6 +1,6 @@
 import React, { lazy } from "react";
 
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import PermContactCalendarOutlinedIcon from "@mui/icons-material/PermContactCalendarOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import WysiwygOutlinedIcon from "@mui/icons-material/WysiwygOutlined";
@@ -29,6 +29,7 @@ import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
 const UserManagement = lazy(() => import("../../screens/user/UserManagement"));
@@ -38,19 +39,27 @@ const Systems = lazy(() => import("../../screens/masterlist/system/Systems"));
 const Category = lazy(
   () => import("../../screens/masterlist/category/Category")
 );
+
+const CustomerListing = lazy(
+  () => import("../../screens/customer-listing/CustomerListing")
+);
 const Customer = lazy(
-  () => import("../../screens/masterlist/customer/Customer")
+  () => import("../../screens/customer-listing/customer/Customer")
 );
 
-const Region = lazy(() => import("../../screens/masterlist/geo/Region"));
-const Province = lazy(() => import("../../screens/masterlist/geo/Province"));
+const Region = lazy(() => import("../../screens/customer-listing/geo/Region"));
+const Province = lazy(
+  () => import("../../screens/customer-listing/geo/Province")
+);
 const CityMunicipality = lazy(
-  () => import("../../screens/masterlist/geo/CityMunicipality")
+  () => import("../../screens/customer-listing/geo/CityMunicipality")
 );
 const SubMunicipality = lazy(
-  () => import("../../screens/masterlist/geo/SubMunicipality")
+  () => import("../../screens/customer-listing/geo/SubMunicipality")
 );
-const Barangay = lazy(() => import("../../screens/masterlist/geo/Barangay"));
+const Barangay = lazy(
+  () => import("../../screens/customer-listing/geo/Barangay")
+);
 const Company = lazy(() => import("../../screens/charging/company/Company"));
 const BusinessUnit = lazy(
   () => import("../../screens/charging/business-unit/BusinessUnit")
@@ -109,7 +118,7 @@ const SystemNavigation = () => {
     {
       segment: "",
       title: "Dashboard",
-      icon: <DashboardOutlinedIcon />,
+      icon: <DashboardIcon />,
       route: "/",
       element: <Dashboard />,
       permission: ["dashboard", "dashlinks"],
@@ -128,7 +137,7 @@ const SystemNavigation = () => {
       icon: <ListAltOutlinedIcon />,
       route: "/masterlist",
       element: <Masterlist />,
-      permission: ["system", "category", "customer"],
+      permission: ["system", "category"],
 
       children: [
         {
@@ -147,59 +156,11 @@ const SystemNavigation = () => {
           route: "/masterlist/category",
           permission: ["category"],
         },
-        {
-          segment: "customer",
-          title: "Customer",
-          icon: <SupportAgentIcon />,
-          element: <Customer />,
-          route: "/masterlist/customer",
-          permission: ["customer"],
-        },
-        {
-          segment: "region",
-          title: "Region",
-          icon: <PublicOutlinedIcon />,
-          element: <Region />,
-          route: "/masterlist/region",
-          permission: ["geo"],
-        },
-        {
-          segment: "province",
-          title: "Province",
-          icon: <MapOutlinedIcon />,
-          element: <Province />,
-          route: "/masterlist/province",
-          permission: ["geo"],
-        },
-        {
-          segment: "city_municipality",
-          title: "City Municipality",
-          icon: <LocationCityOutlinedIcon />,
-          element: <CityMunicipality />,
-          route: "/masterlist/city_municipality",
-          permission: ["geo"],
-        },
-        {
-          segment: "sub_municipality",
-          title: "Sub Municipality",
-          icon: <ApartmentOutlinedIcon />,
-          element: <SubMunicipality />,
-          route: "/masterlist/sub_municipality",
-          permission: ["geo"],
-        },
-        {
-          segment: "barangay",
-          title: "Barangay",
-          icon: <LocationOnOutlinedIcon />,
-          element: <Barangay />,
-          route: "/masterlist/barangay",
-          permission: ["geo"],
-        },
       ],
     },
     {
       segment: "charging",
-      title: "Charging",
+      title: "One Charging",
       icon: <PaymentIcon />,
       route: "/charging",
       element: <Charging />,
@@ -363,6 +324,66 @@ const SystemNavigation = () => {
         },
       ],
     },
+
+    {
+      segment: "customer_listing",
+      title: "Customer Listing",
+      icon: <ChecklistIcon />,
+      route: "/customer_listing",
+      element: <CustomerListing />,
+      permission: ["customer", "geo"],
+      children: [
+        {
+          segment: "customer",
+          title: "Customer",
+          icon: <SupportAgentIcon />,
+          element: <Customer />,
+          route: "/customer_listing/customer",
+          permission: ["customer"],
+        },
+        {
+          segment: "region",
+          title: "Region",
+          icon: <PublicOutlinedIcon />,
+          element: <Region />,
+          route: "/customer_listing/region",
+          permission: ["geo"],
+        },
+        {
+          segment: "province",
+          title: "Province",
+          icon: <MapOutlinedIcon />,
+          element: <Province />,
+          route: "/customer_listing/province",
+          permission: ["geo"],
+        },
+        {
+          segment: "city_municipality",
+          title: "City Municipality",
+          icon: <LocationCityOutlinedIcon />,
+          element: <CityMunicipality />,
+          route: "/customer_listing/city_municipality",
+          permission: ["geo"],
+        },
+        {
+          segment: "sub_municipality",
+          title: "Sub Municipality",
+          icon: <ApartmentOutlinedIcon />,
+          element: <SubMunicipality />,
+          route: "/customer_listing/sub_municipality",
+          permission: ["geo"],
+        },
+        {
+          segment: "barangay",
+          title: "Barangay",
+          icon: <LocationOnOutlinedIcon />,
+          element: <Barangay />,
+          route: "/customer_listing/barangay",
+          permission: ["geo"],
+        },
+      ],
+    },
+
     {
       segment: "sync",
       title: "Sync",
@@ -381,6 +402,7 @@ const SystemNavigation = () => {
         },
       ],
     },
+
     {
       segment: "notification-setup",
       title: "Notification Setup",

@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
@@ -21,10 +22,7 @@ import useParamsHook from "../../../services/hooks/useParamsHook";
 import MobileLoading from "../../../components/custom/MobileLoading";
 import NoDataFound from "../../../components/custom/NoDataFound";
 import TableGrid from "../../../components/custom/TableGrid";
-import {
-  useArchiveCategoryMutation,
-  useCategoryQuery,
-} from "../../../services/server/api/categoryAPI";
+import { useArchiveCategoryMutation } from "../../../services/server/api/categoryAPI";
 import CategoryModal from "../../../components/modal/CategoryModal";
 import MenuPopper from "../../../components/custom/MenuPopper";
 import AppPrompt from "../../../components/custom/AppPrompt";
@@ -32,7 +30,11 @@ import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
 import { setArchive } from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
-import { useCustomerQuery } from "../../../services/server/api/customerAPI";
+import {
+  useCustomerQuery,
+  useSyncArcanaMutation,
+} from "../../../services/server/api/customerAPI";
+import { singleError } from "../../../services/functions/errorResponse";
 
 const Customer = () => {
   const dispatch = useDispatch();
@@ -52,12 +54,29 @@ const Customer = () => {
   const [archiveCategory, { isLoading: loadingArchive }] =
     useArchiveCategoryMutation();
 
+  const [syncArcana, { isLoading: loadingArcanaSync }] =
+    useSyncArcanaMutation();
+
   const header = [
     {
+      name: "Code",
+      value: "code",
+    },
+    {
       name: "Name",
-      alignHeader: "center",
       value: "name",
-      alignValue: "center",
+    },
+    {
+      name: "Type",
+      value: "customer_type",
+    },
+    {
+      name: "Terms",
+      value: "terms",
+    },
+    {
+      name: "Business name",
+      value: "business_name",
     },
   ];
 
@@ -69,6 +88,15 @@ const Customer = () => {
       });
       dispatch(resetModal());
     } catch (error) {}
+  };
+
+  const syncArcanaHandler = async () => {
+    try {
+      const res = await syncArcana().unwrap();
+      enqueueSnackbar(res?.message, { variant: "success" });
+    } catch (error) {
+      singleError(error, enqueueSnackbar);
+    }
   };
 
   return (
@@ -86,10 +114,11 @@ const Customer = () => {
 
           <Stack flexDirection={"row"} gap={2}>
             <Button
+              loading={loadingArcanaSync}
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<CloudSyncOutlinedIcon />}
               sx={{
                 textTransform: "capitalize",
                 fontSize: "10px",
@@ -99,10 +128,10 @@ const Customer = () => {
                 },
               }}
               onClick={() => {
-                dispatch(setCategory(true));
+                syncArcanaHandler();
               }}
             >
-              Add
+              Sync
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -115,7 +144,7 @@ const Customer = () => {
         paddingBottom={3}
         sx={{
           background: "#FFFFFF",
-          border: "1px solid #1A75BB",
+          border: "2px solid #1A75BB",
         }}
       >
         <Stack flexDirection={"row"} m={2} gap={1} alignItems={"center"}>
@@ -149,25 +178,25 @@ const Customer = () => {
             items={data}
             mapFrom={"data"}
             title={"name"}
-            open={(e, i) => {
-              dispatch(setCategoryData(i));
-              setAnchorEl({
-                mouseX: e.clientX,
-                mouseY: e.clientY,
-              });
-            }}
+            // open={(e, i) => {
+            //   dispatch(setCategoryData(i));
+            //   setAnchorEl({
+            //     mouseX: e.clientX,
+            //     mouseY: e.clientY,
+            //   });
+            // }}
           />
         ) : (
           <TableGrid
             header={header}
             items={data}
-            onSelect={(e, i) => {
-              dispatch(setCategoryData(i));
-              setAnchorEl({
-                mouseX: e.clientX,
-                mouseY: e.clientY,
-              });
-            }}
+            // onSelect={(e, i) => {
+            //   dispatch(setCategoryData(i));
+            //   setAnchorEl({
+            //     mouseX: e.clientX,
+            //     mouseY: e.clientY,
+            //   });
+            // }}
           />
         )}
       </Stack>

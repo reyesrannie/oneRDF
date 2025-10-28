@@ -32,9 +32,9 @@ import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
 import { setArchive } from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
-import { useRegionQuery } from "../../../services/server/api/geoAPI";
+import { useBarangayQuery } from "../../../services/server/api/geoAPI";
 
-const Region = () => {
+const Barangay = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const {
@@ -45,7 +45,7 @@ const Region = () => {
     onSelectPage,
     onStatusChange,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useRegionQuery(params);
+  const { data, isLoading, isError, isFetching } = useBarangayQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
   const categoryData = useSelector((state) => state.modal.categoryData);
 
@@ -57,6 +57,14 @@ const Region = () => {
       name: "Name",
       alignHeader: "center",
       value: "name",
+      alignValue: "center",
+    },
+    {
+      name: "City/Municipality",
+      alignHeader: "center",
+      type: "parent",
+      child: "name",
+      value: "city_municipality",
       alignValue: "center",
     },
   ];
@@ -81,7 +89,7 @@ const Region = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"20px"} fontWeight={600}>
-            Region
+            Barangay
           </Typography>
 
           <Stack flexDirection={"row"} gap={2}>
@@ -115,7 +123,7 @@ const Region = () => {
         paddingBottom={3}
         sx={{
           background: "#FFFFFF",
-          border: "1px solid #1A75BB",
+          border: "2px solid #1A75BB",
         }}
       >
         <Stack flexDirection={"row"} m={2} gap={1} alignItems={"center"}>
@@ -207,4 +215,4 @@ const Region = () => {
   );
 };
 
-export default Region;
+export default Barangay;

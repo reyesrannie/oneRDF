@@ -51,6 +51,7 @@ const UserManagement = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useUserQuery(params);
   const reset = useSelector((state) => state.prompt.reset);
@@ -82,7 +83,7 @@ const UserManagement = () => {
     {
       name: "Name",
       alignHeader: "center",
-      value: "name",
+      value: "full_name",
       alignValue: "center",
     },
     {
@@ -151,7 +152,7 @@ const UserManagement = () => {
         paddingBottom={3}
         sx={{
           background: "#FFFFFF",
-          border: "1px solid #1A75BB",
+          border: "2px solid #1A75BB",
         }}
       >
         <Stack flexDirection={"row"} m={2} gap={1} alignItems={"center"}>
@@ -201,6 +202,8 @@ const UserManagement = () => {
           <TableGrid
             header={header}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setUserData(i));
               setAnchorEl({

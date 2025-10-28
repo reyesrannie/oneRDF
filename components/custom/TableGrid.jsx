@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Checkbox,
   IconButton,
@@ -10,16 +11,24 @@ import {
   TableFooter,
   TableHead,
   TableRow,
+  TableSortLabel,
   Typography,
 } from "@mui/material";
 import moment from "moment";
 import "../styles/TableGrid.scss";
 
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
 
-const TableGrid = ({ header = [], items = [], onSelect, onView, onSync }) => {
+const TableGrid = ({
+  header = [],
+  items = [],
+  onSelect,
+  onView,
+  onSync,
+  params = null,
+  onSort,
+}) => {
   return (
     <TableContainer>
       <Table>
@@ -28,36 +37,49 @@ const TableGrid = ({ header = [], items = [], onSelect, onView, onSync }) => {
             {header?.map((head, index) => {
               return (
                 <TableCell key={index} align={head?.alignHeader}>
-                  <Stack
-                    flexDirection={"row"}
-                    alignItems={"center"}
-                    justifyContent={head?.alignHeader}
+                  <TableSortLabel
+                    active={
+                      params?.sorts === head?.value ||
+                      params?.sorts === `-${head?.value}`
+                    }
+                    direction={params?.sorts === head?.value ? "asc" : "desc"}
+                    sx={{
+                      color: "#000 !important",
+                      "& .MuiTableSortLabel-icon": {
+                        opacity: 0,
+                      },
+                    }}
+                    onClick={() =>
+                      onSort(
+                        params?.sorts === `-${head?.value}`
+                          ? head?.value
+                          : `-${head?.value}`
+                      )
+                    }
                   >
-                    {head?.type !== "box" && (
-                      <Typography sx={{ fontSize: "12px", fontWeight: "bold" }}>
-                        {head?.name}
-                      </Typography>
-                    )}
-                    {head?.type === "box" && (
-                      <Checkbox
-                        defaultChecked={false}
-                        size="small"
-                        sx={{
-                          color: "#000000",
-                        }}
-                      />
-                    )}
-                    {head.wSort && (
-                      <IconButton>
-                        <ArrowDownwardIcon
+                    <Stack
+                      flexDirection={"row"}
+                      alignItems={"center"}
+                      justifyContent={head?.alignHeader}
+                    >
+                      {head?.type !== "box" && (
+                        <Typography
+                          sx={{ fontSize: "12px", fontWeight: "bold" }}
+                        >
+                          {head?.name}
+                        </Typography>
+                      )}
+                      {head?.type === "box" && (
+                        <Checkbox
+                          defaultChecked={false}
+                          size="small"
                           sx={{
-                            fontSize: "14px",
                             color: "#000000",
                           }}
                         />
-                      </IconButton>
-                    )}
-                  </Stack>
+                      )}
+                    </Stack>
+                  </TableSortLabel>
                 </TableCell>
               );
             })}

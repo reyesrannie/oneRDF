@@ -20,7 +20,7 @@ export const Themes = () => {
                   main: "#594a43",
                 },
                 info: {
-                  main: "#e7df12",
+                  main: "#F79A2E",
                 },
                 background: {
                   default: "#1A75BB",
@@ -180,13 +180,13 @@ export const Themes = () => {
             styleOverrides: {
               root: {
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "light" ? "#496D89" : "#f0e7c4",
+                  borderColor: mode === "light" ? "#F79A2E" : "#f0e7c4",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "light" ? "#496D89" : "#f0e7c4",
+                  borderColor: mode === "light" ? "#F79A2E" : "#f0e7c4",
                 },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: mode === "light" ? "#496D89" : "#f0e7c4",
+                  borderColor: mode === "light" ? "#F79A2E" : "#f0e7c4",
                 },
                 "& .MuiInputBase-input": {
                   color: mode === "light" ? "#496D89" : "#f0e7c4",

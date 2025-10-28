@@ -119,7 +119,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const SystemAppBar = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [currentDisplay, setCurrentDisplay] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const { navigation } = SystemNavigation();
@@ -163,47 +163,45 @@ const SystemAppBar = () => {
             : "rgba(247, 154, 46, 0.05)",
       }}
     >
-      {location?.pathname !== "/" && (
-        <AppBar position="fixed" open={open} elevation={0}>
-          <Stack
-            alignItems={"center"}
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            width={"100%"}
-            padding={0.5}
-          >
-            <Stack flexDirection={"row"} alignItems={"center"}>
-              <IconButton
-                onClick={() => setOpen(!open)}
-                sx={[
-                  {
-                    marginRight: 1,
-                  },
-                ]}
-              >
-                <MenuIcon sx={{ fontSize: "20px", color: "#FFFFFF" }} />
-              </IconButton>
-              <Typography color="#FFFFFF" fontSize={"14px"}>
-                {moment(new Date()).format("MMMM DD, YYYY").toUpperCase()}
-              </Typography>
-            </Stack>
-            <Stack flexDirection={"row"} alignItems={"center"}>
-              <Typography
-                fontSize={"14px"}
-                color="#FFFFFF"
-                textTransform={"capitalize"}
-              >
-                {userData?.username?.toLowerCase()}
-              </Typography>
-              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-                <AccountCircleOutlinedIcon
-                  sx={{ fontSize: "20px", color: "#FFFFFF" }}
-                />
-              </IconButton>
-            </Stack>
+      <AppBar position="fixed" open={open} elevation={0}>
+        <Stack
+          alignItems={"center"}
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+          width={"100%"}
+          padding={0.5}
+        >
+          <Stack flexDirection={"row"} alignItems={"center"}>
+            <IconButton
+              onClick={() => setOpen(!open)}
+              sx={[
+                {
+                  marginRight: 1,
+                },
+              ]}
+            >
+              <MenuIcon sx={{ fontSize: "20px", color: "#FFFFFF" }} />
+            </IconButton>
+            <Typography color="#FFFFFF" fontSize={"14px"}>
+              {moment(new Date()).format("MMMM DD, YYYY").toUpperCase()}
+            </Typography>
           </Stack>
-        </AppBar>
-      )}
+          <Stack flexDirection={"row"} alignItems={"center"}>
+            <Typography
+              fontSize={"14px"}
+              color="#FFFFFF"
+              textTransform={"capitalize"}
+            >
+              {userData?.username?.toLowerCase()}
+            </Typography>
+            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+              <AccountCircleOutlinedIcon
+                sx={{ fontSize: "20px", color: "#FFFFFF" }}
+              />
+            </IconButton>
+          </Stack>
+        </Stack>
+      </AppBar>
       <Drawer variant="permanent" open={open}>
         <Stack
           alignItems={"center"}
@@ -331,7 +329,7 @@ const SystemAppBar = () => {
           })}
         </List>
       </Drawer>
-      <Box sx={{ flexGrow: 1, p: 2, width: "100vw" }}>
+      <Box sx={{ flexGrow: 1, p: 2, width: "100vw", bgcolor: "#D9D9D9" }}>
         <DrawerHeader />
 
         <Outlet />

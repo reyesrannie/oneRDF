@@ -42,7 +42,7 @@ const BreadCrumbs = () => {
   };
 
   return (
-    <Breadcrumbs>
+    <Breadcrumbs separator=">">
       <Link
         sx={{
           fontSize: "14px",
