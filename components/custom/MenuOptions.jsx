@@ -20,7 +20,7 @@ const MenuOptions = ({ anchorEl, setAnchorEl, addOption, importOption }) => {
         <ListItemIcon>
           <AddOutlinedIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Add</ListItemText>
+        <ListItemText>Create</ListItemText>
       </MenuItem>
       <MenuItem onClick={importOption}>
         <ListItemIcon>

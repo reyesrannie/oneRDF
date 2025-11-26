@@ -18,7 +18,6 @@ import UserModal from "../../components/modal/UserModal";
 import CardList from "../../components/custom/CardList";
 import useParamsHook from "../../services/hooks/useParamsHook";
 import {
-  useResetAllSystemMutation,
   useUserQuery,
   useUserResetMutation,
 } from "../../services/server/api/usersAPI";
@@ -40,16 +39,11 @@ import BreadCrumbs from "../../components/custom/BreadCrumbs";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MenuOptions from "../../components/custom/MenuOptions";
-import { checkObject } from "../../services/functions/checkValues";
-import { useSystemsQuery } from "../../services/server/api/systemAPI";
-import {
-  resetSync,
-  setProgressDialog,
-  setProgressPercent,
-} from "../../services/server/slice/syncSlice";
-import Progress from "../../components/custom/Progress";
+import { setUserSetupModal } from "../../services/server/slice/syncSlice";
+import UserSetupModal from "../../components/modal/UserSetupModal";
+import { useAuditQuery } from "../../services/server/api/auditTrail";
 
-const UserManagement = () => {
+const AuditTrail = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorE2, setAnchorE2] = useState(null);
@@ -62,89 +56,66 @@ const UserManagement = () => {
     onSelectPage,
     onSort,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useUserQuery(params);
-  const {
-    data: systemData,
-    isLoading: loadingSystem,
-    isError: erroSystem,
-    isFetching: fetchingSystem,
-  } = useSystemsQuery({
-    status: "active",
-    pagination: "none",
-  });
+  const { data, isLoading, isError, isFetching } = useAuditQuery(params);
 
   const reset = useSelector((state) => state.prompt.reset);
   const userData = useSelector((state) => state.modal.userData);
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const [userReset, { isLoading: loadingUserReset }] = useUserResetMutation();
-  const [userResetAll, { isLoading: loadingUserResetAll }] =
-    useResetAllSystemMutation();
-
   const onResetHandler = async () => {
-    dispatch(setProgressDialog(true));
-
-    const getSystem = userData?.user_system?.map((us) =>
-      systemData?.find((s) => us?.system_id?.toString() === s?.id?.toString())
-    );
     try {
       const res = await userReset({ id: userData?.id }).unwrap();
-
-      for (let i = 0; i < getSystem.length; i++) {
-        const payloadSystems = {
-          id_prefix: userData?.id_prefix,
-          id_no: userData?.id_no,
-          endpoint: {
-            id: getSystem[i]?.id,
-            name: getSystem[i]?.system_name,
-            url: checkObject(getSystem[i]?.slice)?.reset,
-            token: getSystem[i]?.token,
-          },
-        };
-        const resAll = await userResetAll(payloadSystems).unwrap();
-        dispatch(
-          setProgressPercent(Math.round(((i + 1) / getSystem.length) * 100))
-        );
-      }
-
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
-      dispatch(resetSync());
       dispatch(resetModal());
       dispatch(resetPrompt());
     } catch (error) {
       singleError(error, enqueueSnackbar);
-      dispatch(resetSync());
     }
   };
 
   const header = [
     {
-      name: "User ID",
+      name: "Id",
       alignHeader: "center",
       value: "id",
       alignValue: "center",
     },
+
     {
-      name: "Employee ID",
+      name: "System",
       alignHeader: "center",
-      value: ["id_prefix", "id_no"],
+      value: "system",
       alignValue: "center",
-      type: "concat",
+      child: "system_name",
+      type: "parent",
     },
     {
-      name: "Name",
+      name: "Action",
       alignHeader: "center",
-      value: ["first_name", "middle_name", "last_name", "suffix"],
+      value: "action",
       alignValue: "center",
-      type: "concat",
     },
     {
-      name: "Username",
+      name: "Module",
       alignHeader: "center",
-      value: "username",
+      value: "module",
       alignValue: "center",
+    },
+    {
+      name: "Details",
+      alignHeader: "center",
+      value: "details",
+      alignValue: "center",
+    },
+    {
+      name: "Date Occured",
+      alignHeader: "center",
+      value: "created_at",
+      alignValue: "center",
+      type: "date",
     },
   ];
 
@@ -173,28 +144,6 @@ const UserManagement = () => {
             Users
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              startIcon={<ArrowBackIosIcon />}
-              sx={{
-                textTransform: "capitalize",
-                fontSize: "10px",
-                maxHeight: "30px",
-                "& .MuiSvgIcon-root": {
-                  fontSize: "14px",
-                },
-              }}
-              onClick={(e) => {
-                setAnchorE2({
-                  mouseX: e.clientX,
-                  mouseY: e.clientY,
-                });
-              }}
-            >
-              Add
-            </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
         </Stack>
@@ -228,7 +177,7 @@ const UserManagement = () => {
               fontSize: "14px",
             }}
           >
-            Archived
+            Completed
           </Typography>
         </Stack>
 
@@ -273,7 +222,7 @@ const UserManagement = () => {
         <CustomPagination
           data={data}
           onPageChange={onPageChange}
-          onRowChange={onRowChange}
+          onRowsPerPageChange={onRowChange}
           onChange={onSelectPage}
         />
       )}
@@ -316,12 +265,11 @@ const UserManagement = () => {
         confirmButton={`Yes, Reset it!`}
         cancelButton={` No, Keep it! `}
         confirmOnClick={onResetHandler}
-        isLoading={loadingUserReset || loadingUserResetAll}
+        isLoading={loadingUserReset}
       />
       <UserModal />
-      <Progress />
     </Box>
   );
 };
 
-export default UserManagement;
+export default AuditTrail;

@@ -2,14 +2,13 @@ import { Box } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { setHasRun } from "../../services/server/slice/modalSlice";
-import { useSystemLoginMutation } from "../../services/server/request/systemAPI";
 import { enqueueSnackbar } from "notistack";
 import { singleError } from "../../services/functions/errorResponse";
+import { useLoginAllMutation } from "../../services/server/api/authAPI";
+import { checkObject } from "../../services/functions/checkValues";
 
 const Redirect = () => {
   const { search } = useLocation();
-  const dispatch = useDispatch();
   const [hasError, setHasError] = useState(false);
   const [countdown, setCountdown] = useState(false);
 
@@ -19,20 +18,25 @@ const Redirect = () => {
   const userData = useSelector((state) => state.auth.userData);
   const hasCalled = useRef(false);
 
-  const [login, { isError }] = useSystemLoginMutation();
+  const [login, { isError }] = useLoginAllMutation();
 
   const handleLogin = async (data) => {
-    const parsedSlice = JSON.parse(data?.slice);
     try {
-      const res = await login({
-        baseUrl: parsedSlice[0]?.login,
-        credentials: {
-          username: userData?.username,
-          password: userData?.password,
+      const payload = {
+        username: userData?.username,
+        password: userData?.password,
+        id_prefix: userData?.id_prefix,
+        id_no: userData?.id_no,
+        endpoint: {
+          id: data?.id,
+          name: data?.system_name,
+          url: checkObject(data?.slice)?.login,
+          token: data?.token,
         },
-      }).unwrap();
+      };
+      const res = await login(payload).unwrap();
 
-      const encoded = encodeURIComponent(JSON.stringify(res));
+      const encoded = encodeURIComponent(JSON.stringify(res?.data));
       window.location.href = `${data?.url_holder}redirect?data=${encoded}`;
     } catch (error) {
       setHasError(true);
@@ -42,8 +46,7 @@ const Redirect = () => {
   };
 
   const closePage = () => {
-    setCountdown(3); // Start countdown at 3 seconds
-
+    setCountdown(3);
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev === 1) {

@@ -13,6 +13,7 @@ const Autocomplete = ({
   helpertext,
   loading,
   limit,
+  minWidth,
   ...autocomplete
 }) => {
   const { multiple } = autocomplete;
@@ -61,6 +62,9 @@ const Autocomplete = ({
             value={value}
             disablePortal={false}
             onChange={(_, value) => onChange(value)}
+            sx={{
+              minWidth: minWidth,
+            }}
           />
         );
       }}

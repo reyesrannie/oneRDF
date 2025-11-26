@@ -35,12 +35,13 @@ const SystemController = () => {
     watch,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(systemControllerSchema),
     defaultValues: {
       login: "",
       roles: "",
       user: "",
-      storage: "",
+      pending: "",
+      changePassword: "",
+      reset: "",
     },
   });
 
@@ -49,7 +50,9 @@ const SystemController = () => {
       login: submitData?.login,
       roles: submitData?.roles,
       user: submitData?.user,
-      storage: submitData?.storage,
+      pending: submitData?.pending,
+      changePassword: submitData?.changePassword,
+      reset: submitData?.reset,
     };
 
     try {
@@ -108,11 +111,27 @@ const SystemController = () => {
 
               <AppTextBox
                 control={control}
-                name={"storage"}
-                label="Storage Name"
-                placeholder="e.g., TokenID"
-                error={Boolean(errors?.storage)}
-                helperText={errors?.storage?.message}
+                name={"pending"}
+                label="Pending Request"
+                placeholder="e.g., http://sample.com/api/pending"
+                error={Boolean(errors?.pending)}
+                helperText={errors?.pending?.message}
+              />
+              <AppTextBox
+                control={control}
+                name={"changePassword"}
+                label="Password Change"
+                placeholder="e.g., http://sample.com/api/changePassword"
+                error={Boolean(errors?.changePassword)}
+                helperText={errors?.changePassword?.message}
+              />
+              <AppTextBox
+                control={control}
+                name={"reset"}
+                label="Reset Password"
+                placeholder="e.g., http://sample.com/api/reset"
+                error={Boolean(errors?.reset)}
+                helperText={errors?.reset?.message}
               />
             </Stack>
             <Stack

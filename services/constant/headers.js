@@ -115,67 +115,77 @@ export const accountTitleHeader = [
   {
     name: "Code",
     value: "code",
-    wSort: true,
   },
   {
     name: "Name",
     value: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Account Type",
     value: "account_type",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Account Group",
     value: "account_group",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Account SubGroup",
     value: "account_sub_group",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Financial Statement",
     value: "financial_statement",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Normal Balance",
     value: "normal_balance",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Allocation",
     value: "allocation",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Unit",
     value: "account_unit",
     child: "name",
-    wSort: true,
   },
   {
     type: "parent",
     name: "Charge",
     value: "charge",
     child: "name",
-    wSort: true,
+  },
+  {
+    name: "Purchases Book",
+    value: "purchase_book",
+  },
+  {
+    name: "Vouchers Book",
+    value: "vouchers_book",
+  },
+  {
+    name: "Cash Disbursement Book",
+    value: "cash_disbursement_book",
+  },
+  {
+    name: "Sales Journal Book",
+    value: "sales_journal_book",
+  },
+  {
+    name: "Cash Receipt Book",
+    value: "cash_receipt_book",
   },
 ];

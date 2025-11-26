@@ -81,7 +81,6 @@ const AccountTitleModal = () => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(accountTitleSchema),
     defaultValues: {
       name: "",
       code: "",
@@ -93,6 +92,11 @@ const AccountTitleModal = () => {
       allocation_id: null,
       account_unit_id: null,
       charge_id: null,
+      purchase_book: "",
+      vouchers_book: "",
+      cash_disbursement_book: "",
+      sales_journal_book: "",
+      cash_receipt_book: "",
     },
   });
 
@@ -128,6 +132,11 @@ const AccountTitleModal = () => {
     const newData = {
       code: accountTitleData?.code || "",
       name: accountTitleData?.name || "",
+      purchase_book: accountTitleData?.purchase_book || "",
+      vouchers_book: accountTitleData?.vouchers_book || "",
+      cash_disbursement_book: accountTitleData?.cash_disbursement_book || "",
+      sales_journal_book: accountTitleData?.sales_journal_book || "",
+      cash_receipt_book: accountTitleData?.cash_receipt_book || "",
       account_group_id: accountTitleData?.account_group || null,
       account_sub_group_id: accountTitleData?.account_sub_group || null,
       account_type_id: accountTitleData?.account_type || null,
@@ -178,8 +187,8 @@ const AccountTitleModal = () => {
 
       <form onSubmit={handleSubmit(submitHandler)}>
         <DialogContent>
-          <Stack>
-            <Stack gap={2} flexDirection={"column"}>
+          <Stack gap={2}>
+            <Stack gap={2} flexDirection={"row"}>
               <AppTextBox
                 control={control}
                 name={"code"}
@@ -194,166 +203,231 @@ const AccountTitleModal = () => {
                 error={Boolean(errors?.name)}
                 helperText={errors?.name?.message}
               />
-              <Autocomplete
-                loading={loadingAccountType}
-                control={control}
-                name={"account_type_id"}
-                options={accountTypeData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Account Type"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.account_type_id)}
-                    helperText={errors.account_type_id?.message}
-                  />
-                )}
-              />
-              <Autocomplete
-                loading={loadingAccountGroup}
-                control={control}
-                name={"account_group_id"}
-                options={accountGroupData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Account Group"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.account_group_id)}
-                    helperText={errors.account_group_id?.message}
-                  />
-                )}
-              />
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingAccountType}
+                  control={control}
+                  name={"account_type_id"}
+                  options={accountTypeData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Account Type"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.account_type_id)}
+                      helperText={errors.account_type_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingAccountGroup}
+                  control={control}
+                  name={"account_group_id"}
+                  options={accountGroupData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Account Group"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.account_group_id)}
+                      helperText={errors.account_group_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingAccounSubGroup}
+                  control={control}
+                  name={"account_sub_group_id"}
+                  options={accountSubGroupData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Account Sub Group"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.account_sub_group_id)}
+                      helperText={errors.account_sub_group_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingFinancialStatement}
+                  control={control}
+                  name={"financial_statement_id"}
+                  options={financialStatementData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Financial Statement"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.financial_statement_id)}
+                      helperText={errors.financial_statement_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingNormalBalance}
+                  control={control}
+                  name={"normal_balance_id"}
+                  options={normalBalanceData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Normal Balance"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.normal_balance_id)}
+                      helperText={errors.normal_balance_id?.message}
+                    />
+                  )}
+                />
+              </Box>
 
-              <Autocomplete
-                loading={loadingAccounSubGroup}
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingAllocation}
+                  control={control}
+                  name={"allocation_id"}
+                  options={allocationData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Allocation"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.allocation_id)}
+                      helperText={errors.allocation_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingUnit}
+                  control={control}
+                  name={"account_unit_id"}
+                  options={unitData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Unit"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.account_unit_id)}
+                      helperText={errors.account_unit_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={loadingCharge}
+                  control={control}
+                  name={"charge_id"}
+                  options={chargeData || []}
+                  getOptionLabel={(option) => `${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Charge"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.charge_id)}
+                      helperText={errors.charge_id?.message}
+                    />
+                  )}
+                />
+              </Box>
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <AppTextBox
                 control={control}
-                name={"account_sub_group_id"}
-                options={accountSubGroupData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Account Sub Group"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.account_sub_group_id)}
-                    helperText={errors.account_sub_group_id?.message}
-                  />
-                )}
+                name={"purchase_book"}
+                label="Purchase Book"
+                error={Boolean(errors?.purchase_book)}
+                helperText={errors?.purchase_book?.message}
               />
-              <Autocomplete
-                loading={loadingFinancialStatement}
+              <AppTextBox
                 control={control}
-                name={"financial_statement_id"}
-                options={financialStatementData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Financial Statement"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.financial_statement_id)}
-                    helperText={errors.financial_statement_id?.message}
-                  />
-                )}
+                name={"vouchers_book"}
+                label="Vouchers Book"
+                error={Boolean(errors?.vouchers_book)}
+                helperText={errors?.vouchers_book?.message}
               />
-              <Autocomplete
-                loading={loadingNormalBalance}
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <AppTextBox
                 control={control}
-                name={"normal_balance_id"}
-                options={normalBalanceData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Normal Balance"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.normal_balance_id)}
-                    helperText={errors.normal_balance_id?.message}
-                  />
-                )}
+                name={"cash_disbursement_book"}
+                label="Cash Disbutsement Book"
+                error={Boolean(errors?.cash_disbursement_book)}
+                helperText={errors?.cash_disbursement_book?.message}
               />
-              <Autocomplete
-                loading={loadingAllocation}
+              <AppTextBox
                 control={control}
-                name={"allocation_id"}
-                options={allocationData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Allocation"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.allocation_id)}
-                    helperText={errors.allocation_id?.message}
-                  />
-                )}
+                name={"sales_journal_book"}
+                label="Sales Journal Book"
+                error={Boolean(errors?.sales_journal_book)}
+                helperText={errors?.sales_journal_book?.message}
               />
-              <Autocomplete
-                loading={loadingUnit}
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <AppTextBox
                 control={control}
-                name={"account_unit_id"}
-                options={unitData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Unit"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.account_unit_id)}
-                    helperText={errors.account_unit_id?.message}
-                  />
-                )}
-              />
-              <Autocomplete
-                loading={loadingCharge}
-                control={control}
-                name={"charge_id"}
-                options={chargeData || []}
-                getOptionLabel={(option) => `${option.name}`}
-                isOptionEqualToValue={(option, value) =>
-                  option?.id === value?.id
-                }
-                renderInput={(params) => (
-                  <MuiTextField
-                    {...params}
-                    label="Charge"
-                    size="small"
-                    variant="outlined"
-                    error={Boolean(errors.charge_id)}
-                    helperText={errors.charge_id?.message}
-                  />
-                )}
+                name={"cash_receipt_book"}
+                label="Cash Receipt Book"
+                error={Boolean(errors?.cash_receipt_book)}
+                helperText={errors?.cash_receipt_book?.message}
               />
             </Stack>
           </Stack>

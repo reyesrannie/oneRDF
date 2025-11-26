@@ -4,7 +4,10 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { setChangePass } from "../../services/server/slice/authSlice";
+import {
+  setChangePass,
+  setUserData,
+} from "../../services/server/slice/authSlice";
 import { usePasswordChangeMutation } from "../../services/server/api/authAPI";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -21,6 +24,10 @@ import { objectError } from "../../services/functions/errorResponse";
 import { loginUser } from "../../services/functions/loginServices";
 import { useNavigate } from "react-router-dom";
 import { decodeUser } from "../../services/functions/saveUser";
+import { usePasswordChangeAllMutation } from "../../services/server/api/usersAPI";
+import { useSystemsQuery } from "../../services/server/api/systemAPI";
+import { checkObject } from "../../services/functions/checkValues";
+import { setProgressPercent } from "../../services/server/slice/syncSlice";
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
@@ -30,6 +37,19 @@ const ChangePassword = () => {
   const userData = useSelector((state) => state.auth.userData);
 
   const [passwordChange, { isLoading }] = usePasswordChangeMutation();
+  const [passwordChangeAll, { isLoading: loadingChangePasswordALl }] =
+    usePasswordChangeAllMutation();
+
+  const {
+    data: systemData,
+    isLoading: loadingSystem,
+    isError: erroSystem,
+    isFetching: fetchingSystem,
+  } = useSystemsQuery({
+    status: "active",
+    pagination: "none",
+  });
+
   const {
     control,
     handleSubmit,
@@ -51,17 +71,43 @@ const ChangePassword = () => {
       id: userData?.id,
     };
 
+    const getSystem = userData?.user_system?.map((us) =>
+      systemData?.find((s) => us?.system_id?.toString() === s?.id?.toString())
+    );
+
     try {
       const res = await passwordChange(payload).unwrap();
-      if (hasData === undefined) {
-        loginUser(userData);
+
+      for (let i = 0; i < getSystem.length; i++) {
+        const payloadSystems = {
+          id_prefix: userData?.id_prefix,
+          id_no: userData?.id_no,
+          password: submitData?.password,
+          old_password: payload?.old_password,
+          endpoint: {
+            id: getSystem[i]?.id,
+            name: getSystem[i]?.system_name,
+            url: checkObject(getSystem[i]?.slice)?.changePassword,
+            token: getSystem[i]?.token,
+          },
+        };
+        const resAll = await passwordChangeAll(payloadSystems).unwrap();
       }
+
+      loginUser(userData, payload?.password);
+      dispatch(setUserData({ ...userData, password: submitData?.password }));
+
+      // if (hasData === undefined) {
+      //   loginUser(userData, payload?.password);
+      // }
+
       dispatch(setChangePass(false));
       navigate("/");
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
     } catch (error) {
+      console.log(error);
       objectError(error, setError, enqueueSnackbar);
     }
   };
@@ -127,7 +173,7 @@ const ChangePassword = () => {
             >
               <Button
                 className="change-password-button"
-                disabled={isLoading}
+                disabled={isLoading || loadingChangePasswordALl}
                 onClick={() => dispatch(setChangePass(false))}
                 loadingPosition="start"
                 startIcon={<DoDisturbAltOutlinedIcon />}
@@ -140,7 +186,7 @@ const ChangePassword = () => {
               <Button
                 type="submit"
                 className="change-password-button"
-                loading={isLoading}
+                loading={isLoading || loadingChangePasswordALl}
                 loadingPosition="start"
                 startIcon={<SwapHorizontalCircleOutlinedIcon />}
                 variant="contained"

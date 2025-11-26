@@ -27,13 +27,39 @@ export const userAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Users"],
     }),
+    createUserSystems: builder.mutation({
+      query: (payload) => ({
+        url: `/sample`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["UsersSystems", "Audit"],
+    }),
     updateUser: builder.mutation({
       query: (payload) => ({
         url: `/user/${payload?.id}`,
         method: "PUT",
         body: payload,
       }),
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["Users", "Audit"],
+    }),
+
+    resetAllSystem: builder.mutation({
+      query: (payload) => ({
+        url: `/reset_all_password`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["UsersSystems", "Audit"],
+    }),
+
+    passwordChangeAll: builder.mutation({
+      query: (payload) => ({
+        url: `/change_all_password`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["UsersSystems", "Audit"],
     }),
   }),
 });
@@ -42,5 +68,8 @@ export const {
   useUserQuery,
   useUserResetMutation,
   useCreateUserMutation,
+  useCreateUserSystemsMutation,
   useUpdateUserMutation,
+  usePasswordChangeAllMutation,
+  useResetAllSystemMutation,
 } = userAPI;

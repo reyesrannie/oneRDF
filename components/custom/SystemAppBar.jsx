@@ -38,6 +38,9 @@ import { resetDrawer } from "../../services/server/slice/drawerSlice";
 import { resetTheme } from "../../services/server/slice/themeSlice";
 import { decodeUser } from "../../services/functions/saveUser";
 import { hasAccess } from "../../services/functions/access";
+import { resetModal } from "../../services/server/slice/modalSlice";
+import { resetPrompt } from "../../services/server/slice/promptSlice";
+import { resetSync } from "../../services/server/slice/syncSlice";
 
 const drawerWidth = 240;
 
@@ -149,6 +152,9 @@ const SystemAppBar = () => {
     dispatch(resetAuth());
     dispatch(resetDrawer());
     dispatch(resetTheme());
+    dispatch(resetModal());
+    dispatch(resetPrompt());
+    dispatch(resetSync());
     window.location.reload();
   };
 

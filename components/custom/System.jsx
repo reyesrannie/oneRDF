@@ -65,7 +65,6 @@ const System = () => {
     setError,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(systemSchema),
     defaultValues: {
       system_name: "",
       url_holder: "",

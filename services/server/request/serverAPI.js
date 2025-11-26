@@ -24,6 +24,7 @@ export const serverAPI = createApi({
   }),
   tagTypes: [
     "Users",
+    "UsersSystems",
     "Systems",
     "Company",
     "Category",
@@ -32,6 +33,7 @@ export const serverAPI = createApi({
     "DepartmentUnit",
     "SystemsImages",
     "AccountGroup",
+    "Audit",
   ],
   endpoints: (builder) => ({}),
 });

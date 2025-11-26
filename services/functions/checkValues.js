@@ -44,3 +44,8 @@ export const filterNavigationByAccess = (navItems, accessPermission) => {
 
   return filterChild || [];
 };
+
+export const checkObject = (data) => {
+  const obj = JSON.parse(data);
+  return obj[0];
+};

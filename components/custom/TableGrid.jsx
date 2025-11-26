@@ -108,6 +108,20 @@ const TableGrid = ({
                           {i[head?.value]}
                         </Typography>
                       )}
+
+                      {head?.type === "concat" && (
+                        <Typography
+                          color="text.secondary"
+                          sx={{ fontSize: "12px" }}
+                        >
+                          {Array.isArray(head.value)
+                            ? head.value
+                                .map((field) => i[field])
+                                .filter(Boolean)
+                                .join(" ")
+                            : i[head.value]}
+                        </Typography>
+                      )}
                       {head?.type === "multimedia" && (
                         <Stack
                           gap={1}

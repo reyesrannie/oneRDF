@@ -112,6 +112,7 @@ const Sync = lazy(() => import("../../screens/syncing/Sync"));
 const SyncOneCharging = lazy(
   () => import("../../screens/syncing/charging/SyncOneCharging")
 );
+const AuditTrail = lazy(() => import("../../screens/audit/AuditTrail"));
 
 const SystemNavigation = () => {
   const navigation = [
@@ -410,6 +411,15 @@ const SystemNavigation = () => {
       route: "/notification-setup",
       element: <NotificationSetup />,
       permission: ["notification-setup"],
+    },
+
+    {
+      segment: "audit",
+      title: "Audit",
+      icon: <PermContactCalendarOutlinedIcon />,
+      route: "/audit",
+      element: <AuditTrail />,
+      permission: ["audit_trail"],
     },
   ];
 

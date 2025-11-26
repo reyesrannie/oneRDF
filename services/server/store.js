@@ -10,6 +10,7 @@ import modalSlice from "./slice/modalSlice";
 import systemSlice from "./slice/systemSlice";
 import promptSlice from "./slice/promptSlice";
 import syncSlice from "./slice/syncSlice";
+import { sedarAPI } from "./request/sedarAPI";
 
 export const store = configureStore({
   reducer: {
@@ -23,9 +24,14 @@ export const store = configureStore({
     prompt: promptSlice,
     sync: syncSlice,
 
+    [sedarAPI.reducerPath]: sedarAPI.reducer,
     [serverAPI.reducerPath]: serverAPI.reducer,
     [systemAPI.reducerPath]: systemAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([serverAPI.middleware, systemAPI.middleware]),
+    getDefaultMiddleware().concat([
+      serverAPI.middleware,
+      systemAPI.middleware,
+      sedarAPI.middleware,
+    ]),
 });

@@ -54,7 +54,11 @@ const userRoles = [
   },
   {
     name: "Syncing",
-    child: [{ name: "One Charging", value: "sync-charging" }],
+    child: [{ name: "Sync One Charging", value: "sync-charging" }],
+  },
+  {
+    name: "Audit",
+    child: [{ name: "Audit Trail", value: "audit_trail" }],
   },
 ];
 

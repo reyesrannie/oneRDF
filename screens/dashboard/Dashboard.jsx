@@ -19,10 +19,8 @@ import { setSystemImage } from "../../services/server/slice/modalSlice";
 import SystemCard from "../../components/custom/SystemCard";
 
 const Dashboard = () => {
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-
   const systemImage = useSelector((state) => state.modal.systemImage);
-
+  const userData = useSelector((state) => state.auth.userData);
   const { data, isLoading } = useSystemsQuery({
     status: "active",
     pagination: "none",
@@ -60,6 +58,16 @@ const Dashboard = () => {
     fetchSequentially();
   }, [data]);
 
+  const filterSystems = () => {
+    const items = userData?.user_system?.map((userSys) =>
+      data?.find(
+        (sys) => userSys?.system_id?.toString() === sys?.id?.toString()
+      )
+    );
+
+    return items;
+  };
+
   return (
     <Box
       padding={3}
@@ -72,7 +80,7 @@ const Dashboard = () => {
         flexWrap={"wrap"}
         justifyContent={"center"}
       >
-        <SystemCard data={data} />
+        <SystemCard data={filterSystems()} />
       </Stack>
     </Box>
   );

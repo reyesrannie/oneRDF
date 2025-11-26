@@ -34,7 +34,7 @@ export const Themes = () => {
                   main: "#ff6b6b",
                 },
                 action: {
-                  disabled: "#267046",
+                  disabled: "#464741",
                 },
                 divider: "#ffffff",
               }
@@ -167,6 +167,7 @@ export const Themes = () => {
                 },
                 "& .MuiChip-root": {
                   fontSize: "10px",
+                  backgroundColor: "#1A75BB",
                 },
               },
               listbox: {
@@ -218,6 +219,7 @@ export const Themes = () => {
                 backgroundColor: "#FFFFFF",
                 maxHeight: "calc(100vh - 600px)",
                 minHeight: "calc(100vh - 440px)",
+                maxWidth: "calc(100vw - 370px)",
                 borderRadius: 1,
               },
             },

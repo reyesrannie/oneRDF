@@ -1,12 +1,7 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
-  Checkbox,
   Dialog,
-  Divider,
   Stack,
   Typography,
   useMediaQuery,
@@ -14,53 +9,69 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  useTheme,
+  IconButton,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetModal } from "../../services/server/slice/modalSlice";
-import userImage from "../../assets/svg/add-user.svg";
 import "react-tabs/style/react-tabs.css";
 import "../styles/Modal.scss";
 import AppTextBox from "../custom/AppTextBox";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
-import accountSchema from "../schema/accountSchema";
 import { userRoles } from "../../services/constant/systemConstants";
 import { enqueueSnackbar } from "notistack";
 import Autocomplete from "../custom/AutoComplete";
-import { useSystemsQuery } from "../../services/server/api/systemAPI";
+import {
+  useStoreFileMutation,
+  useSystemsQuery,
+} from "../../services/server/api/systemAPI";
 import {
   useCreateUserMutation,
+  useCreateUserSystemsMutation,
   useUpdateUserMutation,
 } from "../../services/server/api/usersAPI";
 import { objectError } from "../../services/functions/errorResponse";
-import { useCoaQuery } from "../../services/server/api/coaAPI";
+import { useEmployeeQuery } from "../../services/server/request/sedarAPI";
+import SignatureBox from "../custom/SignatureBox";
+import { base64ToFile } from "../../services/functions/saveUser";
+import { checkObject } from "../../services/functions/checkValues";
+import Progress from "../custom/Progress";
+import MobileLoading from "../custom/MobileLoading";
+import {
+  resetSync,
+  setProgressDialog,
+  setProgressPercent,
+} from "../../services/server/slice/syncSlice";
 
 const UserModal = () => {
   const dispatch = useDispatch();
-  const [expandedIndex, setExpandedIndex] = useState(null);
+  const theme = useTheme();
 
   const open = useSelector((state) => state.modal.user);
-  const mode = useSelector((state) => state.theme.mode);
   const userData = useSelector((state) => state.modal.userData);
+  const signatureRef = useRef(null);
 
   const hasRun = useRef(false);
   const isTablet = useMediaQuery("(min-width:768px)");
+
+  const allAccess = userRoles.flatMap((role) => role.child);
 
   const { data: systemData, isLoading: loadingSystems } = useSystemsQuery({
     status: "active",
     pagination: "none",
   });
 
-  const { data: charging, isLoading: loadingCharging } = useCoaQuery({
-    status: "active",
-    pagination: "none",
-  });
+  const { data: sedarData, isLoading: loadingSedar } = useEmployeeQuery();
 
+  const [storeFile, { isLoading: loadingStoreFile }] = useStoreFileMutation();
   const [createUser, { isLoading: loadingCreate }] = useCreateUserMutation();
   const [updateUser, { isLoading: loadingUpdate }] = useUpdateUserMutation();
+
+  const [createUserSystem, { isLoading: loadingCreateSystems }] =
+    useCreateUserSystemsMutation();
 
   const {
     control,
@@ -72,340 +83,472 @@ const UserModal = () => {
     setError,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(accountSchema),
     defaultValues: {
-      name: "",
+      employeeID: null,
+      id_prefix: "",
+      id_no: "",
       username: "",
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      suffix: "",
       access_permission: [],
       systems: [],
+      signature: "",
     },
   });
 
   useEffect(() => {
-    if (userData) {
-      const validAccessValues = userRoles?.flatMap((role) =>
-        role?.child?.map((child) => child.value.trim())
+    if (userData && sedarData) {
+      const userAccess = userData?.access_permission?.map((item) =>
+        allAccess?.find((access) => access?.value === item)
       );
-      const filteredAccess = userData?.access_permission
-        .map((item) => item.trim())
-        .filter((item) => validAccessValues.includes(item));
 
       const newData = {
         ...userData,
-        access_permission: filteredAccess,
-        systems: userData?.user_system?.map((us) =>
-          systemData?.find((s) => s?.id === us?.id)
+        employeeID: sedarData?.data?.find(
+          (emp) =>
+            userData?.id_prefix === emp?.general_info?.prefix_id &&
+            userData?.id_no === emp?.general_info?.id_number
         ),
+        access_permission: userAccess,
+        systems:
+          userData?.user_system?.map((us) =>
+            systemData?.find(
+              (s) => s?.id?.toString() === us?.system_id?.toString()
+            )
+          ) || [],
       };
 
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
     }
-  }, [hasRun, userData, setValue]);
+  }, [userData, sedarData]);
 
-  const generateUsername = () => {
-    const name = watch("name");
+  const generateUsername = (name) => {
     if (!name) setValue("username", "");
 
     const parts = name.trim().split(/\s+/);
     if (parts.length === 0) return;
 
-    const lastName = parts[parts.length - 1];
+    const last_name = parts[parts.length - 1];
     const initials = parts
       .slice(0, -1)
       .map((n) => n[0])
       .join("");
 
-    const username = (initials + lastName).toLowerCase();
+    const username = (initials + last_name).toLowerCase();
     clearErrors();
-    setValue("username", username);
+    return username;
   };
 
-  const handleCheckBox = (value) => {
-    const currentValue = watch("access_permission") || [];
-    if (currentValue.includes(value)) {
-      setValue(
-        "access_permission",
-        currentValue.filter((v) => v !== value)
-      );
-    } else {
-      setValue("access_permission", [...currentValue, value]);
-    }
-  };
-
-  const handleCheckBoxAll = (values) => {
-    const currentValue = watch("access_permission") || [];
-    const checkValue = values?.every((access) =>
-      currentValue.includes(access?.value)
+  const checkHasChanged = () => {
+    const original = userData?.user_system || [];
+    const current = watch("systems") || [];
+    const removed = current.filter(
+      (item) =>
+        !original.some((u) => u?.system_id?.toString() === item?.id?.toString())
     );
-    const allValues = values?.map((access) => access?.value);
-    if (checkValue) {
-      const newValue = currentValue.filter(
-        (v) => !values?.some((access) => access?.value === v)
-      );
-      setValue("access_permission", newValue);
-    } else {
-      setValue(
-        "access_permission",
-        Array.from(new Set([...currentValue, ...allValues]))
-      );
-    }
+    return removed;
   };
 
   const submitHandler = async (data) => {
-    if (watch("access_permission").length === 0) {
-      enqueueSnackbar("Please select at least one permission", {
-        variant: "error",
-      });
-    }
+    dispatch(setProgressDialog(true));
 
-    const payload = {
-      id: userData?.id,
-      full_name: data?.name,
-      access_permission: data?.access_permission,
-      username: data?.username,
-      systems: data?.systems?.map((item) => ({ system_id: item?.id })) || [],
-      password: userData ? null : data?.username,
-      charging_id: data?.charging?.id,
-      charging_code: data?.charging?.code,
-      charging_name: data?.charging?.name,
-    };
+    const image = handleSave();
+    const signatureFile = image
+      ? base64ToFile(
+          image,
+          `${data?.employeeID?.general_info?.prefix_id}_${data?.employeeID?.general_info?.id_number}_${data?.username}.png`
+        )
+      : "";
+    const formData = new FormData();
+    formData.append("file", signatureFile);
 
     try {
+      const imageRes = image ? await storeFile(formData).unwrap() : "";
+
+      const payload = {
+        id_prefix: data?.id_prefix || "",
+        id_no: data?.id_no || "",
+        username: data?.username || "",
+        first_name: data?.first_name || "",
+        middle_name: data?.middle_name || "",
+        last_name: data?.last_name || "",
+        suffix: data?.suffix || "",
+        id: userData?.id,
+        password: userData ? null : data?.username,
+        systems: data?.systems?.map((item) => ({ system_id: item?.id })) || [],
+        signature: imageRes ? imageRes?.data : "",
+        access_permission: data?.access_permission?.map(
+          (access) => access?.value
+        ),
+      };
       const res = userData
         ? await updateUser(payload).unwrap()
         : await createUser(payload).unwrap();
+
+      const systems = userData ? checkHasChanged() : data?.systems;
+
+      for (let i = 0; i < systems.length; i++) {
+        const payloadSystems = {
+          id_prefix: data?.id_prefix || "",
+          id_no: data?.id_no || "",
+          username: data?.username || "",
+          first_name: data?.first_name || "",
+          middle_name: data?.middle_name || undefined,
+          last_name: data?.last_name || "",
+          suffix: data?.suffix || undefined,
+          password: data?.username || "",
+          endpoint: {
+            id: systems[i]?.id,
+            name: systems[i]?.system_name,
+            url: checkObject(systems[i]?.slice)?.pending,
+            token: systems[i]?.token,
+          },
+        };
+
+        const resAll = await createUserSystem(payloadSystems).unwrap();
+
+        dispatch(
+          setProgressPercent(Math.round(((i + 1) / systems.length) * 100))
+        );
+      }
+
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
-      dispatch(resetModal());
+
       reset();
+      dispatch(resetSync());
+      dispatch(resetModal());
     } catch (error) {
+      dispatch(resetSync());
       objectError(error, setError, enqueueSnackbar);
+      dispatch(resetSync());
     }
   };
 
+  const handleSave = () => {
+    if (!signatureRef.current) return;
+    if (signatureRef?.current?.isEmpty()) return null;
+    const img = signatureRef?.current?.getImage();
+    return img;
+  };
+
+  const handleAutoFill = () => {
+    const employee = watch("employeeID");
+    const newData = {
+      username: generateUsername(
+        `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`
+      ),
+      id_prefix: employee?.general_info?.prefix_id,
+      id_no: employee?.general_info?.id_number,
+      first_name: employee?.general_info?.first_name,
+      middle_name: employee?.general_info?.middle_name,
+      last_name: employee?.general_info?.last_name,
+      suffix: employee?.general_info?.suffix,
+    };
+    Object.entries(newData)?.forEach(([key, value]) => {
+      setValue(key, value);
+    });
+  };
+
   return (
-    <Dialog open={open}>
-      <Box minWidth={isTablet ? 600 : 350} height={800} padding={2}>
-        <DialogTitle>
-          <Stack display="flex" alignItems="center">
-            <img
-              src={userImage}
-              alt="Password"
-              draggable="false"
-              className="user-modal-image"
+    <Dialog
+      open={open}
+      slotProps={{
+        paper: {
+          sx: {
+            border: `2px solid ${theme.palette.primary.main}`,
+            minWidth: isTablet ? 700 : 350,
+          },
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: theme?.palette?.primary?.main,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 20,
+              fontWeight: 600,
+            }}
+          >
+            Create User Account
+          </Typography>
+
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+            onClick={() => {
+              reset();
+              dispatch(resetModal());
+            }}
+          >
+            <ClearOutlinedIcon
+              fontSize="small"
+              sx={{
+                color: "#ffffff",
+              }}
             />
-          </Stack>
+          </IconButton>
         </DialogTitle>
 
-        <form onSubmit={handleSubmit(submitHandler)}>
-          <DialogContent>
-            <Stack gap={1}>
-              <Stack>
-                <Typography
-                  color={mode === "light" ? "#000000" : "textPrimary"}
-                >
-                  Profile
-                </Typography>
-                <Divider />
-              </Stack>
-              <Stack gap={2} flexDirection={"row"} width={"100%"}>
-                <AppTextBox
-                  control={control}
-                  name={"name"}
-                  label="Name"
-                  onKeyUp={() => {
-                    generateUsername();
-                  }}
-                  fullWidth
-                  error={Boolean(errors?.name)}
-                  helperText={errors?.name?.message}
-                />
-                <AppTextBox
-                  control={control}
-                  name={"username"}
-                  label="Username"
-                  error={Boolean(errors?.username)}
-                  helperText={errors?.username?.message}
-                  fullWidth
-                />
-              </Stack>
-              <Stack>
-                <Autocomplete
-                  control={control}
-                  name={"charging"}
-                  options={charging || []}
-                  getOptionLabel={(option) =>
-                    `${option?.code} - ${option?.name}`
-                  }
-                  isOptionEqualToValue={(option, value) =>
-                    option?.id === value?.id
-                  }
-                  renderInput={(params) => (
-                    <MuiTextField
-                      {...params}
-                      label="Charging"
-                      size="small"
-                      variant="outlined"
-                      error={Boolean(errors?.charging)}
-                      helperText={errors?.charging?.message}
-                    />
-                  )}
-                />
-              </Stack>
-              <Stack>
-                <Typography
-                  color={mode === "light" ? "#000000" : "textPrimary"}
-                >
-                  Access
-                </Typography>
-                <Divider />
-              </Stack>
-              <Stack gap={1}>
-                {userRoles?.map((roles, index) => {
-                  return (
-                    <Accordion
-                      expanded={expandedIndex === index}
-                      key={index}
-                      onChange={() =>
-                        setExpandedIndex(expandedIndex === index ? null : index)
-                      }
-                    >
-                      <AccordionSummary>
-                        <Stack flexDirection={"row"} alignItems="center">
-                          <Checkbox
-                            checked={roles?.child?.every((access) =>
-                              watch("access_permission")?.includes(
-                                access?.value
-                              )
-                            )}
-                            indeterminate={
-                              roles?.child?.some((access) =>
-                                watch("access_permission")?.includes(
-                                  access?.value
-                                )
-                              ) &&
-                              !roles?.child?.every((access) =>
-                                watch("access_permission")?.includes(
-                                  access?.value
-                                )
-                              )
-                            }
-                            onChange={() => handleCheckBoxAll(roles?.child)}
-                          />
-                          <Typography
-                            color={mode === "light" ? "#ffffff" : "textPrimary"}
-                          >
-                            {roles?.name}
-                          </Typography>
-                        </Stack>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Box
-                          ml={2}
-                          display="grid"
-                          gridTemplateColumns="repeat(2, minmax(150px, 1fr))"
-                          rowGap={1}
-                          columnGap={2}
-                        >
-                          {roles?.child?.map((permissions, i) => {
-                            return (
-                              <Box key={i} display="flex" alignItems="center">
-                                <Checkbox
-                                  checked={watch("access_permission")?.includes(
-                                    permissions?.value
-                                  )}
-                                  onChange={() =>
-                                    handleCheckBox(permissions?.value)
-                                  }
-                                />
-                                <Typography
-                                  color={
-                                    mode === "light" ? "#ffffff" : "textPrimary"
-                                  }
-                                >
-                                  {permissions?.name}
-                                </Typography>
-                              </Box>
-                            );
-                          })}
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  );
-                })}
-                {errors?.access_permission && (
-                  <Typography color="error" sx={{ fontSize: 12 }}>
-                    {errors?.access_permission?.message}
+        {sedarData ? (
+          <form onSubmit={handleSubmit(submitHandler)}>
+            <DialogContent>
+              <Stack gap={2}>
+                <Stack>
+                  <Typography
+                    color={theme.palette.secondary.dark}
+                    fontWeight={600}
+                  >
+                    Employee ID
                   </Typography>
-                )}
-              </Stack>
-              <Stack>
-                <Typography
-                  color={mode === "light" ? "#000000" : "textPrimary"}
-                >
-                  Systems
-                </Typography>
-                <Divider />
-              </Stack>
-
-              <Stack>
-                <Autocomplete
-                  multiple
-                  control={control}
-                  name={"systems"}
-                  options={systemData || []}
-                  getOptionLabel={(option) => `${option?.system_name}`}
-                  isOptionEqualToValue={(option, value) =>
-                    option?.id === value?.id
-                  }
-                  getOptionDisabled={(option) => {
-                    const selected = control._formValues?.systems || [];
-                    return selected.some((item) => item.id === option.id);
-                  }}
-                  renderInput={(params) => (
-                    <MuiTextField
-                      {...params}
-                      label="Systems"
-                      size="small"
-                      variant="outlined"
-                      error={Boolean(errors?.systems)}
-                      helperText={errors?.systems?.message}
+                  <Stack flexDirection={"row"} gap={2}>
+                    <Autocomplete
+                      loading={loadingSedar}
+                      control={control}
+                      name={"employeeID"}
+                      options={sedarData?.data || []}
+                      getOptionLabel={(option) =>
+                        option?.general_info?.full_id_number
+                      }
+                      isOptionEqualToValue={(option, value) =>
+                        option?.general_info?.full_id_number ===
+                        value?.general_info?.full_id_number
+                      }
+                      onClose={handleAutoFill}
+                      componentsProps={{
+                        clearIndicator: {
+                          onClick: (event) => {
+                            reset();
+                          },
+                        },
+                      }}
+                      minWidth={320}
+                      renderInput={(params) => (
+                        <MuiTextField
+                          {...params}
+                          label="Employee ID"
+                          size="small"
+                          variant="outlined"
+                          error={Boolean(errors.account_code)}
+                          helperText={errors.account_code?.message}
+                        />
+                      )}
                     />
-                  )}
-                />
+
+                    <AppTextBox
+                      control={control}
+                      name={"username"}
+                      label="Username"
+                      error={Boolean(errors?.username)}
+                      helperText={errors?.username?.message}
+                      fullWidth
+                    />
+                  </Stack>
+                </Stack>
+
+                <Stack>
+                  <Typography
+                    color={theme.palette.secondary.dark}
+                    fontWeight={600}
+                  >
+                    Full Name
+                  </Typography>
+                  <Stack flexDirection={"row"} gap={2}>
+                    <AppTextBox
+                      control={control}
+                      name={"first_name"}
+                      label="First Name"
+                      error={Boolean(errors?.first_name)}
+                      helperText={errors?.first_name?.message}
+                      fullWidth
+                      disabled
+                    />
+                    <AppTextBox
+                      control={control}
+                      name={"middle_name"}
+                      label="Middle Name"
+                      error={Boolean(errors?.middle_name)}
+                      helperText={errors?.middle_name?.message}
+                      fullWidth
+                      disabled
+                    />
+                    <AppTextBox
+                      control={control}
+                      name={"last_name"}
+                      label="Last Name"
+                      error={Boolean(errors?.last_name)}
+                      helperText={errors?.last_name?.message}
+                      fullWidth
+                      disabled
+                    />
+                    <AppTextBox
+                      control={control}
+                      name={"suffix"}
+                      label="Suffix"
+                      error={Boolean(errors?.suffix)}
+                      helperText={errors?.suffix?.message}
+                      disabled
+                    />
+                  </Stack>
+                </Stack>
+
+                <Stack>
+                  <Typography
+                    color={theme.palette.secondary.dark}
+                    fontWeight={600}
+                  >
+                    All System
+                  </Typography>
+                  <Stack flexDirection={"row"} gap={2}>
+                    <Autocomplete
+                      multiple
+                      control={control}
+                      name={"systems"}
+                      options={systemData || []}
+                      getOptionLabel={(option) => `${option?.system_name}`}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.id === value?.id
+                      }
+                      loading={loadingSystems}
+                      renderInput={(params) => (
+                        <MuiTextField
+                          {...params}
+                          label="Systems"
+                          size="small"
+                          variant="outlined"
+                          error={Boolean(errors?.systems)}
+                          helperText={errors?.systems?.message}
+                        />
+                      )}
+                      minWidth={"100%"}
+                    />
+                  </Stack>
+                </Stack>
+
+                <Stack>
+                  <Typography
+                    color={theme.palette.secondary.dark}
+                    fontWeight={600}
+                  >
+                    One RDF Access
+                  </Typography>
+                  <Stack flexDirection={"row"} gap={2}>
+                    <Autocomplete
+                      multiple
+                      control={control}
+                      name={"access_permission"}
+                      options={allAccess || []}
+                      getOptionLabel={(option) => `${option?.name}`}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.value === value?.value
+                      }
+                      getOptionDisabled={(option) => {
+                        return watch("access_permission").some(
+                          (item) => item === option.value
+                        );
+                      }}
+                      renderInput={(params) => (
+                        <MuiTextField
+                          {...params}
+                          label="Select Access"
+                          size="small"
+                          variant="outlined"
+                          error={Boolean(errors?.access_permission)}
+                          helperText={errors?.access_permission?.message}
+                        />
+                      )}
+                      minWidth={"100%"}
+                    />
+                  </Stack>
+                </Stack>
+
+                <Stack width="100%">
+                  <Typography
+                    color={theme.palette.secondary.dark}
+                    fontWeight={600}
+                  >
+                    Signature
+                  </Typography>
+
+                  <Stack
+                    flexDirection="row"
+                    gap={2}
+                    mt={1}
+                    alignItems="center"
+                    width="100%"
+                  >
+                    <SignatureBox ref={signatureRef} />
+                  </Stack>
+                </Stack>
               </Stack>
-            </Stack>
-          </DialogContent>
-          <DialogActions>
-            <Stack flexDirection={"row"} padding={2} gap={1}>
+            </DialogContent>
+            <DialogActions
+              sx={{
+                justifyContent: "center",
+              }}
+            >
               <Button
-                variant="contained"
-                color="error"
-                startIcon={<ClearOutlinedIcon />}
-                onClick={() => {
-                  reset();
-                  dispatch(resetModal());
-                }}
-              >
-                Close
-              </Button>
-              <Button
-                loading={loadingCreate || loadingUpdate}
+                loading={
+                  loadingCreate ||
+                  loadingStoreFile ||
+                  loadingSystems ||
+                  loadingCreateSystems ||
+                  loadingUpdate
+                }
                 variant="contained"
                 loadingPosition="start"
-                startIcon={<CheckOutlinedIcon />}
-                color="success"
                 type="submit"
+                disabled={
+                  watch("employeeID") === null ||
+                  watch("first_name") === "" ||
+                  watch("last_name") === "" ||
+                  watch("username") === "" ||
+                  watch("id_prefix") === "" ||
+                  watch("id_no") === "" ||
+                  watch("systems")?.length === 0 ||
+                  loadingCreate ||
+                  loadingStoreFile ||
+                  loadingSystems ||
+                  loadingCreateSystems ||
+                  loadingUpdate
+                }
+                color="info"
+                sx={{
+                  color: "#ffffff",
+                  fontWeight: 410,
+                  fontSize: 16,
+                  minWidth: 300,
+                }}
               >
-                {userData ? "Update" : "Create"}
+                {userData ? "Update" : "Register"}
               </Button>
-            </Stack>
-          </DialogActions>
-        </form>
+            </DialogActions>
+          </form>
+        ) : (
+          <MobileLoading />
+        )}
       </Box>
+
+      <Progress />
     </Dialog>
   );
 };
