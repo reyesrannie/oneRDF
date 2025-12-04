@@ -39,6 +39,7 @@ const Redirect = () => {
       const encoded = encodeURIComponent(JSON.stringify(res?.data));
       window.location.href = `${data?.url_holder}redirect?data=${encoded}`;
     } catch (error) {
+      console.log(error);
       setHasError(true);
       singleError(error, enqueueSnackbar);
       closePage();
@@ -46,7 +47,7 @@ const Redirect = () => {
   };
 
   const closePage = () => {
-    setCountdown(3);
+    setCountdown(60);
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev === 1) {

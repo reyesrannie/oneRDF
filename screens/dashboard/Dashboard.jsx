@@ -29,6 +29,15 @@ const Dashboard = () => {
   const [getFile] = useLazyGetFileQuery();
   const dispatch = useDispatch();
 
+  const filterSystems = () => {
+    const items = userData?.user_system?.map((userSys) =>
+      data?.find(
+        (sys) => userSys?.system_id?.toString() === sys?.id?.toString()
+      )
+    );
+
+    return items;
+  };
   const fetchImage = async (fileName, key) => {
     const file = fileName.split("/").pop();
 
@@ -47,8 +56,9 @@ const Dashboard = () => {
 
     const fetchSequentially = async () => {
       const existingIds = new Set(systemImage?.map((img) => img?.id));
+      const systems = filterSystems();
 
-      for (const item of data) {
+      for (const item of systems) {
         if (item?.system_image && item?.id && !existingIds.has(item?.id)) {
           await fetchImage(item?.system_image, item?.id);
         }
@@ -57,16 +67,6 @@ const Dashboard = () => {
 
     fetchSequentially();
   }, [data]);
-
-  const filterSystems = () => {
-    const items = userData?.user_system?.map((userSys) =>
-      data?.find(
-        (sys) => userSys?.system_id?.toString() === sys?.id?.toString()
-      )
-    );
-
-    return items;
-  };
 
   return (
     <Box

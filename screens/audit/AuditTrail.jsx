@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Stack,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Checkbox, Stack, Typography, useMediaQuery } from "@mui/material";
 import React, { useState } from "react";
 import AppSearch from "../../components/custom/AppSearch";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,10 +10,7 @@ import {
 import UserModal from "../../components/modal/UserModal";
 import CardList from "../../components/custom/CardList";
 import useParamsHook from "../../services/hooks/useParamsHook";
-import {
-  useUserQuery,
-  useUserResetMutation,
-} from "../../services/server/api/usersAPI";
+import { useUserResetMutation } from "../../services/server/api/usersAPI";
 import MobileLoading from "../../components/custom/MobileLoading";
 import NoDataFound from "../../components/custom/NoDataFound";
 import TableGrid from "../../components/custom/TableGrid";
@@ -37,10 +27,8 @@ import {
 import CustomPagination from "../../components/custom/CustomPagination";
 import BreadCrumbs from "../../components/custom/BreadCrumbs";
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MenuOptions from "../../components/custom/MenuOptions";
-import { setUserSetupModal } from "../../services/server/slice/syncSlice";
-import UserSetupModal from "../../components/modal/UserSetupModal";
+
 import { useAuditQuery } from "../../services/server/api/auditTrail";
 
 const AuditTrail = () => {
@@ -222,7 +210,7 @@ const AuditTrail = () => {
         <CustomPagination
           data={data}
           onPageChange={onPageChange}
-          onRowsPerPageChange={onRowChange}
+          onRowChange={onRowChange}
           onChange={onSelectPage}
         />
       )}

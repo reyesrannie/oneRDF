@@ -123,6 +123,8 @@ const UserModal = () => {
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
+    } else {
+      reset();
     }
   }, [userData, sedarData]);
 
@@ -327,7 +329,7 @@ const UserModal = () => {
                       name={"employeeID"}
                       options={sedarData?.data || []}
                       getOptionLabel={(option) =>
-                        option?.general_info?.full_id_number
+                        `${option?.general_info?.full_id_number} - ${option?.general_info?.first_name} ${option?.general_info?.last_name} `
                       }
                       isOptionEqualToValue={(option, value) =>
                         option?.general_info?.full_id_number ===

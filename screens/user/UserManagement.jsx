@@ -187,6 +187,9 @@ const UserManagement = () => {
                 },
               }}
               onClick={(e) => {
+                dispatch(resetSync());
+                dispatch(resetModal());
+                dispatch(resetPrompt());
                 setAnchorE2({
                   mouseX: e.clientX,
                   mouseY: e.clientY,
