@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isDrawerOpen: true,
+  isDrawerOpen: false,
   hiddenNavigation: [],
   isButtomNavActivate: false,
 };

@@ -100,7 +100,7 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
+  // shouldForwardProp: (prop) => prop !== "open",
 })(({ theme }) => ({
   width: drawerWidth,
   flexShrink: 0,
@@ -135,6 +135,10 @@ const SystemAppBar = () => {
 
   const currentLocation = location?.pathname?.split("/");
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
+  const systemDisplay = useSelector((state) => state.render.systemDisplay);
+
+  console.log(isDrawerOpen);
+
   const hiddenNavigation = useSelector(
     (state) => state.drawer.hiddenNavigation,
   );
@@ -160,7 +164,7 @@ const SystemAppBar = () => {
     dispatch(resetSync());
     window.location.reload();
   };
-
+  console.log(open);
   return (
     <Box
       sx={{
@@ -214,7 +218,10 @@ const SystemAppBar = () => {
           </Stack>
         </Stack>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer
+        variant={systemDisplay === "slider" ? "temporary" : "permanent"}
+        open={open}
+      >
         <Stack
           alignItems={"center"}
           justifyContent={"center"}

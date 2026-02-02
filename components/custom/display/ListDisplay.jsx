@@ -10,9 +10,10 @@ import { Pagination, Navigation } from "swiper/modules";
 
 import SystemCard from "../SystemCard";
 import "../../styles/ListDisplay.scss";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import DisplayOptions from "./DisplayOptions";
+import { setSystemDisplay } from "../../../services/server/slice/renderSlice";
 
-// Helper: Fills empty spots with 'null' to ensure 2x2 layout structure
 const chunkArray = (array, chunkSize) => {
   const results = [];
   for (let i = 0; i < array.length; i += chunkSize) {
@@ -26,7 +27,10 @@ const chunkArray = (array, chunkSize) => {
 };
 
 const ListDisplay = ({ data }) => {
+  const dispatch = useDispatch();
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
+  const systemDisplay = useSelector((state) => state.render.systemDisplay);
+
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const uniqueCategories = useMemo(() => {
@@ -89,7 +93,7 @@ const ListDisplay = ({ data }) => {
         sx={{
           position: "absolute",
           top: "100px",
-          right: "60px",
+          right: "300px",
           zIndex: 10,
           width: "200px",
           backgroundColor: "white",
@@ -112,6 +116,17 @@ const ListDisplay = ({ data }) => {
             </MenuItem>
           ))}
         </TextField>
+      </Box>
+
+      <Box
+        sx={{
+          position: "absolute",
+          top: "100px",
+          right: "60px",
+          zIndex: 10,
+        }}
+      >
+        <DisplayOptions />
       </Box>
 
       <Swiper

@@ -7,8 +7,10 @@ import {
 } from "../../services/server/api/systemAPI";
 import { setSystemImage } from "../../services/server/slice/modalSlice";
 import ListDisplay from "../../components/custom/display/ListDisplay";
+import IconDisplay from "../../components/custom/display/IconDisplay";
 
 const Dashboard = () => {
+  const systemDisplay = useSelector((state) => state.render.systemDisplay);
   const systemImage = useSelector((state) => state.modal.systemImage);
   const userData = useSelector((state) => state.auth.userData);
   const { data, isLoading } = useSystemsQuery({
@@ -58,7 +60,11 @@ const Dashboard = () => {
     fetchSequentially();
   }, [data]);
 
-  return <ListDisplay data={filterSystems()} />;
+  return systemDisplay === "list" ? (
+    <ListDisplay data={filterSystems()} />
+  ) : (
+    <IconDisplay />
+  );
 };
 
 export default Dashboard;
