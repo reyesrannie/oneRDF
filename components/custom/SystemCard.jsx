@@ -49,17 +49,17 @@ const SystemCard = ({ data }) => {
           <Typography
             sx={{
               color: "#858585",
-              fontSize: "7px",
+              fontSize: "8px",
               lineHeight: "11px",
               fontWeight: "400",
               letterSpacing: "-0.07px",
+              textTransform: "lowercase",
+              "&::first-letter": {
+                textTransform: "uppercase",
+              },
             }}
           >
-            THIS SYSTEM IS AN AUTOMATED PETTY CASH FUND THAT PERFORMS CASH
-            ADVANCE, LIQUIDATION AND REIMBURSEMENT. IT CAN HELP TO INCREASE THE
-            EFFICIENCY AND PROVIDE BETTER MONITORING OF PETTY CASH FUND. THE
-            SYSTEM IS SUPPORTED BY MOBILE, TABLET AND COMPUTERS THAT CAN ACCESS
-            OUTSIDE THE COMPANY.”
+            {data?.description}
           </Typography>
         </Stack>
 

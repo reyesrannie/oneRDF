@@ -79,6 +79,7 @@ const System = () => {
       token: "",
       system_image: "",
       system_background: "",
+      description: "",
       category: null,
     },
   });
@@ -165,34 +166,47 @@ const System = () => {
               mb: 7,
             }}
           >
+            <Stack gap={2} flexDirection={"row"}>
+              <AppTextBox
+                control={control}
+                name={"system_name"}
+                label="System Name"
+                error={Boolean(errors?.system_name)}
+                helperText={errors?.system_name?.message}
+              />
+              <AppTextBox
+                control={control}
+                name={"token"}
+                label="Token/API Key"
+                type="password"
+                error={Boolean(errors?.token)}
+                helperText={errors?.token?.message}
+              />
+            </Stack>
+            <Stack gap={2} flexDirection={"row"}>
+              <AppTextBox
+                control={control}
+                name={"url_holder"}
+                label="Url"
+                error={Boolean(errors?.url_holder)}
+                helperText={errors?.url_holder?.message}
+              />
+              <AppTextBox
+                control={control}
+                name={"backend_url"}
+                label="Backend Url"
+                error={Boolean(errors?.backend_url)}
+                helperText={errors?.backend_url?.message}
+              />
+            </Stack>
             <AppTextBox
+              multiline
+              minRows={3}
               control={control}
-              name={"system_name"}
-              label="System Name"
-              error={Boolean(errors?.system_name)}
-              helperText={errors?.system_name?.message}
-            />
-            <AppTextBox
-              control={control}
-              name={"url_holder"}
-              label="Url"
-              error={Boolean(errors?.url_holder)}
-              helperText={errors?.url_holder?.message}
-            />
-            <AppTextBox
-              control={control}
-              name={"backend_url"}
-              label="Backend Url"
-              error={Boolean(errors?.backend_url)}
-              helperText={errors?.backend_url?.message}
-            />
-            <AppTextBox
-              control={control}
-              name={"token"}
-              label="Token/API Key"
-              type="password"
-              error={Boolean(errors?.token)}
-              helperText={errors?.token?.message}
+              name={"description"}
+              label="Description"
+              error={Boolean(errors?.description)}
+              helperText={errors?.description?.message}
             />
             <AppTextBox
               control={control}
@@ -243,6 +257,7 @@ const System = () => {
                 )
               }
             />
+
             <Autocomplete
               loading={loadingCategory}
               control={control}
