@@ -85,7 +85,7 @@ const UserManagement = () => {
     dispatch(setProgressDialog(true));
 
     const getSystem = userData?.user_system?.map((us) =>
-      systemData?.find((s) => us?.system_id?.toString() === s?.id?.toString())
+      systemData?.find((s) => us?.system_id?.toString() === s?.id?.toString()),
     );
     try {
       const res = await userReset({ id: userData?.id }).unwrap();
@@ -97,13 +97,13 @@ const UserManagement = () => {
           endpoint: {
             id: getSystem[i]?.id,
             name: getSystem[i]?.system_name,
-            url: checkObject(getSystem[i]?.slice)?.reset,
+            url: `${getSystem[i]?.backend_url}${checkObject(getSystem[i]?.slice)?.reset}`,
             token: getSystem[i]?.token,
           },
         };
         const resAll = await userResetAll(payloadSystems).unwrap();
         dispatch(
-          setProgressPercent(Math.round(((i + 1) / getSystem.length) * 100))
+          setProgressPercent(Math.round(((i + 1) / getSystem.length) * 100)),
         );
       }
 
@@ -218,7 +218,7 @@ const UserManagement = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{

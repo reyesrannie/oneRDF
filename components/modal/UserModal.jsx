@@ -101,7 +101,7 @@ const UserModal = () => {
   useEffect(() => {
     if (userData && sedarData) {
       const userAccess = userData?.access_permission?.map((item) =>
-        allAccess?.find((access) => access?.value === item)
+        allAccess?.find((access) => access?.value === item),
       );
 
       const newData = {
@@ -109,14 +109,14 @@ const UserModal = () => {
         employeeID: sedarData?.data?.find(
           (emp) =>
             userData?.id_prefix === emp?.general_info?.prefix_id &&
-            userData?.id_no === emp?.general_info?.id_number
+            userData?.id_no === emp?.general_info?.id_number,
         ),
         access_permission: userAccess,
         systems:
           userData?.user_system?.map((us) =>
             systemData?.find(
-              (s) => s?.id?.toString() === us?.system_id?.toString()
-            )
+              (s) => s?.id?.toString() === us?.system_id?.toString(),
+            ),
           ) || [],
       };
 
@@ -150,7 +150,9 @@ const UserModal = () => {
     const current = watch("systems") || [];
     const removed = current.filter(
       (item) =>
-        !original.some((u) => u?.system_id?.toString() === item?.id?.toString())
+        !original.some(
+          (u) => u?.system_id?.toString() === item?.id?.toString(),
+        ),
     );
     return removed;
   };
@@ -162,7 +164,7 @@ const UserModal = () => {
     const signatureFile = image
       ? base64ToFile(
           image,
-          `${data?.employeeID?.general_info?.prefix_id}_${data?.employeeID?.general_info?.id_number}_${data?.username}.png`
+          `${data?.employeeID?.general_info?.prefix_id}_${data?.employeeID?.general_info?.id_number}_${data?.username}.png`,
         )
       : "";
     const formData = new FormData();
@@ -184,7 +186,7 @@ const UserModal = () => {
         systems: data?.systems?.map((item) => ({ system_id: item?.id })) || [],
         signature: imageRes ? imageRes?.data : "",
         access_permission: data?.access_permission?.map(
-          (access) => access?.value
+          (access) => access?.value,
         ),
       };
       const res = userData
@@ -192,6 +194,8 @@ const UserModal = () => {
         : await createUser(payload).unwrap();
 
       const systems = userData ? checkHasChanged() : data?.systems;
+
+      dispatch(setProgressPercent(0));
 
       for (let i = 0; i < systems.length; i++) {
         const payloadSystems = {
@@ -206,7 +210,7 @@ const UserModal = () => {
           endpoint: {
             id: systems[i]?.id,
             name: systems[i]?.system_name,
-            url: checkObject(systems[i]?.slice)?.pending,
+            url: `${systems[i]?.backend_url}${checkObject(systems[i]?.slice)?.pending}`,
             token: systems[i]?.token,
           },
         };
@@ -214,7 +218,7 @@ const UserModal = () => {
         const resAll = await createUserSystem(payloadSystems).unwrap();
 
         dispatch(
-          setProgressPercent(Math.round(((i + 1) / systems.length) * 100))
+          setProgressPercent(Math.round(((i + 1) / systems.length) * 100)),
         );
       }
 
@@ -243,7 +247,7 @@ const UserModal = () => {
     const employee = watch("employeeID");
     const newData = {
       username: generateUsername(
-        `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`
+        `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
       ),
       id_prefix: employee?.general_info?.prefix_id,
       id_no: employee?.general_info?.id_number,
@@ -465,7 +469,7 @@ const UserModal = () => {
                       }
                       getOptionDisabled={(option) => {
                         return watch("access_permission").some(
-                          (item) => item === option.value
+                          (item) => item === option.value,
                         );
                       }}
                       renderInput={(params) => (

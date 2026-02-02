@@ -77,62 +77,31 @@ const SystemController = () => {
         <form onSubmit={handleSubmit(submitHandler)}>
           <Stack flexDirection={"column"}>
             <Stack
+              direction="row" // Shorthand for flexDirection
+              useFlexGap // Enables gap support for wrapped items
+              flexWrap="wrap"
               gap={2}
-              flexDirection={"column"}
-              sx={{
-                mb: 7,
-              }}
+              sx={{ mb: 7 }}
             >
-              <AppTextBox
-                control={control}
-                name={"login"}
-                label="Login"
-                placeholder="e.g., http://sample.com/api/login"
-                error={Boolean(errors?.login)}
-                helperText={errors?.login?.message}
-              />
-              <AppTextBox
-                control={control}
-                name={"roles"}
-                label="Access Permission"
-                placeholder="e.g., http://sample.com/api/roles"
-                error={Boolean(errors?.roles)}
-                helperText={errors?.roles?.message}
-              />
-
-              <AppTextBox
-                control={control}
-                name={"user"}
-                label="Users"
-                placeholder="e.g., http://sample.com/api/users"
-                error={Boolean(errors?.user)}
-                helperText={errors?.user?.message}
-              />
-
-              <AppTextBox
-                control={control}
-                name={"pending"}
-                label="Pending Request"
-                placeholder="e.g., http://sample.com/api/pending"
-                error={Boolean(errors?.pending)}
-                helperText={errors?.pending?.message}
-              />
-              <AppTextBox
-                control={control}
-                name={"changePassword"}
-                label="Password Change"
-                placeholder="e.g., http://sample.com/api/changePassword"
-                error={Boolean(errors?.changePassword)}
-                helperText={errors?.changePassword?.message}
-              />
-              <AppTextBox
-                control={control}
-                name={"reset"}
-                label="Reset Password"
-                placeholder="e.g., http://sample.com/api/reset"
-                error={Boolean(errors?.reset)}
-                helperText={errors?.reset?.message}
-              />
+              {[
+                { name: "login", label: "Login" },
+                { name: "roles", label: "Access Permission" },
+                { name: "user", label: "Users" },
+                { name: "pending", label: "Pending Request" },
+                { name: "changePassword", label: "Password Change" },
+                { name: "reset", label: "Reset Password" },
+              ].map((field) => (
+                <AppTextBox
+                  key={field.name}
+                  control={control}
+                  name={field.name}
+                  label={field.label}
+                  placeholder={`e.g., http://sample.com/api/${field.name}`}
+                  error={Boolean(errors?.[field.name])}
+                  helperText={errors?.[field.name]?.message}
+                  sx={{ width: { xs: "100%", sm: "calc(50% - 8px)" } }}
+                />
+              ))}
             </Stack>
             <Stack
               position={"absolute"}

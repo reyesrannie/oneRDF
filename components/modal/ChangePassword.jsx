@@ -72,7 +72,7 @@ const ChangePassword = () => {
     };
 
     const getSystem = userData?.user_system?.map((us) =>
-      systemData?.find((s) => us?.system_id?.toString() === s?.id?.toString())
+      systemData?.find((s) => us?.system_id?.toString() === s?.id?.toString()),
     );
 
     try {
@@ -87,10 +87,11 @@ const ChangePassword = () => {
           endpoint: {
             id: getSystem[i]?.id,
             name: getSystem[i]?.system_name,
-            url: checkObject(getSystem[i]?.slice)?.changePassword,
+            url: `${getSystem[i]?.backend_url}${checkObject(getSystem[i]?.slice)?.changePassword}`,
             token: getSystem[i]?.token,
           },
         };
+
         const resAll = await passwordChangeAll(payloadSystems).unwrap();
       }
 

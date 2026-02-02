@@ -30,10 +30,11 @@ const Redirect = () => {
         endpoint: {
           id: data?.id,
           name: data?.system_name,
-          url: checkObject(data?.slice)?.login,
+          url: `${data?.backend_url}${checkObject(data?.slice)?.login}`,
           token: data?.token,
         },
       };
+
       const res = await login(payload).unwrap();
 
       const encoded = encodeURIComponent(JSON.stringify(res?.data));

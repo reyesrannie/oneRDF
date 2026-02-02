@@ -9,8 +9,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
+  setSystemBackground,
   setSystemEndpoint,
-  setSystemImageData,
+  setSystemLogo,
   setSystemSlicer,
 } from "../../services/server/slice/modalSlice";
 
@@ -21,8 +22,7 @@ import "react-tabs/style/react-tabs.css";
 
 import "../styles/Modal.scss";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import systemSchema from "../schema/systemSchema";
+
 import AppTextBox from "../custom/AppTextBox";
 import { useSnackbar } from "notistack";
 import Autocomplete from "./AutoComplete";
@@ -35,7 +35,10 @@ import {
   useUpdateSystemMutation,
 } from "../../services/server/api/systemAPI";
 import SystemController from "./SystemController";
-import { checkValues } from "../../services/functions/checkValues";
+import {
+  checkValues,
+  openFileSelect,
+} from "../../services/functions/checkValues";
 import { objectError } from "../../services/functions/errorResponse";
 
 const System = () => {
@@ -43,8 +46,12 @@ const System = () => {
   const { enqueueSnackbar } = useSnackbar();
   const systemSlicer = useSelector((state) => state.modal.systemSlicer);
   const systemData = useSelector((state) => state.modal.systemData);
-  const systemImageData = useSelector((state) => state.modal.systemImageData);
-  const [image, setImage] = useState(null);
+  const systemLogo = useSelector((state) => state.modal.systemLogo);
+  const systemBackground = useSelector((state) => state.modal.systemBackground);
+
+  const [logo, setLogo] = useState(null);
+  const [background, setBackground] = useState(null);
+
   const rendered = useRef();
 
   const { data: dataCategory, isLoading: loadingCategory } =
@@ -68,27 +75,36 @@ const System = () => {
     defaultValues: {
       system_name: "",
       url_holder: "",
+      backend_url: "",
       token: "",
       system_image: "",
+      system_background: "",
       category: null,
     },
   });
 
-  const getImageHandler = async (file) => {
-    try {
-      const res = await getImage({ fileName: file }).unwrap();
-      dispatch(setSystemImageData(res?.imageURL));
-    } catch (error) {}
+  const getImageHandler = async (file, setSystem) => {
+    !file
+      ? null
+      : await getImage({ fileName: file })
+          .unwrap()
+          .then((res) => res?.imageURL && dispatch(setSystem(res.imageURL)))
+          .catch((err) => console.error(err));
   };
 
   useEffect(() => {
     if (systemData && !rendered.current) {
       dispatch(setSystemSlicer(systemData?.slice[0]));
-      const file = systemData?.system_image.split("/").pop();
-      getImageHandler(file);
+      const logoFile = systemData?.system_image.split("/").pop();
+      const backgroundFile = systemData?.system_background?.split("/").pop();
+
+      getImageHandler(logoFile, setSystemLogo);
+      getImageHandler(backgroundFile, setSystemBackground);
+
       const newData = {
         ...systemData,
-        system_image: file,
+        system_image: logoFile,
+        system_background: backgroundFile,
       };
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
@@ -103,15 +119,27 @@ const System = () => {
   };
 
   const submitHandler = async (submitData) => {
-    const formData = new FormData();
-    formData.append("file", image);
+    const formDataLogo = new FormData();
+    formDataLogo.append("file", logo);
+
+    const formDataBackground = new FormData();
+    formDataBackground.append("file", background);
 
     try {
-      const imageRes = image ? await storeFile(formData).unwrap() : null;
+      const imageLogoRes = logo ? await storeFile(formDataLogo).unwrap() : null;
+      const imageBackgroundRes = background
+        ? await storeFile(formDataBackground).unwrap()
+        : null;
+
       const payload = {
         ...submitData,
         id: systemData ? systemData?.id : null,
-        system_image: imageRes ? imageRes?.data : systemData?.system_image,
+        system_image: imageLogoRes
+          ? imageLogoRes?.data
+          : systemData?.system_image,
+        system_background: imageBackgroundRes
+          ? imageBackgroundRes?.data
+          : systemData?.system_background,
         slice: [systemSlicer],
         category_id: submitData?.category?.id,
       };
@@ -124,38 +152,6 @@ const System = () => {
     } catch (error) {
       objectError(error, setError, enqueueSnackbar);
     }
-  };
-
-  const openFileSelect = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".png, .svg";
-    input.style.display = "none";
-    input.onchange = (event) => {
-      const file = event.target.files[0];
-
-      if (file) {
-        const allowedTypes = ["image/png", "image/svg+xml"];
-
-        if (allowedTypes.includes(file.type)) {
-          const sanitizedFileName = file.name.replace(/\s+/g, "_");
-          const renamedFile = new File([file], sanitizedFileName, {
-            type: file.type,
-          });
-          setValue("system_image", sanitizedFileName);
-          dispatch(setSystemImageData(URL.createObjectURL(renamedFile)));
-          setImage(renamedFile);
-        } else {
-          enqueueSnackbar("Only PNG and SVG files are allowed.", {
-            variant: "error",
-          });
-        }
-      }
-    };
-
-    document.body.appendChild(input);
-    input.click();
-    document.body.removeChild(input);
   };
 
   return (
@@ -185,8 +181,15 @@ const System = () => {
             />
             <AppTextBox
               control={control}
+              name={"backend_url"}
+              label="Backend Url"
+              error={Boolean(errors?.backend_url)}
+              helperText={errors?.backend_url?.message}
+            />
+            <AppTextBox
+              control={control}
               name={"token"}
-              label="Token"
+              label="Token/API Key"
               type="password"
               error={Boolean(errors?.token)}
               helperText={errors?.token?.message}
@@ -198,11 +201,43 @@ const System = () => {
               error={Boolean(errors?.system_image)}
               helperText={errors?.system_image?.message}
               onKeyDown={(e) => e.preventDefault()}
-              onClick={() => openFileSelect()}
+              onClick={() =>
+                openFileSelect(
+                  setValue,
+                  dispatch,
+                  setLogo,
+                  enqueueSnackbar,
+                  setSystemLogo,
+                  "system_image",
+                )
+              }
               icon={
                 watch("system_image") && (
+                  <Avatar src={systemLogo} sx={{ width: 30, height: 30 }} />
+                )
+              }
+            />
+            <AppTextBox
+              control={control}
+              name={"system_background"}
+              label="System Background"
+              error={Boolean(errors?.system_background)}
+              helperText={errors?.system_background?.message}
+              onKeyDown={(e) => e.preventDefault()}
+              onClick={() =>
+                openFileSelect(
+                  setValue,
+                  dispatch,
+                  setBackground,
+                  enqueueSnackbar,
+                  setSystemBackground,
+                  "system_background",
+                )
+              }
+              icon={
+                watch("system_background") && (
                   <Avatar
-                    src={systemImageData}
+                    src={systemBackground}
                     sx={{ width: 30, height: 30 }}
                   />
                 )

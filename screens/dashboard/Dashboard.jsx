@@ -1,13 +1,3 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +6,6 @@ import {
   useSystemsQuery,
 } from "../../services/server/api/systemAPI";
 import { setSystemImage } from "../../services/server/slice/modalSlice";
-import SystemCard from "../../components/custom/SystemCard";
 import ListDisplay from "../../components/custom/display/ListDisplay";
 
 const Dashboard = () => {
@@ -33,8 +22,8 @@ const Dashboard = () => {
   const filterSystems = () => {
     const items = userData?.user_system?.map((userSys) =>
       data?.find(
-        (sys) => userSys?.system_id?.toString() === sys?.id?.toString()
-      )
+        (sys) => userSys?.system_id?.toString() === sys?.id?.toString(),
+      ),
     );
 
     return items;

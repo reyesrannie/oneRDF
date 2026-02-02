@@ -19,7 +19,7 @@ import {
   setSystem,
   setSystemData,
 } from "../../../services/server/slice/modalSlice";
-import SystemModal from "../../../components/modal/SystemModal";
+import SystemModal from "../../../components/modal/systems/SystemModal";
 import { useDispatch } from "react-redux";
 import CardList from "../../../components/custom/CardList";
 import TableGrid from "../../../components/custom/TableGrid";
@@ -105,7 +105,7 @@ const Systems = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
