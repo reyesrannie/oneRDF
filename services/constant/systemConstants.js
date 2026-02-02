@@ -52,6 +52,26 @@ const userRoles = [
       { name: "Geographics", value: "geo" },
     ],
   },
+
+  {
+    name: "Supplier Listing",
+    child: [
+      { name: "Supplier", value: "supplier" },
+
+      {
+        name: "Type",
+        value: "type",
+      },
+      {
+        name: "Buffer Severity",
+        value: "buffer_severity",
+      },
+      {
+        name: "References",
+        value: "references",
+      },
+    ],
+  },
   {
     name: "Syncing",
     child: [{ name: "Sync One Charging", value: "sync-charging" }],

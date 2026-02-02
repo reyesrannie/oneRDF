@@ -34,7 +34,10 @@ import "../styles/AppBar.scss";
 import ChangePassword from "../modal/ChangePassword";
 import SystemNavigation from "../../services/constant/SystemNavigation";
 import logoDrawer from "../../assets/png/logoDrawer.png";
-import { resetDrawer } from "../../services/server/slice/drawerSlice";
+import {
+  resetDrawer,
+  setIsDrawerOpen,
+} from "../../services/server/slice/drawerSlice";
 import { resetTheme } from "../../services/server/slice/themeSlice";
 import { decodeUser } from "../../services/functions/saveUser";
 import { hasAccess } from "../../services/functions/access";
@@ -131,12 +134,12 @@ const SystemAppBar = () => {
   const dispatch = useDispatch();
 
   const currentLocation = location?.pathname?.split("/");
-
+  const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
   const hiddenNavigation = useSelector(
-    (state) => state.drawer.hiddenNavigation
+    (state) => state.drawer.hiddenNavigation,
   );
   const isButtomNavActivate = useSelector(
-    (state) => state.drawer.isButtomNavActivate
+    (state) => state.drawer.isButtomNavActivate,
   );
   const userData = useSelector((state) => state.auth.userData);
   const changePass = useSelector((state) => state.auth.changePass);
@@ -179,7 +182,10 @@ const SystemAppBar = () => {
         >
           <Stack flexDirection={"row"} alignItems={"center"}>
             <IconButton
-              onClick={() => setOpen(!open)}
+              onClick={() => {
+                setOpen(!open);
+                dispatch(setIsDrawerOpen(!isDrawerOpen));
+              }}
               sx={[
                 {
                   marginRight: 1,

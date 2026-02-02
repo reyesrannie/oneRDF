@@ -64,6 +64,18 @@ const initialState = {
   charge: false,
   chargeData: null,
   // <-- Account Title Ends here
+
+  //Supplier Starts here -->
+  termData: null,
+  type: false,
+  typeData: null,
+  buffer: false,
+  bufferData: null,
+  reference: false,
+  referenceData: null,
+  supplier: false,
+  supplierData: null,
+  // <-- Supplier Ends here
 };
 
 const modalSlice = createSlice({
@@ -210,6 +222,34 @@ const modalSlice = createSlice({
     },
     // <-- Account Title Ends here
 
+    //Supplier Starts here -->
+
+    setType: (state, action) => {
+      state.type = action.payload;
+    },
+    setTypeData: (state, action) => {
+      state.typeData = action.payload;
+    },
+    setBuffer: (state, action) => {
+      state.buffer = action.payload;
+    },
+    setBufferData: (state, action) => {
+      state.bufferData = action.payload;
+    },
+    setReference: (state, action) => {
+      state.reference = action.payload;
+    },
+    setReferenceData: (state, action) => {
+      state.referenceData = action.payload;
+    },
+    setSupplier: (state, action) => {
+      state.supplier = action.payload;
+    },
+    setSupplierData: (state, action) => {
+      state.supplierData = action.payload;
+    },
+    // <-- Supplier Ends here
+
     setSystemSlicer: (state, action) => {
       state.systemSlicer = action.payload;
     },
@@ -306,6 +346,18 @@ export const {
   setCharge,
   setChargeData,
   // Account Title
+
+  //Supplier
+
+  setType,
+  setTypeData,
+  setBuffer,
+  setBufferData,
+  setReference,
+  setReferenceData,
+  setSupplier,
+  setSupplierData,
+  //Supplier
 
   setSystemSlicer,
   setDefaultTab,

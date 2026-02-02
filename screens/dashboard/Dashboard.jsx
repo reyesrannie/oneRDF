@@ -17,6 +17,7 @@ import {
 } from "../../services/server/api/systemAPI";
 import { setSystemImage } from "../../services/server/slice/modalSlice";
 import SystemCard from "../../components/custom/SystemCard";
+import ListDisplay from "../../components/custom/display/ListDisplay";
 
 const Dashboard = () => {
   const systemImage = useSelector((state) => state.modal.systemImage);
@@ -68,22 +69,7 @@ const Dashboard = () => {
     fetchSequentially();
   }, [data]);
 
-  return (
-    <Box
-      padding={3}
-      maxHeight={"80vh"}
-      sx={{ overflowY: "auto", overflowX: "hidden" }}
-    >
-      <Stack
-        gap={3}
-        flexDirection={"row"}
-        flexWrap={"wrap"}
-        justifyContent={"center"}
-      >
-        <SystemCard data={filterSystems()} />
-      </Stack>
-    </Box>
-  );
+  return <ListDisplay data={filterSystems()} />;
 };
 
 export default Dashboard;

@@ -30,6 +30,7 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ChecklistIcon from "@mui/icons-material/Checklist";
+import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
 const UserManagement = lazy(() => import("../../screens/user/UserManagement"));
@@ -113,6 +114,17 @@ const SyncOneCharging = lazy(
   () => import("../../screens/syncing/charging/SyncOneCharging")
 );
 const AuditTrail = lazy(() => import("../../screens/audit/AuditTrail"));
+const Supplier = lazy(() => import("../../screens/supplier/Supplier"));
+const SupplierListing = lazy(
+  () => import("../../screens/supplier/supplier-listing/SupplierListing")
+);
+const Type = lazy(() => import("../../screens/supplier/type/Type"));
+const BufferSeverity = lazy(
+  () => import("../../screens/supplier/buffer/BufferSeverity")
+);
+const References = lazy(
+  () => import("../../screens/supplier/references/References")
+);
 
 const SystemNavigation = () => {
   const navigation = [
@@ -381,6 +393,50 @@ const SystemNavigation = () => {
           element: <Barangay />,
           route: "/customer_listing/barangay",
           permission: ["geo"],
+        },
+      ],
+    },
+
+    {
+      segment: "supplier",
+      title: "Supplier",
+      icon: <LanOutlinedIcon />,
+      route: "/supplier",
+      element: <Supplier />,
+      permission: ["supplier", "type", "buffer_severity", "references"],
+      children: [
+        {
+          segment: "supplier-listing",
+          title: "Supplier",
+          icon: <LanOutlinedIcon />,
+          element: <SupplierListing />,
+          route: "/supplier/supplier-listing",
+          permission: ["supplier"],
+        },
+
+        {
+          segment: "type",
+          title: "Type",
+          icon: <LanOutlinedIcon />,
+          element: <Type />,
+          route: "/supplier/type",
+          permission: ["type"],
+        },
+        {
+          segment: "buffer-severity",
+          title: "Buffer Severity",
+          icon: <LanOutlinedIcon />,
+          element: <BufferSeverity />,
+          route: "/supplier/buffer-severity",
+          permission: ["buffer_severity"],
+        },
+        {
+          segment: "references",
+          title: "References",
+          icon: <LanOutlinedIcon />,
+          element: <References />,
+          route: "/supplier/references",
+          permission: ["references"],
         },
       ],
     },

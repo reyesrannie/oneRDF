@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -47,7 +47,7 @@ const Redirect = () => {
   };
 
   const closePage = () => {
-    setCountdown(60);
+    setCountdown(3);
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev === 1) {
@@ -72,10 +72,30 @@ const Redirect = () => {
   }, [data]);
 
   return (
-    <Box padding={2}>
-      {isError || hasError
-        ? `Error encountered closing in ${countdown} second/s...`
-        : "Redirecting..."}
+    <Box
+      height="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      padding={3}
+    >
+      <Stack spacing={2} alignItems="center">
+        {isError || hasError ? (
+          <>
+            <Typography variant="h5" color="error">
+              Oops! Something went wrong.
+            </Typography>
+            <Typography variant="body1">
+              Closing in {countdown} second{countdown !== 1 ? "s" : ""}...
+            </Typography>
+          </>
+        ) : (
+          <>
+            <CircularProgress />
+            <Typography variant="h6">Redirecting ...</Typography>
+          </>
+        )}
+      </Stack>
     </Box>
   );
 };

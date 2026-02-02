@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Checkbox,
   IconButton,
@@ -8,7 +7,6 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
   TableSortLabel,
@@ -106,6 +104,17 @@ const TableGrid = ({
                           }}
                         >
                           {i[head?.value]}
+                        </Typography>
+                      )}
+
+                      {head?.type === "days" && (
+                        <Typography
+                          color="text.secondary"
+                          sx={{
+                            fontSize: "12px",
+                          }}
+                        >
+                          {`${i[head?.value]} ${i[head?.value] > 1 ? "days" : "day"}`}
                         </Typography>
                       )}
 

@@ -49,3 +49,9 @@ export const checkObject = (data) => {
   const obj = JSON.parse(data);
   return obj[0];
 };
+
+export const preventEnterKey = (e) => {
+  if (e.key === "e") {
+    e.preventDefault();
+  }
+};
