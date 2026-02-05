@@ -4,7 +4,7 @@ import { set } from "react-hook-form";
 const initialState = {
   renderLogo: true,
   fadeOut: false,
-  systemDisplay: "slider",
+  systemDisplay: "list",
 };
 
 const renderSlice = createSlice({

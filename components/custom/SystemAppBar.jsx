@@ -77,13 +77,31 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme }) => ({
-  width: `calc(100% - 65px)`,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
+  shouldForwardProp: (prop) =>
+    prop !== "open" && prop !== "systemDisplay" && prop !== "location",
+})(({ theme, open, systemDisplay, location }) => ({
+  width:
+    systemDisplay === "slider" && location?.pathname === "/"
+      ? `100%`
+      : `calc(100% - 65px)`,
+
+  ...(systemDisplay === "slider" &&
+    location?.pathname === "/" && {
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
+      backdropFilter: "blur(12px)",
+      boxShadow: "none",
+      borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
+      color: theme.palette.text.primary,
+    }),
+
+  transition: theme.transitions.create(
+    ["width", "margin", "background-color"],
+    {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    },
+  ),
+
   variants: [
     {
       props: ({ open }) => open,
@@ -137,8 +155,6 @@ const SystemAppBar = () => {
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
   const systemDisplay = useSelector((state) => state.render.systemDisplay);
 
-  console.log(isDrawerOpen);
-
   const hiddenNavigation = useSelector(
     (state) => state.drawer.hiddenNavigation,
   );
@@ -164,7 +180,7 @@ const SystemAppBar = () => {
     dispatch(resetSync());
     window.location.reload();
   };
-  console.log(open);
+
   return (
     <Box
       sx={{
@@ -176,7 +192,13 @@ const SystemAppBar = () => {
             : "rgba(247, 154, 46, 0.05)",
       }}
     >
-      <AppBar position="fixed" open={open} elevation={0}>
+      <AppBar
+        position="fixed"
+        open={open}
+        elevation={0}
+        systemDisplay={systemDisplay}
+        location={location}
+      >
         <Stack
           alignItems={"center"}
           flexDirection={"row"}
@@ -219,8 +241,15 @@ const SystemAppBar = () => {
         </Stack>
       </AppBar>
       <Drawer
-        variant={systemDisplay === "slider" ? "temporary" : "permanent"}
+        variant={
+          systemDisplay === "slider" && location?.pathname === "/"
+            ? "temporary"
+            : "permanent"
+        }
         open={open}
+        onClick={() => {
+          systemDisplay === "slider" && setOpen(false);
+        }}
       >
         <Stack
           alignItems={"center"}
