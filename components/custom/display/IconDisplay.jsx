@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Container, Stack } from "@mui/material";
+import { Box, Button, Typography, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, EffectCreative } from "swiper/modules";
+import { Pagination, EffectCreative, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedSystem } from "../../../services/server/slice/renderSlice";
 import DisplayOptions from "./DisplayOptions";
@@ -30,7 +31,7 @@ const IconDisplay = ({ data }) => {
         <Box
           sx={{
             position: { xs: "unset", md: "absolute" },
-            bottom: { md: "220px" },
+            bottom: { md: "200px" },
             left: { md: "160px" },
             zIndex: 10,
           }}
@@ -49,7 +50,7 @@ const IconDisplay = ({ data }) => {
                 "100%": { opacity: 1, transform: "translateY(0)" },
               },
             }}
-            key={selectedSystem.id}
+            key={selectedSystem?.id || "system-text"}
           >
             <Typography
               variant="h2"
@@ -59,7 +60,7 @@ const IconDisplay = ({ data }) => {
                 textAlign: { xs: "center", md: "left" },
               }}
             >
-              {selectedSystem.system_name}
+              {selectedSystem?.system_name}
             </Typography>
 
             <Typography
@@ -69,9 +70,16 @@ const IconDisplay = ({ data }) => {
                 lineHeight: 1.6,
                 maxWidth: "500px",
                 textAlign: { xs: "center", md: "left" },
+
+                // --- ADDED CLAMPING LOGIC HERE ---
+                display: "-webkit-box",
+                overflow: "hidden",
+                WebkitBoxOrient: "vertical",
+                WebkitLineClamp: 3, // Limits text to 4 lines
+                // ---------------------------------
               }}
             >
-              {selectedSystem.description}
+              {selectedSystem?.description}
             </Typography>
 
             <Button
@@ -100,76 +108,95 @@ const IconDisplay = ({ data }) => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
-          <Swiper
-            modules={[Pagination, EffectCreative]}
-            spaceBetween={-50} // Remove space here, we handle it in alignment
-            slidesPerView="auto" // <--- AUTO WIDTH (Crucial fix)
-            centeredSlides={true} // Keep active item in middle
-            slideToClickedSlide={true}
-            speed={600}
-            grabCursor={true}
-            onSlideChange={(swiper) => {
-              setActiveIndex(swiper.activeIndex);
-              dispatch(setSelectedSystem(data[swiper.activeIndex]));
+          <Box
+            sx={{
+              width: "100%",
+              "& .swiper-button-next, & .swiper-button-prev": {
+                color: "#F7941D",
+                backgroundColor: "transparent",
+                opacity: 0,
+                transition: "opacity 0.3s ease-in-out",
+              },
+              "&:hover .swiper-button-next, &:hover .swiper-button-prev": {
+                opacity: 1,
+              },
             }}
-            pagination={{ clickable: true, dynamicBullets: true }}
-            style={{ paddingBottom: "50px", width: "100%" }}
           >
-            {data?.map((item, index) => {
-              const image = systemImage?.find(
-                (img) => img?.id === item?.id,
-              )?.url;
+            <Swiper
+              modules={[Pagination, EffectCreative, Navigation]}
+              navigation={true}
+              loop={true}
+              spaceBetween={-50}
+              slidesPerView="auto"
+              centeredSlides={true}
+              slideToClickedSlide={true}
+              speed={600}
+              grabCursor={true}
+              onSlideChange={(swiper) => {
+                setActiveIndex(swiper.realIndex);
+                dispatch(setSelectedSystem(data[swiper.realIndex]));
+              }}
+              pagination={{ clickable: true, dynamicBullets: true }}
+              style={{ paddingBottom: "50px", width: "100%" }}
+            >
+              {data?.map((item, index) => {
+                const image = systemImage?.find(
+                  (img) => img?.id === item?.id,
+                )?.url;
 
-              return (
-                <SwiperSlide
-                  key={item?.id}
-                  style={{
-                    width: "280px",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    sx={{
-                      width: "100%",
-                      height: "400px",
-                      opacity: activeIndex === index ? 1 : 0.5,
-                      transition: "opacity 0.3s ease",
-                      transform:
-                        activeIndex === index ? "scale(1.3)" : "scale(0.7)",
+                return (
+                  <SwiperSlide
+                    key={item?.id}
+                    style={{
+                      width: "280px",
+                      display: "flex",
+                      justifyContent: "center",
                     }}
                   >
                     <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
                       sx={{
-                        width: "200px",
-                        height: "200px",
-                        borderRadius: "50%",
-                        backgroundColor: "white",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: "0px 20px 60px rgba(0,0,0,0.2)",
-                        transition: "all 0.3s ease",
-                        cursor: "pointer",
-                        "&:hover": { transform: "scale(1.05)" },
-                        overflow: "hidden",
+                        width: "100%",
+                        height: "400px",
+                        opacity: activeIndex === index ? 1 : 0.5,
+                        transition: "opacity 0.3s ease",
+                        transform:
+                          activeIndex === index ? "scale(1.3)" : "scale(0.7)",
                       }}
                     >
-                      <img
-                        src={image}
-                        style={{
-                          width: "150px",
+                      <Box
+                        sx={{
+                          width: "200px",
+                          height: "200px",
+                          borderRadius: "50%",
+                          backgroundColor: "white",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: "0px 20px 60px rgba(0,0,0,0.2)",
+                          transition: "all 0.3s ease",
+                          cursor: "pointer",
+                          "&:hover": { transform: "scale(1.05)" },
+                          overflow: "hidden",
                         }}
-                      />
+                      >
+                        <img
+                          src={image}
+                          alt={item?.system_name}
+                          style={{
+                            width: "150px",
+                            objectFit: "contain",
+                          }}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </Box>
         </Grid>
       </Grid>
     </Box>

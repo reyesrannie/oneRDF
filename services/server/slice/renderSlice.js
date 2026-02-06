@@ -4,7 +4,7 @@ import { set } from "react-hook-form";
 const initialState = {
   renderLogo: true,
   fadeOut: false,
-  systemDisplay: "list",
+  systemDisplay: "slider",
   selectedSystem: null,
 };
 

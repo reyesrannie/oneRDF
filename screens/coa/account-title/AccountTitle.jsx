@@ -96,7 +96,7 @@ const AccountTitle = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -165,6 +165,7 @@ const AccountTitle = () => {
       </Stack>
       <Stack
         minHeight={"45vh"}
+        maxWidth={`calc(100vw - 370px)`}
         marginTop={1}
         paddingX={3} // left and right
         paddingBottom={3}
@@ -179,7 +180,7 @@ const AccountTitle = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{

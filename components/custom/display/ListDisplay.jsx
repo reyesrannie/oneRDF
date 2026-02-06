@@ -1,5 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { Box, MenuItem, TextField } from "@mui/material";
+import {
+  Box,
+  MenuItem,
+  TextField,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,8 +23,10 @@ const chunkArray = (array, chunkSize) => {
   const results = [];
   for (let i = 0; i < array.length; i += chunkSize) {
     const chunk = array.slice(i, i + chunkSize);
-    while (chunk.length < chunkSize) {
-      chunk.push(null);
+    if (chunkSize > 1) {
+      while (chunk.length < chunkSize) {
+        chunk.push(null);
+      }
     }
     results.push(chunk);
   }
@@ -27,7 +35,12 @@ const chunkArray = (array, chunkSize) => {
 
 const ListDisplay = ({ data }) => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
+
+  // Breakpoints
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md")); // < 900px
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("md", "lg")); // 900px - 1200px
 
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -44,8 +57,16 @@ const ListDisplay = ({ data }) => {
   }, [data, selectedCategory]);
 
   const dataChunks = useMemo(() => {
-    return chunkArray(filteredData, 4);
-  }, [filteredData]);
+    let chunkSize = 4; // Default (Large screens)
+
+    if (isSmallScreen) {
+      chunkSize = 1;
+    } else if (isMediumScreen) {
+      chunkSize = 2;
+    }
+
+    return chunkArray(filteredData, chunkSize);
+  }, [filteredData, isSmallScreen, isMediumScreen]);
 
   const handleChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -54,16 +75,20 @@ const ListDisplay = ({ data }) => {
   return (
     <Box
       sx={{
-        width: isDrawerOpen ? "85%" : "95%",
-        height: "90vh",
+        width: isDrawerOpen ? "85%" : { sx: "100%", md: "65%", lg: "80%" },
+        // Allow height to grow automatically on medium screens since column stacks are tall
+        height: { xs: "auto", md: isMediumScreen ? "auto" : "90vh" },
+        minHeight: "90vh",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        position: "relative",
         "& .swiper": {
           width: "100%",
           paddingBottom: "60px",
-          paddingLeft: "50px",
-          paddingRight: "50px",
+          paddingLeft: { xs: "0px", md: "50px" },
+          paddingRight: { xs: "0px", md: "50px" },
         },
         "& .swiper-button-next, & .swiper-button-prev": {
           color: "#F7941D",
@@ -71,66 +96,79 @@ const ListDisplay = ({ data }) => {
           width: "40px",
           height: "40px",
           zIndex: 50,
+          display: { xs: "none", md: "flex" },
         },
         "& .swiper-button-next": { right: "10px" },
         "& .swiper-button-prev": { left: "10px" },
-
         "& .swiper-button-disabled": {
           opacity: 0.35,
-          pointerEvents: "none", // Prevent clicking
+          pointerEvents: "none",
         },
-
         "& .swiper-pagination": {
           display: "block !important",
+          bottom: "0px !important",
         },
       }}
     >
       <Box
         sx={{
-          position: "absolute",
-          top: "100px",
-          right: "250px",
+          display: "flex",
+          width: { xs: "200px", md: "100%" },
+          justifyContent: { xs: "center", md: "flex-end" },
+          alignItems: { xs: "center", md: "center" },
+          gap: 2,
+          position: { xs: "relative", md: "absolute" },
+          top: { md: "1px" },
+          right: { md: "40px" },
           zIndex: 10,
-          width: "200px",
-          backgroundColor: "white",
-          borderRadius: "4px",
+          flexDirection: { xs: "column", md: "row" },
+          marginTop: { xs: "20px", md: "0" },
+          marginBottom: { xs: "20px", md: "0" },
+          paddingX: { xs: 2, md: 0 },
         }}
       >
-        <TextField
-          select
-          fullWidth
-          size="small"
-          value={selectedCategory}
-          onChange={handleChange}
-          label="Filter System"
-          variant="outlined"
+        <Box
+          sx={{
+            width: { xs: "100%", md: "200px" },
+            backgroundColor: "white",
+            borderRadius: "4px",
+          }}
         >
-          <MenuItem value="All">All Systems</MenuItem>
-          {uniqueCategories?.map((cat) => (
-            <MenuItem key={cat} value={cat}>
-              {cat}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
+          <TextField
+            select
+            fullWidth
+            size="small"
+            value={selectedCategory}
+            onChange={handleChange}
+            label="Filter System"
+            variant="outlined"
+          >
+            <MenuItem value="All">All Systems</MenuItem>
+            {uniqueCategories?.map((cat) => (
+              <MenuItem key={cat} value={cat}>
+                {cat}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
 
-      <Box
-        sx={{
-          position: "absolute",
-          top: "100px",
-          right: "60px",
-          zIndex: 10,
-        }}
-      >
-        <DisplayOptions data={data} />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "flex-end", md: "center" },
+          }}
+        >
+          <DisplayOptions data={data} />
+        </Box>
       </Box>
 
       <Swiper
-        key={selectedCategory}
+        key={`${selectedCategory}-${isSmallScreen ? "small" : isMediumScreen ? "medium" : "large"}`}
         slidesPerView={1}
         modules={[Pagination, Navigation]}
         navigation={true}
         pagination={{ clickable: true }}
+        spaceBetween={isSmallScreen ? 30 : 500}
       >
         {dataChunks.map((chunk, pageIndex) => (
           <SwiperSlide key={pageIndex}>
@@ -141,7 +179,8 @@ const ListDisplay = ({ data }) => {
                 alignItems: "flex-start",
                 height: "100%",
                 width: "100%",
-                paddingTop: "40px",
+                // Increase top padding on Medium to clear filters, as the column starts higher
+                paddingTop: { xs: "10px", md: "60px" },
               }}
             >
               <Grid
@@ -150,21 +189,28 @@ const ListDisplay = ({ data }) => {
                 sx={{
                   maxWidth: "1000px",
                   width: "100%",
-                  justifyContent: "flex-start",
+                  justifyContent: "center",
                   alignItems: "flex-start",
                 }}
               >
                 {chunk.map((item, itemIndex) => (
                   <Grid
                     key={itemIndex}
-                    size={{ xs: 12, md: 6 }}
+                    // --- GRID SIZE LOGIC ---
+                    size={{
+                      xs: 12, // Mobile: Full width (Column)
+                      md: 12, // Medium (2 items): Full width (Column/Stacked)
+                      lg: 6, // Desktop (4 items): Half width (2x2 Grid)
+                    }}
                     display="flex"
                     justifyContent="center"
                   >
                     {item ? (
                       <SystemCard data={item} />
                     ) : (
-                      <Box sx={{ width: "100%", minHeight: "200px" }} />
+                      !isSmallScreen && (
+                        <Box sx={{ width: "100%", minHeight: "200px" }} />
+                      )
                     )}
                   </Grid>
                 ))}

@@ -102,8 +102,13 @@ const Login = () => {
         }}
       />
 
-      {/* Main Content Wrapper (Flex Row on Desktop, Center on Mobile) */}
-      <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          width: { xs: "300px", md: "580px", lg: "1160px" },
+          justifyContent: "center",
+        }}
+      >
         {/* LEFT SIDE: Form Area */}
         <form
           onSubmit={handleSubmit(submitHandler)}
@@ -113,10 +118,9 @@ const Login = () => {
             alignItems={"center"}
             gap={2}
             sx={{
-              // Mobile First Dimensions
               width: "100%",
-              maxWidth: { xs: "100%", md: "580px" },
-              minHeight: { xs: "auto", md: "auto" }, // Auto height on mobile to prevent overflow
+              maxWidth: { xs: "240px", md: "580px" },
+              minHeight: "auto",
               padding: { xs: "30px 20px", md: "0" }, // Add padding inside box on mobile
 
               // Responsive Border Radius & Color
@@ -200,7 +204,7 @@ const Login = () => {
                   Log In
                 </Button>
               </Stack>
-              <Stack
+              {/* <Stack
                 flexDirection={"row"}
                 justifyContent={"center"}
                 alignItems={"center"}
@@ -219,7 +223,7 @@ const Login = () => {
                 >
                   Sign up
                 </Button>
-              </Stack>
+              </Stack> */}
             </Stack>
 
             <Stack marginTop={{ xs: "30px", md: "40px" }} alignItems={"center"}>

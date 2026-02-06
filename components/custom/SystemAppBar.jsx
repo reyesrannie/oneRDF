@@ -63,6 +63,10 @@ const closedMixin = (theme) => ({
   }),
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.down("sm")]: {
+    width: 0,
+    border: "none",
+  },
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
@@ -84,6 +88,11 @@ const AppBar = styled(MuiAppBar, {
     systemDisplay === "slider" && location?.pathname === "/"
       ? `100%`
       : `calc(100% - 65px)`,
+
+  [theme.breakpoints.down("sm")]: {
+    width: "100%",
+    marginLeft: 0,
+  },
 
   ...(systemDisplay === "slider" &&
     location?.pathname === "/" && {
@@ -108,10 +117,16 @@ const AppBar = styled(MuiAppBar, {
       style: {
         marginLeft: drawerWidth,
         width: `calc(100% - ${drawerWidth}px)`,
+
         transition: theme.transitions.create(["width", "margin"], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.enteringScreen,
         }),
+
+        [theme.breakpoints.down("sm")]: {
+          marginLeft: drawerWidth,
+          width: `calc(100% - ${drawerWidth}px)`,
+        },
       },
     },
   ],

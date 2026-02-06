@@ -5,10 +5,8 @@ import {
   CardContent,
   IconButton,
   Stack,
-  Tooltip,
   Typography,
 } from "@mui/material";
-
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import React, { useState } from "react";
@@ -16,66 +14,160 @@ import { useSelector } from "react-redux";
 
 const SystemCard = ({ data }) => {
   const systemImage = useSelector((state) => state.modal.systemImage);
-  const [currentIndex, setCurrentIndex] = useState(null);
+  const [copied, setCopied] = useState(false);
   const image = systemImage?.find((img) => img?.id === data?.id)?.url;
+
+  const handleCopy = () => {
+    const textToCopy = data?.url_holder || "";
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Fallback copy failed:", err);
+      }
+      document.body.removeChild(textarea);
+    }
+  };
+
   return (
     <Card
       sx={{
         display: "grid",
-        gridTemplateColumns: "40% 60%",
-        maxWidth: "450px",
-        minWidth: "450px",
+        gridTemplateColumns: { xs: "1fr", sm: "40% 60%" },
+        width: "100%",
+        maxWidth: { xs: "100%", sm: "450px" },
+        minWidth: { xs: "unset", sm: "450px" },
         minHeight: "200px",
+        overflow: "hidden",
+        borderRadius: "12px",
       }}
     >
+      {/* Top Section (Mobile) / Right Section (Desktop) */}
       <CardContent
         sx={{
           position: "relative",
+          background: "linear-gradient(233deg, #FFF 40.37%, #F6931E 128.97%)",
+          boxShadow: "4px 4px 3.8px rgba(0, 0, 0, 0.25)",
+          minHeight: "160px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          order: { xs: 1, sm: 2 },
         }}
       >
-        <Stack>
+        <IconButton
+          sx={{ position: "absolute", top: 8, right: 8 }}
+          onClick={() => window.open(data?.url_holder, "_blank")}
+        >
+          <OpenInNewRoundedIcon color="primary" sx={{ fontSize: "20px" }} />
+        </IconButton>
+
+        <Box
+          sx={{
+            width: 110,
+            height: 110,
+            backgroundColor: "#FFF",
+            borderRadius: "50%",
+            overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "2px solid #FFF",
+          }}
+        >
+          <img
+            src={image}
+            alt="System"
+            style={{ width: "80px", objectFit: "contain" }}
+          />
+        </Box>
+
+        <IconButton
+          onClick={handleCopy}
+          sx={{ position: "absolute", bottom: 8, right: 8 }}
+        >
+          <ContentCopyRoundedIcon
+            color={copied ? "success" : "primary"}
+            sx={{ fontSize: "20px" }}
+          />
+        </IconButton>
+      </CardContent>
+
+      {/* Bottom Section (Mobile) / Left Section (Desktop) */}
+      <CardContent
+        sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          paddingBottom: "60px !important",
+          order: { xs: 2, sm: 1 },
+        }}
+      >
+        <Stack spacing={1}>
           <Typography
             sx={{
               color: "#1A75BB",
-              lineHeight: "24px",
               fontSize: "18px",
               fontWeight: "800",
+              textAlign: { xs: "center", sm: "left" },
+              // Prevent title from overlapping if it's too long
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {data?.system_name}
           </Typography>
-        </Stack>
-        <Stack>
+
           <Typography
             sx={{
               color: "#858585",
-              fontSize: "8px",
-              lineHeight: "11px",
+              fontSize: "12px",
+              lineHeight: "1.4",
               fontWeight: "400",
-              letterSpacing: "-0.07px",
               textTransform: "lowercase",
-              "&::first-letter": {
-                textTransform: "uppercase",
-              },
+              textAlign: { xs: "center", sm: "left" },
+              "&::first-letter": { textTransform: "uppercase" },
+
+              // --- CLAMPING LOGIC START ---
+              display: "-webkit-box",
+              overflow: "hidden",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 4, // Limits text to 4 lines. Change this number to show more/less.
+              // --- CLAMPING LOGIC END ---
             }}
           >
             {data?.description}
           </Typography>
         </Stack>
 
-        <Stack
+        <Box
           sx={{
             position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            p: 1,
+            bottom: 12,
+            left: 12,
+            right: 12,
           }}
         >
           <Button
+            fullWidth
             variant="contained"
             sx={{
               bgcolor: "#F79A2E",
+              "&:hover": { bgcolor: "#e68a1d" },
             }}
             onClick={() => {
               const query = encodeURIComponent(JSON.stringify(data));
@@ -84,102 +176,7 @@ const SystemCard = ({ data }) => {
           >
             Proceed
           </Button>
-        </Stack>
-      </CardContent>
-
-      <CardContent
-        sx={{
-          position: "relative",
-          borderRadius: "5px",
-          background: "linear-gradient(233deg, #FFF 40.37%, #F6931E 128.97%)",
-          boxShadow: "4px 4px 3.8px rgba(0, 0, 0, 0.25)",
-          minHeight: "130px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            p: 1,
-          }}
-        >
-          <OpenInNewRoundedIcon
-            color="primary"
-            sx={{
-              fontSize: "20px",
-            }}
-          />
-        </IconButton>
-        <Box
-          sx={{
-            width: 130,
-            height: 130,
-            backgroundColor: "#FFF",
-            borderRadius: "50%",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src={image}
-            style={{
-              width: "100px",
-            }}
-          />
         </Box>
-        <Stack
-          sx={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-          }}
-          flexDirection={"row"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {/* <Tooltip title={currentIndex === ind ? "Copied" : "Click to copy"}> */}
-          <IconButton
-            onClick={() => {
-              if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard
-                  .writeText(data?.url_holder || "")
-                  .then(() => setCurrentIndex(ind))
-                  .catch((err) => console.error("Copy failed:", err));
-              } else {
-                const textarea = document.createElement("textarea");
-                textarea.value = data?.url_holder || "";
-                textarea.style.position = "fixed";
-                textarea.style.left = "-9999px";
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                try {
-                  const success = document.execCommand("copy");
-                  if (success) setCurrentIndex(ind);
-                  else console.error("Fallback copy command failed");
-                } catch (err) {
-                  console.error("Fallback copy failed:", err);
-                }
-                document.body.removeChild(textarea);
-              }
-            }}
-          >
-            <ContentCopyRoundedIcon
-              color="primary"
-              sx={{
-                fontSize: "20px",
-              }}
-            />
-          </IconButton>
-          {/* </Tooltip> */}
-        </Stack>
       </CardContent>
     </Card>
   );
