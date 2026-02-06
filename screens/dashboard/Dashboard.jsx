@@ -5,13 +5,20 @@ import {
   useLazyGetFileQuery,
   useSystemsQuery,
 } from "../../services/server/api/systemAPI";
-import { setSystemImage } from "../../services/server/slice/modalSlice";
+import {
+  setSystemImage,
+  setSystemImageBackground,
+} from "../../services/server/slice/modalSlice";
 import ListDisplay from "../../components/custom/display/ListDisplay";
 import IconDisplay from "../../components/custom/display/IconDisplay";
 
 const Dashboard = () => {
   const systemDisplay = useSelector((state) => state.render.systemDisplay);
   const systemImage = useSelector((state) => state.modal.systemImage);
+  const systemImageBackground = useSelector(
+    (state) => state.modal.systemImageBackground,
+  );
+
   const userData = useSelector((state) => state.auth.userData);
   const { data, isLoading } = useSystemsQuery({
     status: "active",
@@ -43,6 +50,19 @@ const Dashboard = () => {
     }
   };
 
+  const fetchImageBackground = async (fileName, key) => {
+    const file = fileName.split("/").pop();
+
+    const exists = systemImageBackground?.some((img) => img.id === key);
+    if (exists) return;
+    try {
+      const response = await getFile({ fileName: file }).unwrap();
+      dispatch(setSystemImageBackground({ id: key, url: response?.imageURL }));
+    } catch (error) {
+      console.error("Error fetching file:", file, error);
+    }
+  };
+
   useEffect(() => {
     if (!data?.length) return;
 
@@ -55,6 +75,12 @@ const Dashboard = () => {
           await fetchImage(item?.system_image, item?.id);
         }
       }
+
+      for (const item of systems) {
+        if (item?.system_background && item?.id && !existingIds.has(item?.id)) {
+          await fetchImageBackground(item?.system_background, item?.id);
+        }
+      }
     };
 
     fetchSequentially();
@@ -63,7 +89,7 @@ const Dashboard = () => {
   return systemDisplay === "list" ? (
     <ListDisplay data={filterSystems()} />
   ) : (
-    <IconDisplay />
+    <IconDisplay data={filterSystems()} />
   );
 };
 

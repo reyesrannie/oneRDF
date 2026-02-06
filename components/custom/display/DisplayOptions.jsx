@@ -1,19 +1,25 @@
 import React from "react";
 import { ToggleButton, ToggleButtonGroup, styled } from "@mui/material";
-import ListIcon from "@mui/icons-material/List"; // Optional icons
-import ViewCarouselIcon from "@mui/icons-material/ViewCarousel"; // Optional icons
 import { useDispatch, useSelector } from "react-redux";
-import { setSystemDisplay } from "../../../services/server/slice/renderSlice";
+import {
+  setSelectedSystem,
+  setSystemDisplay,
+} from "../../../services/server/slice/renderSlice";
 
-// Styled Component to match the image exactly
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+// 1. Update Styled Component to accept a custom prop 'isSlider'
+// We use 'shouldForwardProp' to prevent 'isSlider' from being passed to the DOM element
+const StyledToggleButtonGroup = styled(ToggleButtonGroup, {
+  shouldForwardProp: (prop) => prop !== "isSlider",
+})(({ theme, isSlider }) => ({
   "& .MuiToggleButtonGroup-grouped": {
-    border: "1px solid #888888",
-    borderRadius: "50px", // Pill shape
-    padding: "6px 24px", // Adjust width of buttons
+    // 2. DYNAMIC STYLES: Check isSlider
+    border: isSlider ? "1px solid rgba(255,255,255,0.7)" : "1px solid #888888",
+    color: isSlider ? "#ffffff" : "#888888", // White for slider, Gray for list
+
+    borderRadius: "50px",
+    padding: "6px 24px",
     fontSize: "14px",
-    textTransform: "capitalize", // Capitalize like image (List, Slider)
-    color: "#000",
+    textTransform: "capitalize",
     backgroundColor: "transparent",
 
     // Prevent double borders in the middle
@@ -30,36 +36,43 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 
     // Selected State (Blue Border & Text)
     "&.Mui-selected": {
-      borderColor: "#1677FB", // Or your theme primary color
+      borderColor: "#1677FB",
       color: "#1677FB",
-      backgroundColor: "transparent", // Keep transparent background
-      zIndex: 2, // Bring to front to show full border
+      backgroundColor: "transparent",
+      zIndex: 2,
       "&:hover": {
         backgroundColor: "rgba(22, 119, 251, 0.04)",
       },
 
       // Fix left border for second item if selected
       "& + .MuiToggleButtonGroup-grouped": {
-        borderLeft: "1px solid #E0E0E0",
+        borderLeft: isSlider
+          ? "1px solid rgba(255,255,255,0.3)"
+          : "1px solid #E0E0E0",
       },
     },
 
     // Hover State for unselected
     "&:hover": {
-      backgroundColor: "#F5F5F5",
+      backgroundColor: isSlider ? "rgba(255,255,255,0.1)" : "#F5F5F5",
+      color: isSlider ? "#ffffff" : "#1e2a38", // Slightly darker on hover
     },
   },
 }));
 
-const DisplayOptions = ({ view, setView }) => {
+const DisplayOptions = ({ view, setView, data }) => {
   const dispatch = useDispatch();
   const systemDisplay = useSelector((state) => state.render.systemDisplay);
+
+  // Helper boolean
+  const isSlider = systemDisplay === "slider";
 
   return (
     <StyledToggleButtonGroup
       value={systemDisplay}
       exclusive
       aria-label="view switcher"
+      isSlider={isSlider} // <--- Pass the prop here
     >
       <ToggleButton
         value="list"
@@ -69,7 +82,10 @@ const DisplayOptions = ({ view, setView }) => {
       </ToggleButton>
       <ToggleButton
         value="slider"
-        onClick={() => dispatch(setSystemDisplay("slider"))}
+        onClick={() => {
+          dispatch(setSelectedSystem(data[0]));
+          dispatch(setSystemDisplay("slider"));
+        }}
       >
         Slider
       </ToggleButton>

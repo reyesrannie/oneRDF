@@ -12,7 +12,6 @@ import SystemCard from "../SystemCard";
 import "../../styles/ListDisplay.scss";
 import { useDispatch, useSelector } from "react-redux";
 import DisplayOptions from "./DisplayOptions";
-import { setSystemDisplay } from "../../../services/server/slice/renderSlice";
 
 const chunkArray = (array, chunkSize) => {
   const results = [];
@@ -29,7 +28,6 @@ const chunkArray = (array, chunkSize) => {
 const ListDisplay = ({ data }) => {
   const dispatch = useDispatch();
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
-  const systemDisplay = useSelector((state) => state.render.systemDisplay);
 
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -77,13 +75,11 @@ const ListDisplay = ({ data }) => {
         "& .swiper-button-next": { right: "10px" },
         "& .swiper-button-prev": { left: "10px" },
 
-        // 1. CSS FIX: Keep disabled arrows visible but dimmed
         "& .swiper-button-disabled": {
           opacity: 0.35,
           pointerEvents: "none", // Prevent clicking
         },
 
-        // 2. CSS FIX: Ensure pagination (dots) shows even for 1 page
         "& .swiper-pagination": {
           display: "block !important",
         },
@@ -93,7 +89,7 @@ const ListDisplay = ({ data }) => {
         sx={{
           position: "absolute",
           top: "100px",
-          right: "300px",
+          right: "250px",
           zIndex: 10,
           width: "200px",
           backgroundColor: "white",
@@ -110,7 +106,7 @@ const ListDisplay = ({ data }) => {
           variant="outlined"
         >
           <MenuItem value="All">All Systems</MenuItem>
-          {uniqueCategories.map((cat) => (
+          {uniqueCategories?.map((cat) => (
             <MenuItem key={cat} value={cat}>
               {cat}
             </MenuItem>
@@ -126,7 +122,7 @@ const ListDisplay = ({ data }) => {
           zIndex: 10,
         }}
       >
-        <DisplayOptions />
+        <DisplayOptions data={data} />
       </Box>
 
       <Swiper

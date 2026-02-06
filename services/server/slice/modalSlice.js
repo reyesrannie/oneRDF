@@ -16,6 +16,7 @@ const initialState = {
   access: [],
   systems: [],
   systemImage: [],
+  systemImageBackground: [],
   systemLogo: null,
   systemBackground: null,
   multipleView: false,
@@ -269,6 +270,9 @@ const modalSlice = createSlice({
     setSystemImage: (state, action) => {
       state.systemImage.push(action.payload);
     },
+    setSystemImageBackground: (state, action) => {
+      state.systemImageBackground.push(action.payload);
+    },
     setSystemLogo: (state, action) => {
       state.systemLogo = action.payload;
     },
@@ -369,6 +373,7 @@ export const {
   setAccess,
   setSystems,
   setSystemImage,
+  setSystemImageBackground,
   setSystemLogo,
   setSystemBackground,
   setMultipleView,

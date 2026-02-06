@@ -5,6 +5,7 @@ const initialState = {
   renderLogo: true,
   fadeOut: false,
   systemDisplay: "list",
+  selectedSystem: null,
 };
 
 const renderSlice = createSlice({
@@ -20,13 +21,21 @@ const renderSlice = createSlice({
     setSystemDisplay: (state, action) => {
       state.systemDisplay = action.payload;
     },
+    setSelectedSystem: (state, action) => {
+      state.selectedSystem = action.payload;
+    },
     resetRender: () => {
       return initialState;
     },
   },
 });
 
-export const { setRenderLogo, setFadeOut, setSystemDisplay, resetRender } =
-  renderSlice.actions;
+export const {
+  setRenderLogo,
+  setFadeOut,
+  setSystemDisplay,
+  setSelectedSystem,
+  resetRender,
+} = renderSlice.actions;
 
 export default renderSlice.reducer;

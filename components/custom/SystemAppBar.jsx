@@ -154,6 +154,10 @@ const SystemAppBar = () => {
   const currentLocation = location?.pathname?.split("/");
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
   const systemDisplay = useSelector((state) => state.render.systemDisplay);
+  const selectedSystem = useSelector((state) => state.render.selectedSystem);
+  const systemImageBackground = useSelector(
+    (state) => state.modal.systemImageBackground,
+  );
 
   const hiddenNavigation = useSelector(
     (state) => state.drawer.hiddenNavigation,
@@ -163,7 +167,6 @@ const SystemAppBar = () => {
   );
   const userData = useSelector((state) => state.auth.userData);
   const changePass = useSelector((state) => state.auth.changePass);
-  const background = useSelector((state) => state.theme.background);
 
   const [logout, { isLoading }] = useLogoutMutation();
 
@@ -186,10 +189,6 @@ const SystemAppBar = () => {
       sx={{
         display: "flex",
         height: "100vh",
-        background:
-          location?.pathname === "/"
-            ? `url(${background}) no-repeat center center / cover`
-            : "rgba(247, 154, 46, 0.05)",
       }}
     >
       <AppBar
@@ -248,7 +247,9 @@ const SystemAppBar = () => {
         }
         open={open}
         onClick={() => {
-          systemDisplay === "slider" && setOpen(false);
+          systemDisplay === "slider" &&
+            location?.pathname === "/" &&
+            setOpen(false);
         }}
       >
         <Stack
@@ -377,7 +378,19 @@ const SystemAppBar = () => {
           })}
         </List>
       </Drawer>
-      <Box sx={{ flexGrow: 1, p: 2, width: "100vw", bgcolor: "#D9D9D9" }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          p: 2,
+          width: "100vw",
+          bgcolor: "#D9D9D9",
+
+          background:
+            systemDisplay === "slider" && location?.pathname === "/"
+              ? `url('${systemImageBackground?.find((img) => img?.id === selectedSystem?.id)?.url || ""}') no-repeat center center / cover`
+              : "#D9D9D9",
+        }}
+      >
         <DrawerHeader />
 
         <Outlet />
