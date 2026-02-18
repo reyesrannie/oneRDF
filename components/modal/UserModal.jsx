@@ -49,6 +49,7 @@ import {
 const UserModal = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   const open = useSelector((state) => state.modal.user);
   const userData = useSelector((state) => state.modal.userData);
@@ -502,7 +503,13 @@ const UserModal = () => {
                     alignItems="center"
                     width="100%"
                   >
-                    <SignatureBox ref={signatureRef} />
+                    {watch("signature") ? (
+                      <img
+                        src={`${baseURL}/${watch("signature")?.replace("public/", "storage/")?.replace("//", "/")}`}
+                      />
+                    ) : (
+                      <SignatureBox ref={signatureRef} />
+                    )}
                   </Stack>
                 </Stack>
               </Stack>

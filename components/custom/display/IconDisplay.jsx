@@ -15,6 +15,8 @@ const IconDisplay = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const systemImage = useSelector((state) => state.modal.systemImage);
   const selectedSystem = useSelector((state) => state.render.selectedSystem);
+  const imageURL = "http://localhost:8080/ONERDF/storage/app/";
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   return (
     <Box
@@ -31,7 +33,7 @@ const IconDisplay = ({ data }) => {
         <Box
           sx={{
             position: { xs: "unset", md: "absolute" },
-            bottom: { md: "200px" },
+            bottom: { md: "150px" },
             left: { md: "160px" },
             zIndex: 10,
           }}
@@ -120,6 +122,14 @@ const IconDisplay = ({ data }) => {
               "&:hover .swiper-button-next, &:hover .swiper-button-prev": {
                 opacity: 1,
               },
+              "& .swiper-pagination-bullet": {
+                backgroundColor: "#FFFFFF", // Light color for inactive dots
+                opacity: 0.5,
+              },
+              "& .swiper-pagination-bullet-active": {
+                backgroundColor: "#FFFFFF", // Light color for active dot
+                opacity: 1,
+              },
             }}
           >
             <Swiper
@@ -140,9 +150,9 @@ const IconDisplay = ({ data }) => {
               style={{ paddingBottom: "50px", width: "100%" }}
             >
               {data?.map((item, index) => {
-                const image = systemImage?.find(
-                  (img) => img?.id === item?.id,
-                )?.url;
+                // const image = systemImage?.find(
+                //   (img) => img?.id === item?.id,
+                // )?.url;
 
                 return (
                   <SwiperSlide
@@ -183,7 +193,7 @@ const IconDisplay = ({ data }) => {
                         }}
                       >
                         <img
-                          src={image}
+                          src={`${baseURL}/${item?.system_image?.replace("//", "/")}`}
                           alt={item?.system_name}
                           style={{
                             width: "150px",

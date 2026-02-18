@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -158,6 +157,8 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const SystemAppBar = () => {
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+
   const [open, setOpen] = useState(true);
   const [currentDisplay, setCurrentDisplay] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -170,9 +171,6 @@ const SystemAppBar = () => {
   const isDrawerOpen = useSelector((state) => state.drawer.isDrawerOpen);
   const systemDisplay = useSelector((state) => state.render.systemDisplay);
   const selectedSystem = useSelector((state) => state.render.selectedSystem);
-  const systemImageBackground = useSelector(
-    (state) => state.modal.systemImageBackground,
-  );
 
   const hiddenNavigation = useSelector(
     (state) => state.drawer.hiddenNavigation,
@@ -402,9 +400,10 @@ const SystemAppBar = () => {
 
           background:
             systemDisplay === "slider" && location?.pathname === "/"
-              ? `url('${systemImageBackground?.find((img) => img?.id === selectedSystem?.id)?.url || ""}') no-repeat center center / cover`
+              ? `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${baseURL}/${selectedSystem?.system_background?.replace("public/", "storage/")?.replace("//", "/")}') no-repeat center center / cover`
               : "#D9D9D9",
         }}
+        // `url('${systemImageBackground?.find((img) => img?.id === selectedSystem?.id)?.url || ""}') no-repeat center center / cover`
       >
         <DrawerHeader />
 

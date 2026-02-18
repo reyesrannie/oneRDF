@@ -75,7 +75,9 @@ const ListDisplay = ({ data }) => {
   return (
     <Box
       sx={{
-        width: isDrawerOpen ? "85%" : { sx: "100%", md: "65%", lg: "80%" },
+        width: isDrawerOpen
+          ? { sx: "100%", md: "65%", lg: "80%" }
+          : { sx: "100%", md: "65%", lg: "90%" },
         // Allow height to grow automatically on medium screens since column stacks are tall
         height: { xs: "auto", md: isMediumScreen ? "auto" : "90vh" },
         minHeight: "90vh",

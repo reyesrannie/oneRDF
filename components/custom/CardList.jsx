@@ -4,14 +4,12 @@ import {
   Card,
   CardContent,
   Chip,
-  IconButton,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
 import React from "react";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 
 import "../styles/Modal.scss";
 import { useNavigate } from "react-router-dom";
@@ -60,7 +58,7 @@ const CardList = ({
                 >
                   {image ? (
                     <img
-                      src={`${baseURL}/storage/app/${i[image]}`}
+                      src={`${baseURL}/${item?.system_image?.replace("//", "/")}`}
                       className="system-modal-image-backend"
                     />
                   ) : (

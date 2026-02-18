@@ -13,9 +13,9 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 const SystemCard = ({ data }) => {
-  const systemImage = useSelector((state) => state.modal.systemImage);
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+
   const [copied, setCopied] = useState(false);
-  const image = systemImage?.find((img) => img?.id === data?.id)?.url;
 
   const handleCopy = () => {
     const textToCopy = data?.url_holder || "";
@@ -88,7 +88,7 @@ const SystemCard = ({ data }) => {
           }}
         >
           <img
-            src={image}
+            src={`${baseURL}/${data?.system_image?.replace("public/", "storage/")?.replace("//", "/")}`}
             alt="System"
             style={{ width: "80px", objectFit: "contain" }}
           />
