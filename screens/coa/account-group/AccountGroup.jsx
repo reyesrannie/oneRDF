@@ -57,6 +57,7 @@ const AccountGroup = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useAccountGroupQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
@@ -80,7 +81,7 @@ const AccountGroup = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -162,7 +163,7 @@ const AccountGroup = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -198,8 +199,10 @@ const AccountGroup = () => {
           />
         ) : (
           <TableGrid
-            header={[{ type: "box", alignHeader: "center" }, ...cnHeader]}
+            header={cnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setAccountGroupData(i));
               setAnchorEl({

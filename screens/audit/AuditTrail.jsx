@@ -117,7 +117,7 @@ const AuditTrail = () => {
           justifyContent="space-between"
         >
           <Typography fontSize={"24px"} fontWeight={600}>
-            User Management
+            Audit Trail
           </Typography>
         </Stack>
       </Stack>
@@ -129,7 +129,7 @@ const AuditTrail = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"20px"} fontWeight={600}>
-            Users
+            Audit
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
             <AppSearch onSearch={onSearchData} />
@@ -152,7 +152,7 @@ const AuditTrail = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{

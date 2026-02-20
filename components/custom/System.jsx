@@ -44,6 +44,7 @@ import { objectError } from "../../services/functions/errorResponse";
 const System = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
   const systemSlicer = useSelector((state) => state.modal.systemSlicer);
   const systemData = useSelector((state) => state.modal.systemData);
   const systemLogo = useSelector((state) => state.modal.systemLogo);
@@ -56,8 +57,6 @@ const System = () => {
 
   const { data: dataCategory, isLoading: loadingCategory } =
     useCategoryQuery(nopagination);
-
-  const [getImage] = useLazyGetFileQuery();
 
   const [storeFile, { isLoading: loadingStoreFile }] = useStoreFileMutation();
   const [addSystem, { isLoading: loaddingAddSystem }] = useAddSystemMutation();
@@ -84,32 +83,17 @@ const System = () => {
     },
   });
 
-  const getImageHandler = async (file, setSystem) => {
-    !file
-      ? null
-      : await getImage({ fileName: file })
-          .unwrap()
-          .then((res) => res?.imageURL && dispatch(setSystem(res.imageURL)))
-          .catch((err) => console.error(err));
-  };
-
   useEffect(() => {
     if (systemData && !rendered.current) {
       dispatch(setSystemSlicer(systemData?.slice[0]));
-      const logoFile = systemData?.system_image.split("/").pop();
-      const backgroundFile = systemData?.system_background?.split("/").pop();
-
-      getImageHandler(logoFile, setSystemLogo);
-      getImageHandler(backgroundFile, setSystemBackground);
 
       const newData = {
         ...systemData,
-        system_image: logoFile,
-        system_background: backgroundFile,
       };
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
+
       rendered.current = true;
     }
   }, [systemData]);
@@ -209,6 +193,7 @@ const System = () => {
               helperText={errors?.description?.message}
             />
             <AppTextBox
+              filepath
               control={control}
               name={"system_image"}
               label="System Icon"
@@ -227,11 +212,19 @@ const System = () => {
               }
               icon={
                 watch("system_image") && (
-                  <Avatar src={systemLogo} sx={{ width: 30, height: 30 }} />
+                  <Avatar
+                    src={
+                      logo === null
+                        ? `${baseURL}/${watch("system_image")?.replace("public/", "storage/")?.replace("//", "/")}`
+                        : systemLogo
+                    }
+                    sx={{ width: 30, height: 30 }}
+                  />
                 )
               }
             />
             <AppTextBox
+              filepath
               control={control}
               name={"system_background"}
               label="System Background"
@@ -251,7 +244,11 @@ const System = () => {
               icon={
                 watch("system_background") && (
                   <Avatar
-                    src={systemBackground}
+                    src={
+                      background === null
+                        ? `${baseURL}/${watch("system_background")?.replace("public/", "storage/")?.replace("//", "/")}`
+                        : systemBackground
+                    }
                     sx={{ width: 30, height: 30 }}
                   />
                 )

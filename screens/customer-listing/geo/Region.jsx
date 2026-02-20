@@ -44,6 +44,7 @@ const Region = () => {
     onRowChange,
     onSelectPage,
     onStatusChange,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useRegionQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
@@ -124,7 +125,7 @@ const Region = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -161,6 +162,8 @@ const Region = () => {
           <TableGrid
             header={header}
             items={data}
+            params={params}
+            onSort={onSort}
             // onSelect={(e, i) => {
             //   dispatch(setCategoryData(i));
             //   setAnchorEl({

@@ -68,6 +68,7 @@ const ChargingOfAccount = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useCoaQuery(params);
 
@@ -119,7 +120,7 @@ const ChargingOfAccount = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -138,7 +139,7 @@ const ChargingOfAccount = () => {
       department,
       unit,
       subUnit,
-      location
+      location,
     );
 
     try {
@@ -162,7 +163,7 @@ const ChargingOfAccount = () => {
     department,
     unit,
     subUnit,
-    location
+    location,
   );
 
   return (
@@ -221,7 +222,7 @@ const ChargingOfAccount = () => {
               checked={params?.status === "inactive"}
               onChange={() => {
                 onStatusChange(
-                  params?.status === "active" ? "inactive" : "active"
+                  params?.status === "active" ? "inactive" : "active",
                 );
               }}
               sx={{
@@ -274,6 +275,8 @@ const ChargingOfAccount = () => {
           <TableGrid
             header={oneChargingHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setCoaData(i));
               setAnchorEl({

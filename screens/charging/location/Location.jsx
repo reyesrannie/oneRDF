@@ -57,6 +57,7 @@ const Location = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useLocationQuery(params);
 
@@ -79,7 +80,7 @@ const Location = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -162,7 +163,7 @@ const Location = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -204,6 +205,8 @@ const Location = () => {
           <TableGrid
             header={icnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setLocationData(i));
               setAnchorEl({

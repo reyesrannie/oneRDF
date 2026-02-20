@@ -16,6 +16,7 @@ const AppTextBox = ({
   handleRemove,
   remove,
   secure,
+  filepath,
   ...textField
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +37,7 @@ const AppTextBox = ({
             {...textField}
             size="small"
             inputRef={ref}
-            value={value}
+            value={filepath ? value?.split("/")?.pop() : value}
             onChange={onChange}
             type={showPassword ? "text" : textField?.type}
             InputProps={{

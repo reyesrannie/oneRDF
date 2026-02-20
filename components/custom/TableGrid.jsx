@@ -18,6 +18,13 @@ import "../styles/TableGrid.scss";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
 
+const filterList = [
+  {
+    name: "ID number",
+    value: "id_no",
+  },
+];
+
 const TableGrid = ({
   header = [],
   items = [],
@@ -33,27 +40,31 @@ const TableGrid = ({
         <TableHead>
           <TableRow>
             {header?.map((head, index) => {
+              const sortKey =
+                head?.type === "concat" ? head?.sort : head?.value;
+              const isSorted =
+                params?.sorts === sortKey || params?.sorts === `-${sortKey}`;
+              const isDescending = params?.sorts === `-${sortKey}`;
+
               return (
                 <TableCell key={index} align={head?.alignHeader}>
                   <TableSortLabel
-                    active={
-                      params?.sorts === head?.value ||
-                      params?.sorts === `-${head?.value}`
-                    }
-                    direction={params?.sorts === head?.value ? "asc" : "desc"}
+                    active={isSorted}
+                    // If descending, use 'desc', otherwise 'asc'
+                    direction={isDescending ? "desc" : "asc"}
                     sx={{
                       color: "#000 !important",
                       "& .MuiTableSortLabel-icon": {
                         opacity: 0,
                       },
                     }}
-                    onClick={() =>
-                      onSort(
-                        params?.sorts === `-${head?.value}`
-                          ? head?.value
-                          : `-${head?.value}`
-                      )
-                    }
+                    onClick={() => {
+                      const nextSort =
+                        params?.sorts === sortKey ? `-${sortKey}` : sortKey;
+
+                      console.log(params);
+                      onSort(nextSort);
+                    }}
                   >
                     <Stack
                       flexDirection={"row"}
@@ -155,7 +166,7 @@ const TableGrid = ({
                           }}
                         >
                           {moment(new Date(i[head?.value])).format(
-                            "MMM DD, YYYY"
+                            "MMM DD, YYYY",
                           )}
                         </Typography>
                       )}

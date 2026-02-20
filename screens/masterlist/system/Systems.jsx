@@ -37,6 +37,7 @@ const Systems = () => {
     onRowChange,
     onSelectPage,
     onStatusChange,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useSystemsQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
@@ -145,6 +146,8 @@ const Systems = () => {
           <TableGrid
             header={header}
             items={data}
+            onSort={onSort}
+            params={params}
             onSelect={(e, i) => {
               dispatch(setSystemData(i));
               setAnchorEl({

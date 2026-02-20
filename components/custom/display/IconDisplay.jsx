@@ -13,9 +13,7 @@ import DisplayOptions from "./DisplayOptions";
 const IconDisplay = ({ data }) => {
   const dispatch = useDispatch();
   const [activeIndex, setActiveIndex] = useState(0);
-  const systemImage = useSelector((state) => state.modal.systemImage);
   const selectedSystem = useSelector((state) => state.render.selectedSystem);
-  const imageURL = "http://localhost:8080/ONERDF/storage/app/";
   const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   return (
@@ -193,7 +191,7 @@ const IconDisplay = ({ data }) => {
                         }}
                       >
                         <img
-                          src={`${baseURL}/${item?.system_image?.replace("//", "/")}`}
+                          src={`${baseURL}/${item?.system_image?.replace("public/", "storage/")?.replace("//", "/")}`}
                           alt={item?.system_name}
                           style={{
                             width: "150px",

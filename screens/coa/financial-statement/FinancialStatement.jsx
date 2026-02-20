@@ -59,6 +59,7 @@ const FinancialStatement = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } =
     useFinancialStatementQuery(params);
@@ -66,7 +67,7 @@ const FinancialStatement = () => {
 
   const archive = useSelector((state) => state.prompt.archive);
   const financialStatementData = useSelector(
-    (state) => state.modal.financialStatementData
+    (state) => state.modal.financialStatementData,
   );
   const importData = useSelector((state) => state.modal.importData);
 
@@ -85,7 +86,7 @@ const FinancialStatement = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -167,7 +168,7 @@ const FinancialStatement = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -203,8 +204,10 @@ const FinancialStatement = () => {
           />
         ) : (
           <TableGrid
-            header={[{ type: "box", alignHeader: "center" }, ...cnHeader]}
+            header={cnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setFinancialStatementData(i));
               setAnchorEl({

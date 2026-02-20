@@ -44,6 +44,7 @@ const Province = () => {
     onRowChange,
     onSelectPage,
     onStatusChange,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useProvinceQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
@@ -132,7 +133,7 @@ const Province = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -169,6 +170,8 @@ const Province = () => {
           <TableGrid
             header={header}
             items={data}
+            params={params}
+            onSort={onSort}
             // onSelect={(e, i) => {
             //   dispatch(setCategoryData(i));
             //   setAnchorEl({

@@ -58,6 +58,7 @@ const NormalBalance = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } =
     useNormalBalanceQuery(params);
@@ -65,7 +66,7 @@ const NormalBalance = () => {
 
   const archive = useSelector((state) => state.prompt.archive);
   const normalBalanceData = useSelector(
-    (state) => state.modal.normalBalanceData
+    (state) => state.modal.normalBalanceData,
   );
   const importData = useSelector((state) => state.modal.importData);
 
@@ -84,7 +85,7 @@ const NormalBalance = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -166,7 +167,7 @@ const NormalBalance = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -202,8 +203,10 @@ const NormalBalance = () => {
           />
         ) : (
           <TableGrid
-            header={[{ type: "box", alignHeader: "center" }, ...cnHeader]}
+            header={cnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setNormalBalanceData(i));
               setAnchorEl({

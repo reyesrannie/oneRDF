@@ -57,6 +57,7 @@ const UnitDepartment = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } =
     useDepartmentUnitQuery(params);
@@ -65,7 +66,7 @@ const UnitDepartment = () => {
 
   const archive = useSelector((state) => state.prompt.archive);
   const departmentUnitData = useSelector(
-    (state) => state.modal.departmentUnitData
+    (state) => state.modal.departmentUnitData,
   );
   const importData = useSelector((state) => state.modal.importData);
 
@@ -82,7 +83,7 @@ const UnitDepartment = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -166,7 +167,7 @@ const UnitDepartment = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -205,6 +206,8 @@ const UnitDepartment = () => {
           <TableGrid
             header={icnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setDepartmentUnitData(i));
               setAnchorEl({

@@ -504,9 +504,44 @@ const UserModal = () => {
                     width="100%"
                   >
                     {watch("signature") ? (
-                      <img
-                        src={`${baseURL}/${watch("signature")?.replace("public/", "storage/")?.replace("//", "/")}`}
-                      />
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: 100,
+                          border: "2px dashed #9e9e9e",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          position: "relative",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <IconButton
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            zIndex: 10,
+                          }}
+                          onClick={() => setValue("signature", null)}
+                        >
+                          <ClearOutlinedIcon
+                            fontSize="small"
+                            sx={{ color: "#000" }}
+                          />
+                        </IconButton>
+
+                        <img
+                          src={`${baseURL}/${watch("signature")?.replace("public/", "storage/")?.replace("//", "/")}`}
+                          alt="Signature"
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                          }}
+                        />
+                      </Box>
                     ) : (
                       <SignatureBox ref={signatureRef} />
                     )}

@@ -111,7 +111,6 @@ export const errorHeaderOC = [
 ];
 
 export const accountTitleHeader = [
-  { type: "box", alignHeader: "center" },
   {
     name: "Code",
     value: "code",

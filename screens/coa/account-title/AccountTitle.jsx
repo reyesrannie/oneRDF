@@ -62,6 +62,7 @@ const AccountTitle = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useAccountTitleQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
@@ -218,6 +219,8 @@ const AccountTitle = () => {
           <TableGrid
             header={accountTitleHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setAccountTitleData(i));
               setAnchorEl({

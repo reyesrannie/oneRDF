@@ -56,6 +56,7 @@ const BusinessUnit = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useBusinessUnitQuery(params);
 
@@ -78,7 +79,7 @@ const BusinessUnit = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -162,7 +163,7 @@ const BusinessUnit = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -200,6 +201,8 @@ const BusinessUnit = () => {
           <TableGrid
             header={icnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setBusinessUnitData(i));
               setAnchorEl({

@@ -55,6 +55,7 @@ const SubUnit = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useSubUnitQuery(params);
 
@@ -77,7 +78,7 @@ const SubUnit = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -160,7 +161,7 @@ const SubUnit = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -199,6 +200,8 @@ const SubUnit = () => {
           <TableGrid
             header={icnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setSubUnitData(i));
               setAnchorEl({

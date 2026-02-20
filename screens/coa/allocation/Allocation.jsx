@@ -59,6 +59,7 @@ const Allocation = () => {
     onPageChange,
     onRowChange,
     onSelectPage,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useAllocationQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
@@ -82,7 +83,7 @@ const Allocation = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -164,7 +165,7 @@ const Allocation = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -200,8 +201,10 @@ const Allocation = () => {
           />
         ) : (
           <TableGrid
-            header={[{ type: "box", alignHeader: "center" }, ...cnHeader]}
+            header={cnHeader}
             items={data}
+            params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setAllocationData(i));
               setAnchorEl({

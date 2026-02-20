@@ -44,6 +44,7 @@ const SubMunicipality = () => {
     onRowChange,
     onSelectPage,
     onStatusChange,
+    onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } =
     useSubMunicipalityQuery(params);
@@ -133,7 +134,7 @@ const SubMunicipality = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{
@@ -170,6 +171,8 @@ const SubMunicipality = () => {
           <TableGrid
             header={header}
             items={data}
+            params={params}
+            onSort={onSort}
             // onSelect={(e, i) => {
             //   dispatch(setCategoryData(i));
             //   setAnchorEl({

@@ -132,12 +132,14 @@ const UserManagement = () => {
       value: ["id_prefix", "id_no"],
       alignValue: "center",
       type: "concat",
+      sort: "id_no",
     },
     {
       name: "Name",
       alignHeader: "center",
       value: ["first_name", "middle_name", "last_name", "suffix"],
       alignValue: "center",
+      sort: "first_name",
       type: "concat",
     },
     {
