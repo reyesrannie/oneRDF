@@ -38,6 +38,7 @@ const Redirect = () => {
       const res = await login(payload).unwrap();
 
       const encoded = encodeURIComponent(JSON.stringify(res?.data));
+      window.name = data?.system_name;
       window.location.href = `${data?.url_holder}redirect?data=${encoded}`;
     } catch (error) {
       console.log(error);

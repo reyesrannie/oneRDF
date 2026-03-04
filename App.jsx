@@ -10,6 +10,10 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const Routing = lazy(() => import("./services/routes/Routing"));
 
+if (!window.name) {
+  window.name = "OneRDF_Portal";
+}
+
 function App() {
   const renderLogo = useSelector((state) => state.render.renderLogo);
   const dispatch = useDispatch();

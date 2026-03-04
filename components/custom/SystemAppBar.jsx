@@ -159,7 +159,7 @@ const Drawer = styled(MuiDrawer, {
 const SystemAppBar = () => {
   const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [currentDisplay, setCurrentDisplay] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const { navigation } = SystemNavigation();
