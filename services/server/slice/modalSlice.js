@@ -78,6 +78,12 @@ const initialState = {
   supplier: false,
   supplierData: null,
   // <-- Supplier Ends here
+
+  //ItemListing Starts here -->
+  uom: false,
+  uomData: null,
+
+  // <-- ItemListing Ends here
 };
 
 const modalSlice = createSlice({
@@ -224,7 +230,7 @@ const modalSlice = createSlice({
     },
     // <-- Account Title Ends here
 
-    //Supplier Starts here -->
+    //Supplier Starts here --> //Supplier Starts here -->
 
     setType: (state, action) => {
       state.type = action.payload;
@@ -250,7 +256,16 @@ const modalSlice = createSlice({
     setSupplierData: (state, action) => {
       state.supplierData = action.payload;
     },
-    // <-- Supplier Ends here
+
+    //ItemListing Starts here -->
+
+    setUom: (state, action) => {
+      state.uom = action.payload;
+    },
+    setUomData: (state, action) => {
+      state.uomData = action.payload;
+    },
+    // <-- ItemListing Ends here
 
     setSystemSlicer: (state, action) => {
       state.systemSlicer = action.payload;
@@ -356,7 +371,6 @@ export const {
   // Account Title
 
   //Supplier
-
   setType,
   setTypeData,
   setBuffer,
@@ -366,6 +380,11 @@ export const {
   setSupplier,
   setSupplierData,
   //Supplier
+
+  //ItemListing
+  setUom,
+  setUomData,
+  //ItemListing
 
   setSystemSlicer,
   setDefaultTab,

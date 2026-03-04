@@ -31,6 +31,8 @@ import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
+import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
+import Uom from "../../screens/item-listing/uom/Uom";
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
 const UserManagement = lazy(() => import("../../screens/user/UserManagement"));
@@ -38,92 +40,95 @@ const Masterlist = lazy(() => import("../../screens/masterlist/Masterlist"));
 
 const Systems = lazy(() => import("../../screens/masterlist/system/Systems"));
 const Category = lazy(
-  () => import("../../screens/masterlist/category/Category")
+  () => import("../../screens/masterlist/category/Category"),
 );
 
 const CustomerListing = lazy(
-  () => import("../../screens/customer-listing/CustomerListing")
+  () => import("../../screens/customer-listing/CustomerListing"),
 );
 const Customer = lazy(
-  () => import("../../screens/customer-listing/customer/Customer")
+  () => import("../../screens/customer-listing/customer/Customer"),
 );
 
 const Region = lazy(() => import("../../screens/customer-listing/geo/Region"));
 const Province = lazy(
-  () => import("../../screens/customer-listing/geo/Province")
+  () => import("../../screens/customer-listing/geo/Province"),
 );
 const CityMunicipality = lazy(
-  () => import("../../screens/customer-listing/geo/CityMunicipality")
+  () => import("../../screens/customer-listing/geo/CityMunicipality"),
 );
 const SubMunicipality = lazy(
-  () => import("../../screens/customer-listing/geo/SubMunicipality")
+  () => import("../../screens/customer-listing/geo/SubMunicipality"),
 );
 const Barangay = lazy(
-  () => import("../../screens/customer-listing/geo/Barangay")
+  () => import("../../screens/customer-listing/geo/Barangay"),
 );
 const Company = lazy(() => import("../../screens/charging/company/Company"));
 const BusinessUnit = lazy(
-  () => import("../../screens/charging/business-unit/BusinessUnit")
+  () => import("../../screens/charging/business-unit/BusinessUnit"),
 );
 const Department = lazy(
-  () => import("../../screens/charging/department/Department")
+  () => import("../../screens/charging/department/Department"),
 );
 const UnitDepartment = lazy(
-  () => import("../../screens/charging/unit-department/UnitDepartment")
+  () => import("../../screens/charging/unit-department/UnitDepartment"),
 );
 const SubUnit = lazy(() => import("../../screens/charging/sub-unit/SubUnit"));
 const Location = lazy(() => import("../../screens/charging/location/Location"));
 const ChargingOfAccount = lazy(
-  () => import("../../screens/charging/charging of account/ChargingOfAccount")
+  () => import("../../screens/charging/charging of account/ChargingOfAccount"),
 );
 const NotificationSetup = lazy(
-  () => import("../../screens/notification-setup/NotificationSetup")
+  () => import("../../screens/notification-setup/NotificationSetup"),
 );
 const Charging = lazy(() => import("../../screens/charging/Charging"));
 const Coa = lazy(() => import("../../screens/coa/Coa"));
 const AccountGroup = lazy(
-  () => import("../../screens/coa/account-group/AccountGroup")
+  () => import("../../screens/coa/account-group/AccountGroup"),
 );
 const AccountSubGroup = lazy(
-  () => import("../../screens/coa/account-sub-group/AccountSubGroup")
+  () => import("../../screens/coa/account-sub-group/AccountSubGroup"),
 );
 const AccountType = lazy(
-  () => import("../../screens/coa/account-type/AccountType")
+  () => import("../../screens/coa/account-type/AccountType"),
 );
 const AccountUnit = lazy(
-  () => import("../../screens/coa/account-unit/AccountUnit")
+  () => import("../../screens/coa/account-unit/AccountUnit"),
 );
 const FinancialStatement = lazy(
-  () => import("../../screens/coa/financial-statement/FinancialStatement")
+  () => import("../../screens/coa/financial-statement/FinancialStatement"),
 );
 const NormalBalance = lazy(
-  () => import("../../screens/coa/normal-balance/NormalBalance")
+  () => import("../../screens/coa/normal-balance/NormalBalance"),
 );
 const Credit = lazy(() => import("../../screens/coa/credit/Credit"));
 const AccountCharging = lazy(
-  () => import("../../screens/coa/account-charging/AccountCharging")
+  () => import("../../screens/coa/account-charging/AccountCharging"),
 );
 const AccountTitle = lazy(
-  () => import("../../screens/coa/account-title/AccountTitle")
+  () => import("../../screens/coa/account-title/AccountTitle"),
 );
 const Allocation = lazy(
-  () => import("../../screens/coa/allocation/Allocation")
+  () => import("../../screens/coa/allocation/Allocation"),
 );
 const Sync = lazy(() => import("../../screens/syncing/Sync"));
 const SyncOneCharging = lazy(
-  () => import("../../screens/syncing/charging/SyncOneCharging")
+  () => import("../../screens/syncing/charging/SyncOneCharging"),
 );
 const AuditTrail = lazy(() => import("../../screens/audit/AuditTrail"));
 const Supplier = lazy(() => import("../../screens/supplier/Supplier"));
 const SupplierListing = lazy(
-  () => import("../../screens/supplier/supplier-listing/SupplierListing")
+  () => import("../../screens/supplier/supplier-listing/SupplierListing"),
 );
 const Type = lazy(() => import("../../screens/supplier/type/Type"));
 const BufferSeverity = lazy(
-  () => import("../../screens/supplier/buffer/BufferSeverity")
+  () => import("../../screens/supplier/buffer/BufferSeverity"),
 );
 const References = lazy(
-  () => import("../../screens/supplier/references/References")
+  () => import("../../screens/supplier/references/References"),
+);
+const ItemListing = lazy(
+  () => import("../../screens/item-listing/ItemListing"),
 );
 
 const SystemNavigation = () => {
@@ -243,6 +248,25 @@ const SystemNavigation = () => {
           element: <ChargingOfAccount />,
           route: "/charging/oneCharging",
           permission: ["oneCharging"],
+        },
+      ],
+    },
+    {
+      segment: "item",
+      title: "Item Listing",
+      icon: <InventoryOutlinedIcon />,
+      route: "/item",
+      element: <ItemListing />,
+      permission: ["uom"],
+
+      children: [
+        {
+          segment: "uom",
+          title: "Uom",
+          icon: <InventoryOutlinedIcon />,
+          element: <Uom />,
+          route: "/item/uom",
+          permission: ["uom"],
         },
       ],
     },
@@ -482,13 +506,13 @@ const SystemNavigation = () => {
   const getFirstAccessibleRoute = (navigation, userPermissions) => {
     for (const navItem of navigation) {
       const hasPermission = navItem.permission?.some((p) =>
-        userPermissions?.includes(p)
+        userPermissions?.includes(p),
       );
       if (hasPermission) {
         if (navItem.children?.length) {
           const child = getFirstAccessibleRoute(
             navItem.children,
-            userPermissions
+            userPermissions,
           );
           return child || navItem.route;
         }
