@@ -45,10 +45,10 @@ const SystemCard = ({ data }) => {
       sx={{
         display: "grid",
         gridTemplateColumns: { xs: "1fr", sm: "40% 60%" },
-        width: "100%",
-        maxWidth: { xs: "100%", sm: "450px" },
-        minWidth: { xs: "unset", sm: "450px" },
-        minHeight: "200px",
+        width: { sx: "100%" },
+        maxWidth: { xs: "250px", sm: "400px" },
+        minWidth: { xs: "250px", sm: "400px" },
+        minHeight: { sx: "unset", sm: "100px" },
         overflow: "hidden",
         borderRadius: "12px",
       }}
@@ -59,7 +59,7 @@ const SystemCard = ({ data }) => {
           position: "relative",
           background: "linear-gradient(233deg, #FFF 40.37%, #F6931E 128.97%)",
           boxShadow: "4px 4px 3.8px rgba(0, 0, 0, 0.25)",
-          minHeight: "160px",
+          minHeight: { sx: "unset" },
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -69,9 +69,12 @@ const SystemCard = ({ data }) => {
       >
         <IconButton
           sx={{ position: "absolute", top: 8, right: 8 }}
-          onClick={() => window.open(data?.url_holder, "_blank")}
+          onClick={() => {
+            const query = encodeURIComponent(JSON.stringify(data));
+            window.open(`/redirect?data=${query}`, "_blank");
+          }}
         >
-          <OpenInNewRoundedIcon color="primary" sx={{ fontSize: "20px" }} />
+          <OpenInNewRoundedIcon color="primary" sx={{ fontSize: "14px" }} />
         </IconButton>
 
         <Box
@@ -94,7 +97,7 @@ const SystemCard = ({ data }) => {
           />
         </Box>
 
-        <IconButton
+        {/* <IconButton
           onClick={handleCopy}
           sx={{ position: "absolute", bottom: 8, right: 8 }}
         >
@@ -102,7 +105,7 @@ const SystemCard = ({ data }) => {
             color={copied ? "success" : "primary"}
             sx={{ fontSize: "20px" }}
           />
-        </IconButton>
+        </IconButton> */}
       </CardContent>
 
       {/* Bottom Section (Mobile) / Left Section (Desktop) */}
@@ -112,15 +115,15 @@ const SystemCard = ({ data }) => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          paddingBottom: "60px !important",
+          paddingBottom: "50px !important",
           order: { xs: 2, sm: 1 },
         }}
       >
-        <Stack spacing={1}>
+        <Stack>
           <Typography
             sx={{
               color: "#1A75BB",
-              fontSize: "18px",
+              fontSize: "16px",
               fontWeight: "800",
               textAlign: { xs: "center", sm: "left" },
               // Prevent title from overlapping if it's too long

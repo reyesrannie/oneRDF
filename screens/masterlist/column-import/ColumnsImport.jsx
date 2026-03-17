@@ -7,29 +7,36 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import React, { useState } from "react";
-
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-
+import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  resetModal,
+  setColumn,
+  setColumnData,
+} from "../../../services/server/slice/modalSlice";
+import CardList from "../../../components/custom/CardList";
 import useParamsHook from "../../../services/hooks/useParamsHook";
-import { useSystemsQuery } from "../../../services/server/api/systemAPI";
 import MobileLoading from "../../../components/custom/MobileLoading";
 import NoDataFound from "../../../components/custom/NoDataFound";
-import {
-  setSystem,
-  setSystemData,
-} from "../../../services/server/slice/modalSlice";
-import SystemModal from "../../../components/modal/systems/SystemModal";
-import { useDispatch } from "react-redux";
-import CardList from "../../../components/custom/CardList";
 import TableGrid from "../../../components/custom/TableGrid";
+import CategoryModal from "../../../components/modal/CategoryModal";
 import MenuPopper from "../../../components/custom/MenuPopper";
+import AppPrompt from "../../../components/custom/AppPrompt";
+import warning from "../../../assets/svg/warning.svg";
+import { enqueueSnackbar } from "notistack";
+import { setArchive } from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
+import {
+  useArchiveColumnMutation,
+  useColumnQuery,
+} from "../../../services/server/api/masterlist/columnAPI";
+import ColumnModal from "../../../components/modal/masterlist/ColumnModal";
 
-const Systems = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+const ColumnsImport = () => {
   const dispatch = useDispatch();
-
+  const [anchorEl, setAnchorEl] = useState(null);
   const {
     params,
     onSearchData,
@@ -39,20 +46,31 @@ const Systems = () => {
     onStatusChange,
     onSort,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useSystemsQuery(params);
+  const { data, isLoading, isError, isFetching } = useColumnQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
+  const columnData = useSelector((state) => state.modal.columnData);
+
+  const [archiveColumn, { isLoading: loadingArchive }] =
+    useArchiveColumnMutation();
 
   const header = [
-    { name: "Id", value: "id" },
-    { name: "Name", value: "system_name" },
     {
-      name: "Url",
-      value: "url_holder",
-      type: "multimedia",
-      image: "system_image",
+      name: "Name",
+      alignHeader: "center",
+      value: "name",
+      alignValue: "center",
     },
-    { name: "Last Modified", value: "updated_at", type: "date" },
   ];
+
+  const onClickHandler = async () => {
+    try {
+      const res = await archiveColumn(columnData).unwrap();
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+      dispatch(resetModal());
+    } catch (error) {}
+  };
 
   return (
     <Stack mt={3}>
@@ -64,7 +82,7 @@ const Systems = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"20px"} fontWeight={600}>
-            Systems
+            Columns
           </Typography>
 
           <Stack flexDirection={"row"} gap={2}>
@@ -82,10 +100,10 @@ const Systems = () => {
                 },
               }}
               onClick={() => {
-                dispatch(setSystem(true));
+                dispatch(setColumn(true));
               }}
             >
-              Add System
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -129,14 +147,11 @@ const Systems = () => {
           <NoDataFound />
         ) : !isTablet ? (
           <CardList
-            mapFrom={"data"}
             items={data}
-            title={"system_name"}
-            sub={"url_holder"}
-            image={"system_image"}
-            avatar
+            mapFrom={"data"}
+            title={"name"}
             open={(e, i) => {
-              dispatch(setSystemData(i));
+              dispatch(setColumnData(i));
               setAnchorEl({
                 mouseX: e.clientX,
                 mouseY: e.clientY,
@@ -147,10 +162,10 @@ const Systems = () => {
           <TableGrid
             header={header}
             items={data}
-            onSort={onSort}
             params={params}
+            onSort={onSort}
             onSelect={(e, i) => {
-              dispatch(setSystemData(i));
+              dispatch(setColumnData(i));
               setAnchorEl({
                 mouseX: e.clientX,
                 mouseY: e.clientY,
@@ -168,19 +183,31 @@ const Systems = () => {
         />
       )}
 
+      <ColumnModal />
       <MenuPopper
         params={params}
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
         update={() => {
           setAnchorEl(null);
-          dispatch(setSystem(true));
+          dispatch(setColumn(true));
+        }}
+        archive={() => {
+          setAnchorEl(null);
+          dispatch(setArchive(true));
         }}
       />
-
-      <SystemModal />
+      <AppPrompt
+        image={warning}
+        title={`${params?.status === "active" ? "Archive" : "Restore"} column?`}
+        message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this column?`}
+        confirmButton={`Yes, ${params?.status === "active" ? "Archive" : "Restore"} it!`}
+        cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
+        confirmOnClick={onClickHandler}
+        isLoading={loadingArchive}
+      />
     </Stack>
   );
 };
 
-export default Systems;
+export default ColumnsImport;

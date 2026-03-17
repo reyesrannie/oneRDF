@@ -27,6 +27,14 @@ export const userAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Users"],
     }),
+
+    checkUsersImport: builder.mutation({
+      query: (payload) => ({
+        url: `/existing_users_check`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
     createUserSystems: builder.mutation({
       query: (payload) => ({
         url: `/sample`,
@@ -66,7 +74,9 @@ export const userAPI = serverAPI.injectEndpoints({
 
 export const {
   useUserQuery,
+  useLazyUserQuery,
   useUserResetMutation,
+  useCheckUsersImportMutation,
   useCreateUserMutation,
   useCreateUserSystemsMutation,
   useUpdateUserMutation,

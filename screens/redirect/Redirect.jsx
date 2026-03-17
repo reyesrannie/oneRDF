@@ -24,7 +24,7 @@ const Redirect = () => {
     try {
       const payload = {
         username: userData?.username,
-        password: userData?.password,
+        // password: userData?.password,
         id_prefix: userData?.id_prefix,
         id_no: userData?.id_no,
         endpoint: {
@@ -49,7 +49,7 @@ const Redirect = () => {
   };
 
   const closePage = () => {
-    setCountdown(3);
+    setCountdown(60);
     const interval = setInterval(() => {
       setCountdown((prev) => {
         if (prev === 1) {

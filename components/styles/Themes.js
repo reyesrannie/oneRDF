@@ -199,7 +199,7 @@ export const Themes = () => {
             styleOverrides: {
               root: {
                 color: mode === "light" ? "#496D89" : "#f0e7c4",
-                fontSize: "14px",
+                fontSize: "12px",
                 "&.Mui-focused": {
                   color: "#496D89",
                 },

@@ -11,6 +11,8 @@ import AppSearch from "../../components/custom/AppSearch";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
+  setImport,
+  setIsLoading,
   setUser,
   setUserData,
 } from "../../services/server/slice/modalSlice";
@@ -18,7 +20,11 @@ import UserModal from "../../components/modal/UserModal";
 import CardList from "../../components/custom/CardList";
 import useParamsHook from "../../services/hooks/useParamsHook";
 import {
+  useCheckUsersImportMutation,
+  useCreateUserSystemsMutation,
+  useLazyUserQuery,
   useResetAllSystemMutation,
+  useUpdateUserMutation,
   useUserQuery,
   useUserResetMutation,
 } from "../../services/server/api/usersAPI";
@@ -40,7 +46,10 @@ import BreadCrumbs from "../../components/custom/BreadCrumbs";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import MenuOptions from "../../components/custom/MenuOptions";
-import { checkObject } from "../../services/functions/checkValues";
+import {
+  checkObject,
+  generateUserPayload,
+} from "../../services/functions/checkValues";
 import { useSystemsQuery } from "../../services/server/api/systemAPI";
 import {
   resetSync,
@@ -48,11 +57,18 @@ import {
   setProgressPercent,
 } from "../../services/server/slice/syncSlice";
 import Progress from "../../components/custom/Progress";
+import ImportModal from "../../components/modal/ImportModal";
+import SimCardDownloadOutlinedIcon from "@mui/icons-material/SimCardDownloadOutlined";
+import { hasAccess } from "../../services/functions/access";
+import { exportToExcel } from "../../services/functions/exportExcel";
+import { useColumnQuery } from "../../services/server/api/masterlist/columnAPI";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorE2, setAnchorE2] = useState(null);
+  const importData = useSelector((state) => state.modal.importData);
+
   const {
     params,
     onSearchData,
@@ -63,6 +79,19 @@ const UserManagement = () => {
     onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useUserQuery(params);
+  const [getAll, { data: allData, isLoading: loadingAll, isError: errorAll }] =
+    useLazyUserQuery();
+
+  const {
+    data: columnData,
+    isLoading: loadingColumn,
+    isError: erroColumn,
+    isFetching: fetchingColumn,
+  } = useColumnQuery({
+    status: "active",
+    pagination: "none",
+  });
+
   const {
     data: systemData,
     isLoading: loadingSystem,
@@ -77,9 +106,14 @@ const UserManagement = () => {
   const userData = useSelector((state) => state.modal.userData);
   const isTablet = useMediaQuery("(min-width:768px)");
 
+  const [createUserSystem, { isLoading: loadingCreateSystems }] =
+    useCreateUserSystemsMutation();
+  const [updateUser, { isLoading: loadingUpdate }] = useUpdateUserMutation();
   const [userReset, { isLoading: loadingUserReset }] = useUserResetMutation();
   const [userResetAll, { isLoading: loadingUserResetAll }] =
     useResetAllSystemMutation();
+  const [userCheck, { isLoading: loadingUserCheck }] =
+    useCheckUsersImportMutation();
 
   const onResetHandler = async () => {
     dispatch(setProgressDialog(true));
@@ -150,6 +184,107 @@ const UserManagement = () => {
     },
   ];
 
+  const excelColumns = [
+    { header: "ID No", key: "id_no", width: 15 },
+    { header: "ID Prefix", key: "id_prefix", width: 15 },
+    { header: "First Name", key: "first_name", width: 20 },
+    { header: "Middle Name", key: "middle_name", width: 20 },
+    { header: "Last Name", key: "last_name", width: 20 },
+    { header: "Suffix", key: "suffix", width: 15 },
+    { header: "Username", key: "username", width: 15 },
+  ];
+
+  const exportData = async () => {
+    try {
+      const res = await getAll({
+        status: "active",
+        pagination: "none",
+      }).unwrap();
+
+      await exportToExcel(res, excelColumns, "User_Export.xlsx");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const importHandler = async () => {
+    dispatch(setIsLoading(true));
+    dispatch(setProgressDialog(true));
+
+    const payload = generateUserPayload(importData, columnData);
+    try {
+      const res = await userCheck(payload).unwrap();
+      await processSyncing(res?.data?.existing_users, systemData);
+    } catch (error) {}
+
+    dispatch(setIsLoading(false));
+    dispatch(setProgressDialog(false));
+    dispatch(resetSync());
+    dispatch(resetModal());
+  };
+
+  const processSyncing = async (usersData, allAvailableSystems) => {
+    let totalOperations = 0;
+    usersData.forEach((user) => {
+      totalOperations += user.systems.length;
+    });
+
+    let completedOperations = 0;
+
+    for (let i = 0; i < usersData.length; i++) {
+      const user = usersData[i];
+
+      const payloadUsers = {
+        ...user,
+        systems: user?.updated_system?.map((item) => ({ system_id: item })),
+      };
+
+      try {
+        const updates = await updateUser(payloadUsers).unwrap();
+      } catch (error) {
+        singleError(error, enqueueSnackbar);
+      }
+
+      for (let j = 0; j < user.systems.length; j++) {
+        const systemId = user.systems[j];
+        const targetSystem = allAvailableSystems.find(
+          (sys) => sys.id === systemId,
+        );
+        if (!targetSystem) continue;
+        const payloadSystems = {
+          id_prefix: user?.id_prefix || "",
+          id_no: user?.id_no || "",
+          username: user?.username || "",
+          first_name: user?.first_name || "",
+          middle_name: user?.middle_name || undefined,
+          last_name: user?.last_name || "",
+          suffix: user?.suffix || undefined,
+          password: user?.username || "",
+          endpoint: {
+            id: targetSystem.id,
+            name: targetSystem.system_name,
+            url: `${targetSystem.backend_url}${checkObject(targetSystem.slice)?.pending}`,
+            token: targetSystem.token,
+          },
+        };
+        try {
+          const resAll = await createUserSystem(payloadSystems).unwrap();
+
+          completedOperations++;
+          const progressPercentage = Math.round(
+            (completedOperations / totalOperations) * 100,
+          );
+          dispatch(setProgressPercent(progressPercentage));
+        } catch (error) {
+          console.error(
+            `Failed to sync user ${user.username} to ${targetSystem.system_name}`,
+            error,
+          );
+        }
+      }
+    }
+  };
+
   return (
     <Box padding={2}>
       <Stack display={"flex"} flexDirection={"column"}>
@@ -175,6 +310,28 @@ const UserManagement = () => {
             Users
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
+            {hasAccess(["dataExport"]) && (
+              <Button
+                variant="contained"
+                color="success"
+                size="small"
+                loading={loadingAll}
+                startIcon={<SimCardDownloadOutlinedIcon />}
+                sx={{
+                  textTransform: "capitalize",
+                  fontSize: "10px",
+                  maxHeight: "30px",
+                  "& .MuiSvgIcon-root": {
+                    fontSize: "14px",
+                  },
+                }}
+                onClick={(e) => {
+                  exportData();
+                }}
+              >
+                Export
+              </Button>
+            )}
             <Button
               variant="contained"
               color="primary"
@@ -325,6 +482,12 @@ const UserManagement = () => {
       />
       <UserModal />
       <Progress />
+
+      <ImportModal
+        importDataHandler={() => importHandler()}
+        title={"user"}
+        loading={loadingUserCheck || loadingCreateSystems}
+      />
     </Box>
   );
 };

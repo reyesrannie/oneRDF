@@ -88,7 +88,6 @@ const Login = () => {
         padding: 2,
       }}
     >
-      {/* Background Image Layer */}
       <Box
         sx={{
           position: "absolute",
@@ -105,14 +104,13 @@ const Login = () => {
       <Box
         sx={{
           display: "flex",
-          width: { xs: "300px", md: "580px", lg: "1160px" },
+          width: { xs: "300px", md: "580px", lg: "1100px" },
           justifyContent: "center",
         }}
       >
-        {/* LEFT SIDE: Form Area */}
         <form
           onSubmit={handleSubmit(submitHandler)}
-          style={{ zIndex: 2, width: "100%", maxWidth: "580px" }} // Ensure form doesn't stretch too wide on mobile
+          style={{ zIndex: 2, width: "100%", maxWidth: "580px" }}
         >
           <Stack
             alignItems={"center"}
@@ -120,13 +118,10 @@ const Login = () => {
             sx={{
               width: "100%",
               maxWidth: { xs: "240px", md: "580px" },
-              minHeight: "auto",
-              padding: { xs: "30px 20px", md: "0" }, // Add padding inside box on mobile
-
-              // Responsive Border Radius & Color
+              padding: { xs: "30px 20px", md: "0" },
               borderRadius: { xs: "15px", md: "15px", lg: "15px 0px 0px 15px" },
               backgroundColor: "#FFFFFFBF",
-              backdropFilter: "blur(5px)", // Nice touch for mobile transparency
+              backdropFilter: "blur(5px)",
             }}
           >
             <Stack
@@ -136,26 +131,26 @@ const Login = () => {
             >
               <Typography
                 sx={{
-                  fontSize: { xs: "28px", md: "35px" }, // Smaller font on mobile
+                  fontSize: { xs: "28px" }, // Smaller font on mobile
                   fontWeight: "600",
                 }}
               >
                 Log In
               </Typography>
-              <Typography sx={{ fontSize: "16px", px: 2 }}>
+              <Typography sx={{ fontSize: "14px" }}>
                 Welcome back! Please enter your details.
               </Typography>
             </Stack>
 
             <Stack
-              marginTop={{ xs: "25px", md: "35px" }}
-              gap={3}
+              gap={1}
               sx={{
+                mt: "20px",
                 width: "100%",
                 maxWidth: "350px", // Limit form width internally
               }}
             >
-              <Stack gap={1}>
+              <Stack gap={0}>
                 <Typography sx={{ fontSize: "12px", fontWeight: "600" }}>
                   Username
                 </Typography>
@@ -204,29 +199,9 @@ const Login = () => {
                   Log In
                 </Button>
               </Stack>
-              {/* <Stack
-                flexDirection={"row"}
-                justifyContent={"center"}
-                alignItems={"center"}
-              >
-                <Typography sx={{ fontSize: "12px", fontWeight: "600" }}>
-                  Don’t have account?
-                </Typography>
-                <Button
-                  sx={{
-                    color: "#1677FB",
-                    padding: 0,
-                    ml: 1,
-                    minWidth: "auto",
-                  }}
-                  size="small"
-                >
-                  Sign up
-                </Button>
-              </Stack> */}
             </Stack>
 
-            <Stack marginTop={{ xs: "30px", md: "40px" }} alignItems={"center"}>
+            <Stack marginTop={{ xs: "25px", md: "30px" }} alignItems={"center"}>
               <img src={misLogo} style={{ width: "50px" }} alt="MIS Logo" />
               <Typography sx={{ fontSize: "12px", fontWeight: "500", mt: 1 }}>
                 Powered By MIS All rights reserved

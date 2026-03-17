@@ -78,6 +78,9 @@ const initialState = {
   supplier: false,
   supplierData: null,
   // <-- Supplier Ends here
+
+  column: false,
+  columnData: null,
 };
 
 const modalSlice = createSlice({
@@ -297,6 +300,14 @@ const modalSlice = createSlice({
     setImportErrorMessage: (state, action) => {
       state.importErrorMessage = action.payload;
     },
+
+    setColumn: (state, action) => {
+      state.column = action.payload;
+    },
+    setColumnData: (state, action) => {
+      state.columnData = action.payload;
+    },
+
     resetModal: () => {
       return initialState;
     },
@@ -382,6 +393,9 @@ export const {
   setImportData,
   setImportError,
   setImportErrorMessage,
+
+  setColumn,
+  setColumnData,
   resetModal,
 } = modalSlice.actions;
 

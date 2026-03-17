@@ -94,3 +94,26 @@ export const openFileSelect = (
   input.click();
   document.body.removeChild(input);
 };
+
+export const generateUserPayload = (data, systemsList) => {
+  return data.map((row) => {
+    const formattedRow = {
+      id_no: String(row["ID No"] || ""),
+      id_prefix: row["ID Prefix"] || "",
+      first_name: row["First Name"] || "",
+      middle_name: row["Middle Name"] || "",
+      last_name: row["Last Name"] || "",
+      suffix: row["Suffix"] || "",
+      username: row["Username"] || "",
+      systems: [],
+    };
+
+    systemsList.forEach((system) => {
+      if (row[system.name]) {
+        formattedRow.systems.push(row[system?.name]);
+      }
+    });
+
+    return formattedRow;
+  });
+};

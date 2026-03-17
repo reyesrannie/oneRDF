@@ -58,7 +58,7 @@ const CardList = ({
                 >
                   {image ? (
                     <img
-                      src={`${baseURL}/${item?.system_image?.replace("//", "/")}`}
+                      src={`${baseURL}/${i?.system_image?.replace("//", "/")}`}
                       className="system-modal-image-backend"
                     />
                   ) : (

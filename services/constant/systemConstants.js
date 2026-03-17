@@ -14,6 +14,8 @@ const userRoles = [
     child: [
       { name: "System", value: "system" },
       { name: "Category", value: "category" },
+      { name: "User Import", value: "columns" },
+      { name: "Export Masterlist", value: "dataExport" },
     ],
   },
 
