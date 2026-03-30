@@ -26,7 +26,10 @@ import MenuPopper from "../../../components/custom/MenuPopper";
 import AppPrompt from "../../../components/custom/AppPrompt";
 import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
-import { setArchive } from "../../../services/server/slice/promptSlice";
+import {
+  resetPrompt,
+  setArchive,
+} from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
 import {
   useArchiveColumnMutation,
@@ -49,6 +52,7 @@ const ColumnsImport = () => {
   const { data, isLoading, isError, isFetching } = useColumnQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
   const columnData = useSelector((state) => state.modal.columnData);
+  const archive = useSelector((state) => state.prompt.archive);
 
   const [archiveColumn, { isLoading: loadingArchive }] =
     useArchiveColumnMutation();
@@ -69,11 +73,12 @@ const ColumnsImport = () => {
         variant: "success",
       });
       dispatch(resetModal());
+      dispatch(resetPrompt());
     } catch (error) {}
   };
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -81,7 +86,7 @@ const ColumnsImport = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Columns
           </Typography>
 
@@ -198,6 +203,7 @@ const ColumnsImport = () => {
         }}
       />
       <AppPrompt
+        open={archive}
         image={warning}
         title={`${params?.status === "active" ? "Archive" : "Restore"} column?`}
         message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this column?`}

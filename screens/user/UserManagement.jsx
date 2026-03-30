@@ -20,6 +20,7 @@ import UserModal from "../../components/modal/UserModal";
 import CardList from "../../components/custom/CardList";
 import useParamsHook from "../../services/hooks/useParamsHook";
 import {
+  useArchiveUserMutation,
   useCheckUsersImportMutation,
   useCreateUserSystemsMutation,
   useLazyUserQuery,
@@ -104,6 +105,8 @@ const UserManagement = () => {
 
   const reset = useSelector((state) => state.prompt.reset);
   const userData = useSelector((state) => state.modal.userData);
+  const archive = useSelector((state) => state.prompt.archive);
+
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const [createUserSystem, { isLoading: loadingCreateSystems }] =
@@ -114,6 +117,22 @@ const UserManagement = () => {
     useResetAllSystemMutation();
   const [userCheck, { isLoading: loadingUserCheck }] =
     useCheckUsersImportMutation();
+
+  const [archiveUser, { isLoading: loadingArchive }] = useArchiveUserMutation();
+
+  const onClickHandler = async () => {
+    try {
+      const res = await archiveUser(userData).unwrap();
+      dispatch(resetPrompt());
+      dispatch(resetModal());
+      enqueueSnackbar(
+        res !== null ? res?.message : "Data has been archived successfully",
+        {
+          variant: "success",
+        },
+      );
+    } catch (error) {}
+  };
 
   const onResetHandler = async () => {
     dispatch(setProgressDialog(true));
@@ -294,19 +313,19 @@ const UserManagement = () => {
           flexDirection={"row"}
           justifyContent="space-between"
         >
-          <Typography fontSize={"24px"} fontWeight={600}>
+          <Typography fontSize={"18px"} fontWeight={600}>
             User Management
           </Typography>
         </Stack>
       </Stack>
-      <Stack display={"flex"} flexDirection={"column"} mt={5}>
+      <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
           flexDirection={"row"}
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Users
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
@@ -387,7 +406,7 @@ const UserManagement = () => {
           />
           <Typography
             sx={{
-              fontSize: "14px",
+              fontSize: "12px",
             }}
           >
             Archived
@@ -479,6 +498,17 @@ const UserManagement = () => {
         cancelButton={` No, Keep it! `}
         confirmOnClick={onResetHandler}
         isLoading={loadingUserReset || loadingUserResetAll}
+      />
+
+      <AppPrompt
+        open={archive}
+        image={warning}
+        title={`${params?.status === "active" ? "Archive" : "Restore"} user?`}
+        message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this user?`}
+        confirmButton={`Yes, ${params?.status === "active" ? "Archive" : "Restore"} it!`}
+        cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
+        confirmOnClick={onClickHandler}
+        isLoading={loadingArchive}
       />
       <UserModal />
       <Progress />

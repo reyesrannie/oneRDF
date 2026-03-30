@@ -63,7 +63,6 @@ const SyncOneCharging = () => {
   const importData = useSelector((state) => state.modal.importData);
 
   const header = [
-    { type: "box", alignHeader: "center" },
     {
       name: "Id",
       value: "id",
@@ -88,7 +87,7 @@ const SyncOneCharging = () => {
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
           variant: "success",
-        }
+        },
       );
       dispatch(resetModal());
       dispatch(resetPrompt());
@@ -112,7 +111,7 @@ const SyncOneCharging = () => {
   const mapped = readExcelItems(importData, importHeader);
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -120,7 +119,7 @@ const SyncOneCharging = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             One Charging
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
@@ -161,7 +160,7 @@ const SyncOneCharging = () => {
             checked={params?.status === "inactive"}
             onChange={() => {
               onStatusChange(
-                params?.status === "active" ? "inactive" : "active"
+                params?.status === "active" ? "inactive" : "active",
               );
             }}
             sx={{

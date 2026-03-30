@@ -76,7 +76,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
+  minHeight: "30px",
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -394,7 +394,7 @@ const SystemAppBar = () => {
       <Box
         sx={{
           flexGrow: 1,
-          p: 2,
+          p: 1,
           width: "100vw",
           bgcolor: "#D9D9D9",
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 export const checkValues = (values = []) => {
   return Object.keys(values).every(
@@ -116,4 +116,35 @@ export const generateUserPayload = (data, systemsList) => {
 
     return formattedRow;
   });
+};
+
+export const useDebounceCallback = (callback, delay = 500) => {
+  const timeoutRef = useRef(null);
+
+  const callbackRef = useRef(callback);
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const debouncedFunction = useMemo(() => {
+    return (...args) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        callbackRef.current(...args);
+      }, delay);
+    };
+  }, [delay]);
+
+  return debouncedFunction;
 };

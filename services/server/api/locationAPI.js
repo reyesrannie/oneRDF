@@ -1,4 +1,5 @@
 import { serverAPI } from "../request/serverAPI";
+import { setLocationData } from "../slice/valuesSlice";
 
 export const locationAPI = serverAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,6 +11,13 @@ export const locationAPI = serverAPI.injectEndpoints({
         params: payload,
       }),
       providesTags: ["Location"],
+      async onQueryStarted(payload, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data) dispatch(setLocationData(data));
+          else dispatch(setLocationData(data?.result));
+        } catch (error) {}
+      },
     }),
     addLocation: builder.mutation({
       query: (payload) => ({

@@ -33,7 +33,7 @@ const MenuPopper = ({
         dispatch(resetModal());
       }}
     >
-      {update && (
+      {update && params?.status === "active" && (
         <MenuItem onClick={update}>
           <ListItemIcon>
             <DriveFileRenameOutlineOutlinedIcon fontSize="small" />

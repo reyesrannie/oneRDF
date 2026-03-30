@@ -51,7 +51,14 @@ export const userAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Users", "Audit"],
     }),
-
+    archiveUser: builder.mutation({
+      query: (payload) => ({
+        url: `/user/${payload?.id}`,
+        method: "DELETE",
+        body: payload,
+      }),
+      invalidatesTags: ["Users", "Audit"],
+    }),
     resetAllSystem: builder.mutation({
       query: (payload) => ({
         url: `/reset_all_password`,
@@ -80,6 +87,7 @@ export const {
   useCreateUserMutation,
   useCreateUserSystemsMutation,
   useUpdateUserMutation,
+  useArchiveUserMutation,
   usePasswordChangeAllMutation,
   useResetAllSystemMutation,
 } = userAPI;

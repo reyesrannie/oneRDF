@@ -7,7 +7,7 @@ const MobileLoading = () => {
       <Stack gap={1} width={"100%"}>
         <Skeleton
           variant="rectangular"
-          height={20}
+          height={10}
           sx={{
             bgcolor: "#ccc",
             "&::after": {
@@ -17,7 +17,7 @@ const MobileLoading = () => {
         />
         <Skeleton
           variant="rectangular"
-          height={20}
+          height={10}
           sx={{
             bgcolor: "#ccc",
             "&::after": {
@@ -27,7 +27,7 @@ const MobileLoading = () => {
         />
         <Skeleton
           variant="rectangular"
-          height={20}
+          height={10}
           sx={{
             bgcolor: "#ccc",
             "&::after": {

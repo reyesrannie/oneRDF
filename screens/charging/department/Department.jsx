@@ -109,7 +109,7 @@ const Department = () => {
   const mapped = readExcelItems(importData);
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -117,7 +117,7 @@ const Department = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Department
           </Typography>
           <Stack flexDirection={"row"} gap={2}>

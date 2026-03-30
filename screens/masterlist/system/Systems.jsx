@@ -12,23 +12,36 @@ import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOu
 
 import AppSearch from "../../../components/custom/AppSearch";
 import useParamsHook from "../../../services/hooks/useParamsHook";
-import { useSystemsQuery } from "../../../services/server/api/systemAPI";
+import {
+  useArchiveSystemMutation,
+  useSystemsQuery,
+} from "../../../services/server/api/systemAPI";
 import MobileLoading from "../../../components/custom/MobileLoading";
 import NoDataFound from "../../../components/custom/NoDataFound";
 import {
+  resetModal,
   setSystem,
   setSystemData,
 } from "../../../services/server/slice/modalSlice";
 import SystemModal from "../../../components/modal/systems/SystemModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CardList from "../../../components/custom/CardList";
 import TableGrid from "../../../components/custom/TableGrid";
 import MenuPopper from "../../../components/custom/MenuPopper";
 import CustomPagination from "../../../components/custom/CustomPagination";
+import {
+  resetPrompt,
+  setArchive,
+} from "../../../services/server/slice/promptSlice";
+import AppPrompt from "../../../components/custom/AppPrompt";
+import warning from "../../../assets/svg/warning.svg";
 
 const Systems = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
+
+  const systemData = useSelector((state) => state.modal.systemData);
+  const archive = useSelector((state) => state.prompt.archive);
 
   const {
     params,
@@ -40,7 +53,11 @@ const Systems = () => {
     onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useSystemsQuery(params);
+
   const isTablet = useMediaQuery("(min-width:768px)");
+
+  const [archiveSystem, { isLoading: loadingArchive }] =
+    useArchiveSystemMutation();
 
   const header = [
     { name: "Id", value: "id" },
@@ -54,8 +71,19 @@ const Systems = () => {
     { name: "Last Modified", value: "updated_at", type: "date" },
   ];
 
+  const onClickHandler = async () => {
+    try {
+      const res = await archiveSystem(systemData).unwrap();
+      dispatch(resetPrompt());
+      dispatch(resetModal());
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+    } catch (error) {}
+  };
+
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -63,7 +91,7 @@ const Systems = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Systems
           </Typography>
 
@@ -176,9 +204,24 @@ const Systems = () => {
           setAnchorEl(null);
           dispatch(setSystem(true));
         }}
+        archive={() => {
+          setAnchorEl(null);
+          dispatch(setArchive(true));
+        }}
       />
 
       <SystemModal />
+
+      <AppPrompt
+        open={archive}
+        image={warning}
+        title={`${params?.status === "active" ? "Archive" : "Restore"} system?`}
+        message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this system?`}
+        confirmButton={`Yes, ${params?.status === "active" ? "Archive" : "Restore"} it!`}
+        cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
+        confirmOnClick={onClickHandler}
+        isLoading={loadingArchive}
+      />
     </Stack>
   );
 };

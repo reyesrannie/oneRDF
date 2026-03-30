@@ -5,6 +5,12 @@ import {
   Stack,
   useMediaQuery,
   TextField as MuiTextField,
+  DialogTitle,
+  Typography,
+  IconButton,
+  useTheme,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,7 +33,10 @@ import { objectError } from "../../services/functions/errorResponse";
 import Autocomplete from "../custom/AutoComplete";
 import { useLazyBusinessUnitQuery } from "../../services/server/api/businessUnitAPI";
 import { useLazyDepartmentQuery } from "../../services/server/api/departmentAPI";
-import { useLazyCompanyQuery } from "../../services/server/api/companyAPI";
+import {
+  useCompanyQuery,
+  useLazyCompanyQuery,
+} from "../../services/server/api/companyAPI";
 import { useLazyDepartmentUnitQuery } from "../../services/server/api/departmentUnitAPI";
 import { useLazySubUnitQuery } from "../../services/server/api/SubUnitAPI";
 import { useLazyLocationQuery } from "../../services/server/api/locationAPI";
@@ -40,78 +49,19 @@ import coaSchema from "../schema/coaSchema";
 
 const CoaModal = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
+
   const { enqueueSnackbar } = useSnackbar();
   const open = useSelector((state) => state.modal.coa);
   const coaData = useSelector((state) => state.modal.coaData);
-  const isTablet = useMediaQuery("(min-width:768px)");
-  const debounceTimeout = useRef(null);
   const hasExecuted = useRef();
 
-  const [
-    getCompany,
-    {
-      data: companyData,
-      isLoading: loadingCompany,
-      isSuccess: successCompany,
-      status: statusCompany,
-      reset: resetCompany,
-    },
-  ] = useLazyCompanyQuery();
-
-  const [
-    getBusinessUnit,
-    {
-      data: businessUnitData,
-      isLoading: loadingBusinessUnit,
-      isSuccess: successBusinessUnit,
-      status: statusBusinessUnit,
-      reset: resetBusinessUnit,
-    },
-  ] = useLazyBusinessUnitQuery();
-
-  const [
-    getDepartment,
-    {
-      data: departmentData,
-      isLoading: loadingDepartment,
-      isSuccess: successDepartment,
-      status: statusDepartment,
-      reset: resetDepartment,
-    },
-  ] = useLazyDepartmentQuery();
-
-  const [
-    getUnit,
-    {
-      data: departmentUnitData,
-      isLoading: loadingDepartmentUnit,
-      isSuccess: successDepartmentUnit,
-      status: statusUnit,
-      reset: reseUnit,
-    },
-  ] = useLazyDepartmentUnitQuery();
-
-  const [
-    getSubUnit,
-    {
-      data: subUnitData,
-      isLoading: loadingSubUnit,
-      isSuccess: successSubUnit,
-      status: statusSubUnit,
-      reset: reseSubUnit,
-    },
-  ] = useLazySubUnitQuery();
-
-  const [
-    getLocation,
-    {
-      data: locationData,
-      isLoading: loadingLocation,
-      isSuccess: successLocation,
-      status: statusLocation,
-      reset: resetLocation,
-    },
-  ] = useLazyLocationQuery();
+  const companyList = useSelector((state) => state.values.companyData);
+  const businessList = useSelector((state) => state.values.businessData);
+  const departmentList = useSelector((state) => state.values.departmentData);
+  const unitList = useSelector((state) => state.values.unitData);
+  const subUnitList = useSelector((state) => state.values.subUnitData);
+  const locationList = useSelector((state) => state.values.locationData);
 
   const [addCoa, { isLoading: loadingCoaAdd }] = useAddCoaMutation();
   const [updateCoa, { isLoading: loadingCoaUpdate }] = useUpdateCoaMutation();
@@ -168,7 +118,7 @@ const CoaModal = () => {
         coaData !== null
           ? "Successfully updated the data"
           : "Successfully created data",
-        { variant: "success" }
+        { variant: "success" },
       );
       dispatch(resetModal());
       reset();
@@ -178,53 +128,25 @@ const CoaModal = () => {
   };
 
   useEffect(() => {
-    if (coaData && !hasExecuted.current) {
-      console.log(coaData);
-      getCompany({ search: coaData?.company_code, status: "active" });
-      getBusinessUnit({
-        status: "active",
-        search: coaData?.business_unit_code,
-      });
-      getDepartment({
-        status: "active",
-        search: coaData?.department_code,
-      });
-      getUnit({ status: "active", search: coaData?.unit_code });
-      getSubUnit({ status: "active", search: coaData?.sub_unit_code });
-      getLocation({ status: "active", search: coaData?.location_code });
-      hasExecuted.current = true;
-    }
-
-    if (
-      coaData &&
-      open &&
-      successCompany &&
-      successBusinessUnit &&
-      successDepartment &&
-      successDepartmentUnit &&
-      successSubUnit &&
-      successLocation
-    ) {
+    if (coaData && open) {
       const newValue = {
         code: coaData?.code,
         name: coaData?.name,
-        company: companyData?.data?.find(
-          (item) => item?.code === coaData?.company_code
+        company: companyList?.find(
+          (item) => item?.code === coaData?.company_code,
         ),
-        business_unit: businessUnitData?.data?.find(
-          (item) => item?.code === coaData?.business_unit_code
+        business_unit: businessList?.find(
+          (item) => item?.code === coaData?.business_unit_code,
         ),
-        department: departmentData?.data?.find(
-          (item) => item?.code === coaData?.department_code
+        department: departmentList?.find(
+          (item) => item?.code === coaData?.department_code,
         ),
-        unit: departmentUnitData?.data?.find(
-          (item) => item?.code === coaData?.unit_code
+        unit: unitList?.find((item) => item?.code === coaData?.unit_code),
+        sub_unit: subUnitList?.find(
+          (item) => item?.code === coaData?.sub_unit_code,
         ),
-        sub_unit: subUnitData?.data?.find(
-          (item) => item?.code === coaData?.sub_unit_code
-        ),
-        location: locationData?.data?.find(
-          (item) => item?.code === coaData?.location_code
+        location: locationList?.find(
+          (item) => item?.code === coaData?.location_code,
         ),
       };
 
@@ -232,36 +154,19 @@ const CoaModal = () => {
         setValue(key, value);
       });
     }
-  }, [
-    coaData,
-    setValue,
-    getCompany,
-    getBusinessUnit,
-    getDepartment,
-    getUnit,
-    getSubUnit,
-    getLocation,
-    open,
-    successCompany,
-    successBusinessUnit,
-    successDepartment,
-    successDepartmentUnit,
-    successSubUnit,
-    successLocation,
-  ]);
-
-  const getValue = useCallback((e, func) => {
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-    debounceTimeout.current = setTimeout(() => {
-      func({ status: "active", per_page: 10, search: e.target.value });
-    }, 500);
-  }, []);
+  }, [coaData, open]);
 
   return (
     <Dialog
       open={open}
+      slotProps={{
+        paper: {
+          sx: {
+            border: `2px solid ${theme.palette.primary.main}`,
+            minWidth: { sx: "unset", md: 400 },
+          },
+        },
+      }}
       onClose={() => {
         dispatch(setCategory(false));
         hasExecuted.current = false;
@@ -269,24 +174,45 @@ const CoaModal = () => {
         coaData && reset();
       }}
     >
+      <DialogTitle
+        sx={{
+          backgroundColor: theme?.palette?.primary?.main,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: 18,
+            fontWeight: 600,
+          }}
+        >
+          Create User Account
+        </Typography>
+
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+          }}
+          onClick={() => {
+            reset();
+            dispatch(resetModal());
+          }}
+        >
+          <ClearOutlinedIcon
+            fontSize="small"
+            sx={{
+              color: "#ffffff",
+            }}
+          />
+        </IconButton>
+      </DialogTitle>
       <form onSubmit={handleSubmit(submitHandler)}>
-        <Box minWidth={isTablet ? 400 : 300} padding={2}>
-          <Stack gap={2} mb={3}>
-            <Stack display="flex" alignItems="center" gap={1}>
-              <img
-                src={categoryImage}
-                alt="Password"
-                draggable="false"
-                className="user-modal-image"
-              />
-            </Stack>
-            <Stack
-              gap={2}
-              flexDirection={"column"}
-              sx={{
-                mb: 5,
-              }}
-            >
+        <DialogContent>
+          <Stack gap={2}>
+            <Stack gap={2} flexDirection={"column"}>
               <AppTextBox
                 control={control}
                 name={"code"}
@@ -302,24 +228,13 @@ const CoaModal = () => {
                 helperText={errors?.name?.message}
               />
               <Autocomplete
-                loading={loadingCompany}
                 control={control}
                 name={"company"}
-                options={companyData?.data || []}
+                options={companyList || []}
                 getOptionLabel={(option) => `${option.code} - ${option.name}`}
-                noOptionsText={
-                  statusCompany !== "uninitialized"
-                    ? "No Options"
-                    : "Select a company"
-                }
                 isOptionEqualToValue={(option, value) =>
                   option?.id === value?.id
                 }
-                onClose={() => {
-                  if (watch("company") === null) {
-                    resetCompany();
-                  }
-                }}
                 renderInput={(params) => (
                   <MuiTextField
                     {...params}
@@ -328,35 +243,17 @@ const CoaModal = () => {
                     variant="outlined"
                     error={Boolean(errors.company)}
                     helperText={errors.company?.message}
-                    onKeyUp={(e) => {
-                      if (e?.target?.value === "") {
-                        resetCompany();
-                      } else {
-                        getValue(e, getCompany);
-                      }
-                    }}
                   />
                 )}
               />
               <Autocomplete
-                loading={loadingBusinessUnit}
                 control={control}
                 name={"business_unit"}
-                options={businessUnitData?.data || []}
+                options={businessList || []}
                 getOptionLabel={(option) => `${option.code} - ${option.name}`}
                 isOptionEqualToValue={(option, value) =>
                   option?.id === value?.id
                 }
-                noOptionsText={
-                  statusBusinessUnit !== "uninitialized"
-                    ? "No Options"
-                    : "Select a business unit"
-                }
-                onClose={() => {
-                  if (watch("business_unit") === null) {
-                    resetBusinessUnit();
-                  }
-                }}
                 renderInput={(params) => (
                   <MuiTextField
                     {...params}
@@ -365,35 +262,17 @@ const CoaModal = () => {
                     variant="outlined"
                     error={Boolean(errors.business_unit)}
                     helperText={errors.business_unit?.message}
-                    onKeyUp={(e) => {
-                      if (e?.target?.value === "") {
-                        resetBusinessUnit();
-                      } else {
-                        getValue(e, getBusinessUnit);
-                      }
-                    }}
                   />
                 )}
               />
               <Autocomplete
-                loading={loadingDepartment}
                 control={control}
                 name={"department"}
-                options={departmentData?.data || []}
+                options={departmentList || []}
                 getOptionLabel={(option) => `${option.code} - ${option.name}`}
                 isOptionEqualToValue={(option, value) =>
                   option?.id === value?.id
                 }
-                noOptionsText={
-                  statusDepartment !== "uninitialized"
-                    ? "No Options"
-                    : "Select a department"
-                }
-                onClose={() => {
-                  if (watch("department") === null) {
-                    resetDepartment();
-                  }
-                }}
                 renderInput={(params) => (
                   <MuiTextField
                     {...params}
@@ -402,35 +281,17 @@ const CoaModal = () => {
                     variant="outlined"
                     error={Boolean(errors.department)}
                     helperText={errors.department?.message}
-                    onKeyUp={(e) => {
-                      if (e?.target?.value === "") {
-                        resetDepartment();
-                      } else {
-                        getValue(e, getDepartment);
-                      }
-                    }}
                   />
                 )}
               />
               <Autocomplete
-                loading={loadingDepartmentUnit}
                 control={control}
                 name={"unit"}
-                options={departmentUnitData?.data || []}
+                options={unitList || []}
                 getOptionLabel={(option) => `${option.code} - ${option.name}`}
                 isOptionEqualToValue={(option, value) =>
                   option?.id === value?.id
                 }
-                noOptionsText={
-                  statusUnit !== "uninitialized"
-                    ? "No Options"
-                    : "Select a unit"
-                }
-                onClose={() => {
-                  if (watch("unit") === null) {
-                    reseUnit();
-                  }
-                }}
                 renderInput={(params) => (
                   <MuiTextField
                     {...params}
@@ -439,35 +300,17 @@ const CoaModal = () => {
                     variant="outlined"
                     error={Boolean(errors.unit)}
                     helperText={errors.unit?.message}
-                    onKeyUp={(e) => {
-                      if (e?.target?.value === "") {
-                        reseUnit();
-                      } else {
-                        getValue(e, getUnit);
-                      }
-                    }}
                   />
                 )}
               />
               <Autocomplete
-                loading={loadingSubUnit}
                 control={control}
                 name={"sub_unit"}
-                options={subUnitData?.data || []}
+                options={subUnitList || []}
                 getOptionLabel={(option) => `${option.code} - ${option.name}`}
                 isOptionEqualToValue={(option, value) =>
                   option?.id === value?.id
                 }
-                noOptionsText={
-                  statusSubUnit !== "uninitialized"
-                    ? "No Options"
-                    : "Select a sub unit"
-                }
-                onClose={() => {
-                  if (watch("sub_unit") === null) {
-                    reseSubUnit();
-                  }
-                }}
                 renderInput={(params) => (
                   <MuiTextField
                     {...params}
@@ -476,35 +319,17 @@ const CoaModal = () => {
                     variant="outlined"
                     error={Boolean(errors.sub_unit)}
                     helperText={errors.sub_unit?.message}
-                    onKeyUp={(e) => {
-                      if (e?.target?.value === "") {
-                        reseSubUnit();
-                      } else {
-                        getValue(e, getSubUnit);
-                      }
-                    }}
                   />
                 )}
               />
               <Autocomplete
-                loading={loadingLocation}
                 control={control}
                 name={"location"}
-                options={locationData?.data || []}
+                options={locationList || []}
                 getOptionLabel={(option) => `${option.code} - ${option.name}`}
                 isOptionEqualToValue={(option, value) =>
                   option?.id === value?.id
                 }
-                noOptionsText={
-                  statusLocation !== "uninitialized"
-                    ? "No Options"
-                    : "Select a location"
-                }
-                onClose={() => {
-                  if (watch("location") === null) {
-                    resetLocation();
-                  }
-                }}
                 renderInput={(params) => (
                   <MuiTextField
                     {...params}
@@ -513,59 +338,45 @@ const CoaModal = () => {
                     variant="outlined"
                     error={Boolean(errors.location)}
                     helperText={errors.location?.message}
-                    onKeyUp={(e) => {
-                      if (e?.target?.value === "") {
-                        resetLocation();
-                      } else {
-                        getValue(e, getLocation);
-                      }
-                    }}
                   />
                 )}
               />
             </Stack>
           </Stack>
-          <Stack
-            position={"absolute"}
-            flexDirection={"row"}
-            bottom={0}
-            right={0}
-            padding={2}
-            gap={1}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<ClearOutlinedIcon />}
+            onClick={() => {
+              reset();
+              dispatch(resetModal());
+            }}
           >
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<ClearOutlinedIcon />}
-              onClick={() => {
-                reset();
-                dispatch(resetModal());
-              }}
-            >
-              Close
-            </Button>
-            <Button
-              loading={loadingCoaAdd || loadingCoaUpdate}
-              disabled={
-                watch("name") === "" ||
-                watch("code") === "" ||
-                watch("company") === null ||
-                watch("business_unit") === null ||
-                watch("department") === null ||
-                watch("unit") === null ||
-                watch("sub_unit") === null ||
-                watch("location") === null
-              }
-              variant="contained"
-              loadingPosition="start"
-              startIcon={<CheckOutlinedIcon />}
-              color="success"
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Stack>
-        </Box>
+            Close
+          </Button>
+          <Button
+            loading={loadingCoaAdd || loadingCoaUpdate}
+            disabled={
+              watch("name") === "" ||
+              watch("code") === "" ||
+              watch("company") === null ||
+              watch("business_unit") === null ||
+              watch("department") === null ||
+              watch("unit") === null ||
+              watch("sub_unit") === null ||
+              watch("location") === null
+            }
+            variant="contained"
+            loadingPosition="start"
+            startIcon={<CheckOutlinedIcon />}
+            color="success"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </DialogActions>
       </form>
     </Dialog>
   );

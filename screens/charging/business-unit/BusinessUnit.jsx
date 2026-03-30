@@ -109,7 +109,7 @@ const BusinessUnit = () => {
   const mapped = readExcelItems(importData);
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -117,7 +117,7 @@ const BusinessUnit = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             BusinessUnit
           </Typography>
           <Stack flexDirection={"row"} gap={2}>

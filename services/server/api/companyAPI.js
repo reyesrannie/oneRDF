@@ -1,4 +1,5 @@
 import { serverAPI } from "../request/serverAPI";
+import { setCompanyData } from "../slice/valuesSlice";
 
 export const companyAPI = serverAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,6 +11,13 @@ export const companyAPI = serverAPI.injectEndpoints({
         params: payload,
       }),
       providesTags: ["Company"],
+      async onQueryStarted(payload, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data) dispatch(setCompanyData(data));
+          else dispatch(setCompanyData(data?.result));
+        } catch (error) {}
+      },
     }),
     addCompany: builder.mutation({
       query: (payload) => ({

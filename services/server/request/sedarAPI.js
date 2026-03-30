@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { setSedarData } from "../slice/valuesSlice";
 
 const baseURL = import.meta.env.VITE_SEDAR_BASE_URL;
 const token = import.meta.env.VITE_SEDAR_KEY;
@@ -24,8 +25,15 @@ export const sedarAPI = createApi({
         params: payload,
       }),
       providesTags: ["SEDAR"],
+      async onQueryStarted(payload, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data) dispatch(setSedarData(data?.data));
+          else dispatch(setChargingData(data?.result));
+        } catch (error) {}
+      },
     }),
   }),
 });
 
-export const { useEmployeeQuery } = sedarAPI;
+export const { useEmployeeQuery, useLazyEmployeeQuery } = sedarAPI;

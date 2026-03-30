@@ -11,7 +11,7 @@ const Sync = () => {
   const sync = navigation?.find((nav) => nav.segment === "sync");
 
   return (
-    <Box ml={5}>
+    <Box padding={2}>
       <Stack gap={1} display={"flex"} flexDirection={"column"}>
         <BreadCrumbs />
         <Stack
@@ -19,7 +19,7 @@ const Sync = () => {
           flexDirection={"row"}
           justifyContent="space-between"
         >
-          <Typography fontSize={"24px"} fontWeight={600}>
+          <Typography fontSize={"18px"} fontWeight={600}>
             Sync
           </Typography>
         </Stack>
