@@ -64,7 +64,7 @@ const AccountUnit = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const archive = useSelector((state) => state.prompt.archive);
-  const accountTypeData = useSelector((state) => state.modal.accountTypeData);
+  const accountTypeData = useSelector((state) => state.modal.accounUnitData);
   const importData = useSelector((state) => state.modal.importData);
 
   const importHeader = [{ name: "name", value: "Name" }];

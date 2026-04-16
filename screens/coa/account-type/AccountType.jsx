@@ -44,8 +44,10 @@ import {
   useAccountTypeQuery,
   useArchiveAccountTypeMutation,
   useImportAccountTypeMutation,
+  useLazyAccountTypeQuery,
 } from "../../../services/server/api/accountTypeAPI";
 import AccountTypesModal from "../../../components/modal/AccountTypesModal";
+import { exportToExcel } from "../../../services/functions/exportExcel";
 
 const AccountType = () => {
   const dispatch = useDispatch();
@@ -65,7 +67,8 @@ const AccountType = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const archive = useSelector((state) => state.prompt.archive);
-  const accountTypeData = useSelector((state) => state.modal.accountTypeData);
+  const accounTypeData = useSelector((state) => state.modal.accounTypeData);
+
   const importData = useSelector((state) => state.modal.importData);
 
   const importHeader = [{ name: "name", value: "Name" }];
@@ -78,7 +81,7 @@ const AccountType = () => {
 
   const onClickHandler = async () => {
     try {
-      await arhiveAccountType(accountTypeData).unwrap();
+      await arhiveAccountType(accounTypeData).unwrap();
       enqueueSnackbar(
         `Data has been ${params?.status === "active" ? "archived" : "restored"}!`,
         {
@@ -207,6 +210,7 @@ const AccountType = () => {
             onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setAccountTypeData(i));
+              console.log(i);
               setAnchorEl({
                 mouseX: e.clientX,
                 mouseY: e.clientY,

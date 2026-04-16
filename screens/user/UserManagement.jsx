@@ -233,7 +233,10 @@ const UserManagement = () => {
     const payload = generateUserPayload(importData, columnData);
     try {
       const res = await userCheck(payload).unwrap();
-      await processSyncing(res?.data?.existing_users, systemData);
+      await processSyncing(
+        [...res?.data?.existing_users, ...res?.data?.new_users],
+        systemData,
+      );
     } catch (error) {}
 
     dispatch(setIsLoading(false));
