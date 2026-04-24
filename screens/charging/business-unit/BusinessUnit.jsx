@@ -10,6 +10,8 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
@@ -40,7 +42,11 @@ import BusinessUnitModal from "../../../components/modal/BusinessUnitModal";
 import CustomPagination from "../../../components/custom/CustomPagination";
 import ImportModal from "../../../components/modal/ImportModal";
 import MenuOptions from "../../../components/custom/MenuOptions";
-import { icnHeader, errorHeader } from "../../../services/constant/headers";
+import {
+  icnHeader,
+  errorHeader,
+  cniHeader,
+} from "../../../services/constant/headers";
 import ImportErrorModal from "../../../components/modal/ImportErrorModal";
 import { readExcelItems } from "../../../services/functions/readExcel";
 
@@ -106,7 +112,7 @@ const BusinessUnit = () => {
     }
   };
 
-  const mapped = readExcelItems(importData);
+  const mapped = readExcelItems(importData, errorHeader);
 
   return (
     <Stack>
@@ -125,9 +131,9 @@ const BusinessUnit = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
-                textTransform: "uppercase",
+                textTransform: "capitalize",
                 fontSize: "10px",
                 maxHeight: "30px",
                 "& .MuiSvgIcon-root": {
@@ -141,7 +147,7 @@ const BusinessUnit = () => {
                 });
               }}
             >
-              New
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -227,6 +233,7 @@ const BusinessUnit = () => {
         title="Business Unit"
         importDataHandler={handleImport}
         loading={loadingImport}
+        importHeader={cniHeader}
       />
 
       <ImportErrorModal items={mapped} header={errorHeader} />

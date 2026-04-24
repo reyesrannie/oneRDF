@@ -525,8 +525,21 @@ const UserManagement = () => {
 
       <ImportModal
         importDataHandler={() => importHandler()}
-        title={"user"}
+        title={"User"}
         loading={loadingUserCheck || loadingCreateSystems}
+        importHeader={[
+          { name: "id_no", value: "ID No" },
+          { name: "id_prefix", value: "ID Prefix" },
+          { name: "first_name", value: "First Name" },
+          { name: "middle_name", value: "Middle Name" },
+          { name: "last_name", value: "Last Name" },
+          { name: "suffix", value: "Suffix" },
+          { name: "username", value: "Username" },
+          ...(systemData?.map((system) => ({
+            name: system.id,
+            value: system.system_name,
+          })) || []),
+        ]}
       />
     </Box>
   );

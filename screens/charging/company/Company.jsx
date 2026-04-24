@@ -44,7 +44,6 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 const Company = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorE2, setAnchorE2] = useState(null);
 
   const {
     params,
@@ -80,10 +79,6 @@ const Company = () => {
     }
   };
 
-  const handleImport = async () => {
-    dispatch(resetModal());
-  };
-
   return (
     <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
@@ -103,7 +98,7 @@ const Company = () => {
               size="small"
               startIcon={<ArrowBackIosIcon />}
               sx={{
-                textTransform: "uppercase",
+                textTransform: "capitalize",
                 fontSize: "10px",
                 maxHeight: "30px",
                 "& .MuiSvgIcon-root": {
@@ -111,10 +106,7 @@ const Company = () => {
                 },
               }}
               onClick={(e) => {
-                setAnchorE2({
-                  mouseX: e.clientX,
-                  mouseY: e.clientY,
-                });
+                dispatch(setCompany(true));
               }}
             >
               Add
@@ -199,7 +191,6 @@ const Company = () => {
       )}
 
       <CompanyModal />
-      <ImportModal title="Company" importDataHandler={handleImport} />
 
       <MenuPopper
         params={params}
@@ -212,19 +203,6 @@ const Company = () => {
         archive={() => {
           setAnchorEl(null);
           dispatch(setArchive(true));
-        }}
-      />
-
-      <MenuOptions
-        anchorEl={anchorE2}
-        setAnchorEl={setAnchorE2}
-        addOption={() => {
-          dispatch(setCompany(true));
-          setAnchorE2(null);
-        }}
-        importOption={() => {
-          dispatch(setImport(true));
-          setAnchorE2(null);
         }}
       />
 

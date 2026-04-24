@@ -29,6 +29,17 @@ export const cnHeader = [
   },
 ];
 
+export const cniHeader = [
+  {
+    name: "code",
+    value: "Code",
+  },
+  {
+    name: "name",
+    value: "Name",
+  },
+];
+
 export const errorHeader = [
   {
     name: "Code",

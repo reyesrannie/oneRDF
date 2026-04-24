@@ -10,6 +10,8 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
@@ -95,7 +97,7 @@ const ColumnsImport = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
                 textTransform: "capitalize",
                 fontSize: "10px",

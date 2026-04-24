@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import AppSearch from "../../../components/custom/AppSearch";
 import useParamsHook from "../../../services/hooks/useParamsHook";
@@ -100,7 +101,7 @@ const Systems = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
                 textTransform: "capitalize",
                 fontSize: "10px",

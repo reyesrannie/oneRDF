@@ -162,28 +162,30 @@ const ImportModal = ({
             onChange={readFile}
           />
         </Box>
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Button
-            variant="text"
-            startIcon={<DownloadIcon />}
-            onClick={(e) => {
-              e.stopPropagation();
-              exportTemplate(); // Prevents any accidental bubbling
-            }}
-            sx={{
-              textTransform: "none", // Keeps it looking like normal text instead of ALL CAPS
-              fontSize: "12px",
-              fontWeight: 600,
-              color: "primary.main",
-              "&:hover": {
-                textDecoration: "underline",
-                bgcolor: "transparent",
-              },
-            }}
-          >
-            Download the template here
-          </Button>
-        </Box>
+        {importHeader?.length !== 0 && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Button
+              variant="text"
+              startIcon={<DownloadIcon />}
+              onClick={(e) => {
+                e.stopPropagation();
+                exportTemplate(); // Prevents any accidental bubbling
+              }}
+              sx={{
+                textTransform: "none", // Keeps it looking like normal text instead of ALL CAPS
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "primary.main",
+                "&:hover": {
+                  textDecoration: "underline",
+                  bgcolor: "transparent",
+                },
+              }}
+            >
+              Download the template here
+            </Button>
+          </Box>
+        )}
       </DialogContent>
 
       <DialogActions>

@@ -7,6 +7,8 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  useTheme,
+  Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,6 +41,7 @@ const LocationModal = () => {
   const view = useSelector((state) => state.modal.multipleView);
   const locationData = useSelector((state) => state.modal.locationData);
   const isTablet = useMediaQuery("(min-width:768px)");
+  const theme = useTheme();
 
   const [addLocation, { isLoading: loadingLocationAdd }] =
     useAddLocationMutation();
@@ -102,6 +105,47 @@ const LocationModal = () => {
         locationData && reset();
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: theme?.palette?.primary?.main,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 20,
+              fontWeight: 600,
+            }}
+          >
+            Company
+          </Typography>
+
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+            onClick={() => {
+              dispatch(resetModal());
+            }}
+          >
+            <ClearOutlinedIcon
+              fontSize="small"
+              sx={{
+                color: "#ffffff",
+              }}
+            />
+          </IconButton>
+        </DialogTitle>
+      </Box>
       <form onSubmit={handleSubmit(submitHandler)}>
         <Box minWidth={isTablet ? 400 : 300} minHeight={100} padding={2}>
           <Stack gap={2} mb={3}>

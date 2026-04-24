@@ -10,6 +10,8 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
@@ -30,7 +32,10 @@ import MenuPopper from "../../../components/custom/MenuPopper";
 import AppPrompt from "../../../components/custom/AppPrompt";
 import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
-import { setArchive } from "../../../services/server/slice/promptSlice";
+import {
+  resetPrompt,
+  setArchive,
+} from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
 
 const Category = () => {
@@ -68,6 +73,7 @@ const Category = () => {
         variant: "success",
       });
       dispatch(resetModal());
+      dispatch(resetPrompt());
     } catch (error) {}
   };
 
@@ -89,7 +95,7 @@ const Category = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
                 textTransform: "capitalize",
                 fontSize: "10px",
@@ -197,6 +203,7 @@ const Category = () => {
         }}
       />
       <AppPrompt
+        open={useSelector((state) => state.prompt.archive)}
         image={warning}
         title={`${params?.status === "active" ? "Archive" : "Restore"} category?`}
         message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this category?`}

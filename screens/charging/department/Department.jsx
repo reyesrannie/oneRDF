@@ -10,6 +10,8 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
@@ -41,7 +43,11 @@ import DepartmentModal from "../../../components/modal/DepartmentModal";
 import ImportModal from "../../../components/modal/ImportModal";
 import MenuOptions from "../../../components/custom/MenuOptions";
 import ImportErrorModal from "../../../components/modal/ImportErrorModal";
-import { errorHeader, icnHeader } from "../../../services/constant/headers";
+import {
+  cniHeader,
+  errorHeader,
+  icnHeader,
+} from "../../../services/constant/headers";
 import { readExcelItems } from "../../../services/functions/readExcel";
 
 const Department = () => {
@@ -125,9 +131,9 @@ const Department = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
-                textTransform: "uppercase",
+                textTransform: "capitalize",
                 fontSize: "10px",
                 maxHeight: "30px",
                 "& .MuiSvgIcon-root": {
@@ -141,7 +147,7 @@ const Department = () => {
                 });
               }}
             >
-              New
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -228,6 +234,7 @@ const Department = () => {
         title="Department"
         importDataHandler={handleImport}
         loading={loadingImport}
+        importHeader={cniHeader}
       />
 
       <ImportErrorModal items={mapped} header={errorHeader} />

@@ -40,8 +40,13 @@ import SubUnitModal from "../../../components/modal/SubUnitModal";
 import { readExcelItems } from "../../../services/functions/readExcel";
 import ImportModal from "../../../components/modal/ImportModal";
 import MenuOptions from "../../../components/custom/MenuOptions";
-import { errorHeader, icnHeader } from "../../../services/constant/headers";
+import {
+  cniHeader,
+  errorHeader,
+  icnHeader,
+} from "../../../services/constant/headers";
 import ImportErrorModal from "../../../components/modal/ImportErrorModal";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const SubUnit = () => {
   const dispatch = useDispatch();
@@ -123,9 +128,9 @@ const SubUnit = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
-                textTransform: "uppercase",
+                textTransform: "capitalize",
                 fontSize: "10px",
                 maxHeight: "30px",
                 "& .MuiSvgIcon-root": {
@@ -139,7 +144,7 @@ const SubUnit = () => {
                 });
               }}
             >
-              New
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -227,6 +232,7 @@ const SubUnit = () => {
         title="Sub Unit"
         importDataHandler={handleImport}
         loading={loadingImport}
+        importHeader={cniHeader}
       />
 
       <ImportErrorModal items={mapped} header={errorHeader} />

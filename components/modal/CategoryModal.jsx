@@ -1,4 +1,16 @@
-import { Box, Button, Dialog, Stack, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,6 +40,7 @@ const CategoryModal = () => {
   const open = useSelector((state) => state.modal.category);
   const categoryData = useSelector((state) => state.modal.categoryData);
   const isTablet = useMediaQuery("(min-width:768px)");
+  const theme = useTheme();
 
   const [addCategory, { isLoading: loadingAddCategory }] =
     useAddCategoryMutation();
@@ -81,24 +94,52 @@ const CategoryModal = () => {
         categoryData && reset();
       }}
     >
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <Box minWidth={isTablet ? 400 : 300} minHeight={100} padding={2}>
-          <Stack gap={2} mb={3}>
-            <Stack display="flex" alignItems="center" gap={1}>
-              <img
-                src={categoryImage}
-                alt="Password"
-                draggable="false"
-                className="user-modal-image"
-              />
-            </Stack>
-            <Stack
-              gap={2}
-              flexDirection={"column"}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: theme?.palette?.primary?.main,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 20,
+              fontWeight: 600,
+            }}
+          >
+            Systems
+          </Typography>
+
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+            onClick={() => {
+              dispatch(resetModal());
+            }}
+          >
+            <ClearOutlinedIcon
+              fontSize="small"
               sx={{
-                mb: 5,
+                color: "#ffffff",
               }}
-            >
+            />
+          </IconButton>
+        </DialogTitle>
+      </Box>
+
+      <form onSubmit={handleSubmit(submitHandler)}>
+        <DialogContent>
+          <Box minWidth={isTablet ? 400 : 300}>
+            <Stack>
               <AppTextBox
                 control={control}
                 name={"name"}
@@ -107,39 +148,32 @@ const CategoryModal = () => {
                 helperText={errors?.name?.message}
               />
             </Stack>
-          </Stack>
-          <Stack
-            position={"absolute"}
-            flexDirection={"row"}
-            bottom={0}
-            right={0}
-            padding={2}
-            gap={1}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<ClearOutlinedIcon />}
+            onClick={() => {
+              reset();
+              dispatch(resetModal());
+            }}
           >
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<ClearOutlinedIcon />}
-              onClick={() => {
-                reset();
-                dispatch(resetModal());
-              }}
-            >
-              Close
-            </Button>
-            <Button
-              loading={loadingAddCategory || loadingUpdateCategory}
-              disabled={watch("name") === ""}
-              variant="contained"
-              loadingPosition="start"
-              startIcon={<CheckOutlinedIcon />}
-              color="success"
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Stack>
-        </Box>
+            Close
+          </Button>
+          <Button
+            loading={loadingAddCategory || loadingUpdateCategory}
+            disabled={watch("name") === ""}
+            variant="contained"
+            loadingPosition="start"
+            startIcon={<CheckOutlinedIcon />}
+            color="success"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </DialogActions>
       </form>
     </Dialog>
   );

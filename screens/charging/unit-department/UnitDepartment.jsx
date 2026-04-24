@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
@@ -42,7 +43,11 @@ import DepartmentUnitModal from "../../../components/modal/DepartmentUnitModal";
 import { readExcelItems } from "../../../services/functions/readExcel";
 import ImportModal from "../../../components/modal/ImportModal";
 import MenuOptions from "../../../components/custom/MenuOptions";
-import { errorHeader, icnHeader } from "../../../services/constant/headers";
+import {
+  cniHeader,
+  errorHeader,
+  icnHeader,
+} from "../../../services/constant/headers";
 import ImportErrorModal from "../../../components/modal/ImportErrorModal";
 
 const UnitDepartment = () => {
@@ -129,9 +134,9 @@ const UnitDepartment = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
-                textTransform: "uppercase",
+                textTransform: "capitalize",
                 fontSize: "10px",
                 maxHeight: "30px",
                 "& .MuiSvgIcon-root": {
@@ -145,7 +150,7 @@ const UnitDepartment = () => {
                 });
               }}
             >
-              New
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -232,9 +237,10 @@ const UnitDepartment = () => {
       <ImportErrorModal items={mapped} header={errorHeader} />
 
       <ImportModal
-        title="Department Unit"
+        title="Unit"
         importDataHandler={handleImport}
         loading={loadingImport}
+        importHeader={cniHeader}
       />
 
       <MenuOptions
