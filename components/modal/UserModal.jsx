@@ -34,10 +34,16 @@ import {
   useUpdateUserMutation,
 } from "../../services/server/api/usersAPI";
 import { objectError } from "../../services/functions/errorResponse";
-import { useEmployeeQuery } from "../../services/server/request/sedarAPI";
+import {
+  useEmployeeQuery,
+  useLazyEmployeeQuery,
+} from "../../services/server/request/sedarAPI";
 import SignatureBox from "../custom/SignatureBox";
 import { base64ToFile } from "../../services/functions/saveUser";
-import { checkObject } from "../../services/functions/checkValues";
+import {
+  checkObject,
+  useDebounceCallback,
+} from "../../services/functions/checkValues";
 import Progress from "../custom/Progress";
 import MobileLoading from "../custom/MobileLoading";
 import {
@@ -59,13 +65,15 @@ const UserModal = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const allAccess = userRoles.flatMap((role) => role.child);
+  const sedarData = useSelector((state) => state?.values?.sedarData);
 
   const { data: systemData, isLoading: loadingSystems } = useSystemsQuery({
     status: "active",
     pagination: "none",
   });
 
-  const { data: sedarData, isLoading: loadingSedar } = useEmployeeQuery();
+  const [getEmployee, { isLoading: loadingSedar, isFetching: fetchingSedar }] =
+    useLazyEmployeeQuery();
 
   const [storeFile, { isLoading: loadingStoreFile }] = useStoreFileMutation();
   const [createUser, { isLoading: loadingCreate }] = useCreateUserMutation();
@@ -100,6 +108,15 @@ const UserModal = () => {
   });
 
   useEffect(() => {
+    if (userData) {
+      handleSearchSedar(`${userData?.id_prefix}-${userData?.id_no}`);
+    } else {
+      sedarData?.length === 0 && handleSearchSedar(`AMSI-FO`);
+      reset();
+    }
+  }, [userData]);
+
+  useEffect(() => {
     if (userData && sedarData) {
       const userAccess = userData?.access_permission?.map((item) =>
         allAccess?.find((access) => access?.value === item),
@@ -107,7 +124,7 @@ const UserModal = () => {
 
       const newData = {
         ...userData,
-        employeeID: sedarData?.data?.find(
+        employeeID: sedarData?.find(
           (emp) =>
             userData?.id_prefix === emp?.general_info?.prefix_id &&
             userData?.id_no === emp?.general_info?.id_number,
@@ -124,8 +141,6 @@ const UserModal = () => {
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
-    } else {
-      reset();
     }
   }, [userData, sedarData]);
 
@@ -247,9 +262,11 @@ const UserModal = () => {
   const handleAutoFill = () => {
     const employee = watch("employeeID");
     const newData = {
-      username: generateUsername(
-        `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
-      ),
+      username: employee?.general_info?.first_name
+        ? generateUsername(
+            `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
+          )
+        : "",
       id_prefix: employee?.general_info?.prefix_id,
       id_no: employee?.general_info?.id_number,
       first_name: employee?.general_info?.first_name,
@@ -261,6 +278,12 @@ const UserModal = () => {
       setValue(key, value);
     });
   };
+
+  const handleSearchSedar = useDebounceCallback(async (searchValue) => {
+    await getEmployee({
+      search: searchValue,
+    });
+  }, 500);
 
   return (
     <Dialog
@@ -315,8 +338,9 @@ const UserModal = () => {
             />
           </IconButton>
         </DialogTitle>
-
-        {sedarData ? (
+        {userData && (loadingSedar || fetchingSedar) ? (
+          <MobileLoading />
+        ) : (
           <form onSubmit={handleSubmit(submitHandler)}>
             <DialogContent>
               <Stack gap={2}>
@@ -329,10 +353,12 @@ const UserModal = () => {
                   </Typography>
                   <Stack flexDirection={"row"} gap={2}>
                     <Autocomplete
-                      loading={loadingSedar}
+                      disabled={userData}
+                      limit={100}
+                      loading={loadingSedar || fetchingSedar}
                       control={control}
                       name={"employeeID"}
-                      options={sedarData?.data || []}
+                      options={sedarData || []}
                       getOptionLabel={(option) =>
                         `${option?.general_info?.full_id_number} - ${option?.general_info?.first_name} ${option?.general_info?.last_name} `
                       }
@@ -347,6 +373,10 @@ const UserModal = () => {
                             reset();
                           },
                         },
+                      }}
+                      onKeyUp={(e) => {
+                        e?.target.value !== "" &&
+                          handleSearchSedar(e?.target.value);
                       }}
                       minWidth={320}
                       renderInput={(params) => (
@@ -591,8 +621,6 @@ const UserModal = () => {
               </Button>
             </DialogActions>
           </form>
-        ) : (
-          <MobileLoading />
         )}
       </Box>
 

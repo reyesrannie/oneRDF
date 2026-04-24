@@ -11,7 +11,7 @@ const Supplier = () => {
   const supplier = navigation?.find((nav) => nav.segment === "supplier");
 
   return (
-    <Box ml={5}>
+    <Box padding={2}>
       <Stack gap={1} display={"flex"} flexDirection={"column"}>
         <BreadCrumbs />
 
@@ -20,7 +20,7 @@ const Supplier = () => {
           flexDirection={"row"}
           justifyContent="space-between"
         >
-          <Typography fontSize={"24px"} fontWeight={600}>
+          <Typography fontSize={"18px"} fontWeight={600}>
             Supplier
           </Typography>
         </Stack>

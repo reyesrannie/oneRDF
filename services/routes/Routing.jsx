@@ -14,12 +14,12 @@ const Routing = () => {
 
   const filterNavigation = filterNavigationByAccess(
     navigation,
-    user?.access_permission
+    user?.access_permission,
   );
 
   const defaultRoute = useMemo(
     () => getFirstAccessibleRoute(filterNavigation, user?.access_permission),
-    [navigation]
+    [navigation],
   );
 
   const routes = useRoutes([

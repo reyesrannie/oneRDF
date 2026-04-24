@@ -126,7 +126,7 @@ const AccountTitle = () => {
   const mapped = readExcelItems(importData, importHeader);
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -134,7 +134,7 @@ const AccountTitle = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Account Title
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
@@ -166,7 +166,7 @@ const AccountTitle = () => {
       </Stack>
       <Stack
         minHeight={"45vh"}
-        maxWidth={`calc(100vw - 370px)`}
+        maxWidth={`calc(100vw - 160px)`}
         marginTop={1}
         paddingX={3} // left and right
         paddingBottom={3}

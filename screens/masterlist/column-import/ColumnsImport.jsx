@@ -10,33 +10,34 @@ import React, { useState } from "react";
 import StatusFilter from "../../../components/custom/StatusFilter";
 import AppSearch from "../../../components/custom/AppSearch";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
-  setCategory,
-  setCategoryData,
+  setColumn,
+  setColumnData,
 } from "../../../services/server/slice/modalSlice";
 import CardList from "../../../components/custom/CardList";
 import useParamsHook from "../../../services/hooks/useParamsHook";
 import MobileLoading from "../../../components/custom/MobileLoading";
 import NoDataFound from "../../../components/custom/NoDataFound";
 import TableGrid from "../../../components/custom/TableGrid";
-import { useArchiveCategoryMutation } from "../../../services/server/api/categoryAPI";
 import CategoryModal from "../../../components/modal/CategoryModal";
 import MenuPopper from "../../../components/custom/MenuPopper";
 import AppPrompt from "../../../components/custom/AppPrompt";
 import warning from "../../../assets/svg/warning.svg";
 import { enqueueSnackbar } from "notistack";
-import { setArchive } from "../../../services/server/slice/promptSlice";
+import {
+  resetPrompt,
+  setArchive,
+} from "../../../services/server/slice/promptSlice";
 import CustomPagination from "../../../components/custom/CustomPagination";
 import {
-  useCustomerQuery,
-  useSyncArcanaMutation,
-} from "../../../services/server/api/customerAPI";
-import { singleError } from "../../../services/functions/errorResponse";
+  useArchiveColumnMutation,
+  useColumnQuery,
+} from "../../../services/server/api/masterlist/columnAPI";
+import ColumnModal from "../../../components/modal/masterlist/ColumnModal";
 
-const Customer = () => {
+const ColumnsImport = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const {
@@ -48,56 +49,32 @@ const Customer = () => {
     onStatusChange,
     onSort,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useCustomerQuery(params);
+  const { data, isLoading, isError, isFetching } = useColumnQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
-  const categoryData = useSelector((state) => state.modal.categoryData);
+  const columnData = useSelector((state) => state.modal.columnData);
+  const archive = useSelector((state) => state.prompt.archive);
 
-  const [archiveCategory, { isLoading: loadingArchive }] =
-    useArchiveCategoryMutation();
-
-  const [syncArcana, { isLoading: loadingArcanaSync }] =
-    useSyncArcanaMutation();
+  const [archiveColumn, { isLoading: loadingArchive }] =
+    useArchiveColumnMutation();
 
   const header = [
     {
-      name: "Code",
-      value: "code",
-    },
-    {
       name: "Name",
+      alignHeader: "center",
       value: "name",
-    },
-    {
-      name: "Type",
-      value: "customer_type",
-    },
-    {
-      name: "Terms",
-      value: "terms",
-    },
-    {
-      name: "Business name",
-      value: "business_name",
+      alignValue: "center",
     },
   ];
 
   const onClickHandler = async () => {
     try {
-      const res = await archiveCategory(categoryData).unwrap();
+      const res = await archiveColumn(columnData).unwrap();
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
       dispatch(resetModal());
+      dispatch(resetPrompt());
     } catch (error) {}
-  };
-
-  const syncArcanaHandler = async () => {
-    try {
-      const res = await syncArcana().unwrap();
-      enqueueSnackbar(res?.message, { variant: "success" });
-    } catch (error) {
-      singleError(error, enqueueSnackbar);
-    }
   };
 
   return (
@@ -110,16 +87,15 @@ const Customer = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"18px"} fontWeight={600}>
-            Customer
+            Columns
           </Typography>
 
           <Stack flexDirection={"row"} gap={2}>
             <Button
-              loading={loadingArcanaSync}
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<CloudSyncOutlinedIcon />}
+              startIcon={<AddCircleOutlineOutlinedIcon />}
               sx={{
                 textTransform: "capitalize",
                 fontSize: "10px",
@@ -129,10 +105,10 @@ const Customer = () => {
                 },
               }}
               onClick={() => {
-                syncArcanaHandler();
+                dispatch(setColumn(true));
               }}
             >
-              Sync
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -179,13 +155,13 @@ const Customer = () => {
             items={data}
             mapFrom={"data"}
             title={"name"}
-            // open={(e, i) => {
-            //   dispatch(setCategoryData(i));
-            //   setAnchorEl({
-            //     mouseX: e.clientX,
-            //     mouseY: e.clientY,
-            //   });
-            // }}
+            open={(e, i) => {
+              dispatch(setColumnData(i));
+              setAnchorEl({
+                mouseX: e.clientX,
+                mouseY: e.clientY,
+              });
+            }}
           />
         ) : (
           <TableGrid
@@ -193,14 +169,13 @@ const Customer = () => {
             items={data}
             params={params}
             onSort={onSort}
-
-            // onSelect={(e, i) => {
-            //   dispatch(setCategoryData(i));
-            //   setAnchorEl({
-            //     mouseX: e.clientX,
-            //     mouseY: e.clientY,
-            //   });
-            // }}
+            onSelect={(e, i) => {
+              dispatch(setColumnData(i));
+              setAnchorEl({
+                mouseX: e.clientX,
+                mouseY: e.clientY,
+              });
+            }}
           />
         )}
       </Stack>
@@ -213,14 +188,14 @@ const Customer = () => {
         />
       )}
 
-      <CategoryModal />
+      <ColumnModal />
       <MenuPopper
         params={params}
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
         update={() => {
           setAnchorEl(null);
-          dispatch(setCategory(true));
+          dispatch(setColumn(true));
         }}
         archive={() => {
           setAnchorEl(null);
@@ -228,9 +203,10 @@ const Customer = () => {
         }}
       />
       <AppPrompt
+        open={archive}
         image={warning}
-        title={`${params?.status === "active" ? "Archive" : "Restore"} category?`}
-        message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this category?`}
+        title={`${params?.status === "active" ? "Archive" : "Restore"} column?`}
+        message={`Are you sure you want to ${params?.status === "active" ? "archive" : "restore"} this column?`}
         confirmButton={`Yes, ${params?.status === "active" ? "Archive" : "Restore"} it!`}
         cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
         confirmOnClick={onClickHandler}
@@ -240,4 +216,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default ColumnsImport;

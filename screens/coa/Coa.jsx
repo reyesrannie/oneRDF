@@ -11,7 +11,7 @@ const Coa = () => {
   const coa = navigation?.find((nav) => nav.segment === "coa");
 
   return (
-    <Box ml={5}>
+    <Box padding={2}>
       <Stack gap={1} display={"flex"} flexDirection={"column"}>
         <BreadCrumbs />
         <Stack
@@ -19,7 +19,7 @@ const Coa = () => {
           flexDirection={"row"}
           justifyContent="space-between"
         >
-          <Typography fontSize={"24px"} fontWeight={600}>
+          <Typography fontSize={"18px"} fontWeight={600}>
             Chart of Account
           </Typography>
         </Stack>

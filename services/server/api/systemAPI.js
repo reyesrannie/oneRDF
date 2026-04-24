@@ -27,6 +27,14 @@ export const systemAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Systems", "SystemsImages"],
     }),
+    archiveSystem: builder.mutation({
+      query: (payload) => ({
+        url: `/system/${payload?.id}`,
+        method: "DELETE",
+        body: payload,
+      }),
+      invalidatesTags: ["Systems", "SystemsImages"],
+    }),
     storeFile: builder.mutation({
       query: (payload) => ({
         url: "/store_file",
@@ -54,6 +62,7 @@ export const {
   useSystemsQuery,
   useAddSystemMutation,
   useUpdateSystemMutation,
+  useArchiveSystemMutation,
   useStoreFileMutation,
   useLazySystemsQuery,
   useLazyGetFileQuery,

@@ -10,6 +10,8 @@ import modalSlice from "./slice/modalSlice";
 import systemSlice from "./slice/systemSlice";
 import promptSlice from "./slice/promptSlice";
 import syncSlice from "./slice/syncSlice";
+import valuesSlice from "./slice/valuesSlice";
+
 import { sedarAPI } from "./request/sedarAPI";
 
 export const store = configureStore({
@@ -23,6 +25,7 @@ export const store = configureStore({
     system: systemSlice,
     prompt: promptSlice,
     sync: syncSlice,
+    values: valuesSlice,
 
     [sedarAPI.reducerPath]: sedarAPI.reducer,
     [serverAPI.reducerPath]: serverAPI.reducer,

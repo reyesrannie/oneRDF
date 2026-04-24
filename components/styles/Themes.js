@@ -199,7 +199,7 @@ export const Themes = () => {
             styleOverrides: {
               root: {
                 color: mode === "light" ? "#496D89" : "#f0e7c4",
-                fontSize: "14px",
+                fontSize: "12px",
                 "&.Mui-focused": {
                   color: "#496D89",
                 },
@@ -218,7 +218,7 @@ export const Themes = () => {
               root: {
                 backgroundColor: "#FFFFFF",
                 maxHeight: "calc(100vh - 600px)",
-                minHeight: "calc(100vh - 440px)",
+                minHeight: "calc(100vh - 280px)",
                 // maxWidth: "calc(100vw - 370px)",
                 borderRadius: 1,
               },

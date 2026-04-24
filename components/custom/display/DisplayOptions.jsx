@@ -6,23 +6,24 @@ import {
   setSystemDisplay,
 } from "../../../services/server/slice/renderSlice";
 
-// 1. Update Styled Component to accept a custom prop 'isSlider'
-// We use 'shouldForwardProp' to prevent 'isSlider' from being passed to the DOM element
 const StyledToggleButtonGroup = styled(ToggleButtonGroup, {
   shouldForwardProp: (prop) => prop !== "isSlider",
 })(({ theme, isSlider }) => ({
   "& .MuiToggleButtonGroup-grouped": {
-    // 2. DYNAMIC STYLES: Check isSlider
     border: isSlider ? "1px solid rgba(255,255,255,0.7)" : "1px solid #888888",
     color: isSlider ? "#ffffff" : "#888888", // White for slider, Gray for list
-
     borderRadius: "50px",
     padding: "6px 24px",
-    fontSize: "14px",
+    fontSize: "10px",
+
+    [theme.breakpoints.up("md")]: {
+      padding: "6px 24px",
+      fontSize: "12px",
+    },
+
     textTransform: "capitalize",
     backgroundColor: "transparent",
 
-    // Prevent double borders in the middle
     "&:not(:first-of-type)": {
       marginLeft: "-1px",
       borderLeft: "1px solid transparent",
@@ -34,7 +35,6 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup, {
       borderBottomRightRadius: 0,
     },
 
-    // Selected State (Blue Border & Text)
     "&.Mui-selected": {
       borderColor: "#1677FB",
       color: "#1677FB",
@@ -44,7 +44,6 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup, {
         backgroundColor: "rgba(22, 119, 251, 0.04)",
       },
 
-      // Fix left border for second item if selected
       "& + .MuiToggleButtonGroup-grouped": {
         borderLeft: isSlider
           ? "1px solid rgba(255,255,255,0.3)"

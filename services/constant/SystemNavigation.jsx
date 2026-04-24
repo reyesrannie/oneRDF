@@ -31,8 +31,12 @@ import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
+<<<<<<< HEAD
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import Uom from "../../screens/item-listing/uom/Uom";
+=======
+import ColumnsImport from "../../screens/masterlist/column-import/ColumnsImport";
+>>>>>>> AdjustmentForImageRendering
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
 const UserManagement = lazy(() => import("../../screens/user/UserManagement"));
@@ -126,9 +130,12 @@ const BufferSeverity = lazy(
 );
 const References = lazy(
   () => import("../../screens/supplier/references/References"),
+<<<<<<< HEAD
 );
 const ItemListing = lazy(
   () => import("../../screens/item-listing/ItemListing"),
+=======
+>>>>>>> AdjustmentForImageRendering
 );
 
 const SystemNavigation = () => {
@@ -173,6 +180,14 @@ const SystemNavigation = () => {
           element: <Category />,
           route: "/masterlist/category",
           permission: ["category"],
+        },
+        {
+          segment: "columns",
+          title: "Columns",
+          icon: <CategoryOutlinedIcon />,
+          element: <ColumnsImport />,
+          route: "/masterlist/columns",
+          permission: ["columns"],
         },
       ],
     },

@@ -43,6 +43,9 @@ import { hasAccess } from "../../services/functions/access";
 import { resetModal } from "../../services/server/slice/modalSlice";
 import { resetPrompt } from "../../services/server/slice/promptSlice";
 import { resetSync } from "../../services/server/slice/syncSlice";
+import { Suspense } from "react";
+import LoadingRender from "./LoadingRender";
+import RouteLoader from "./RouteLoader";
 
 const drawerWidth = 240;
 
@@ -76,7 +79,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
+  minHeight: "30px",
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -394,7 +397,7 @@ const SystemAppBar = () => {
       <Box
         sx={{
           flexGrow: 1,
-          p: 2,
+          p: 1,
           width: "100vw",
           bgcolor: "#D9D9D9",
 
@@ -406,8 +409,9 @@ const SystemAppBar = () => {
         // `url('${systemImageBackground?.find((img) => img?.id === selectedSystem?.id)?.url || ""}') no-repeat center center / cover`
       >
         <DrawerHeader />
-
-        <Outlet />
+        <Suspense key={location.pathname} fallback={<RouteLoader />}>
+          <Outlet />
+        </Suspense>
       </Box>
 
       <Menu

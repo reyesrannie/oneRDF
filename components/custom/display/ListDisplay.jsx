@@ -88,7 +88,7 @@ const ListDisplay = ({ data }) => {
         position: "relative",
         "& .swiper": {
           width: "100%",
-          paddingBottom: "60px",
+          paddingBottom: { xs: "10px", md: "20px" },
           paddingLeft: { xs: "0px", md: "50px" },
           paddingRight: { xs: "0px", md: "50px" },
         },
@@ -124,8 +124,7 @@ const ListDisplay = ({ data }) => {
           right: { md: "40px" },
           zIndex: 10,
           flexDirection: { xs: "column", md: "row" },
-          marginTop: { xs: "20px", md: "0" },
-          marginBottom: { xs: "20px", md: "0" },
+          marginBottom: { xs: "10px", md: "0" },
           paddingX: { xs: 2, md: 0 },
         }}
       >
@@ -170,7 +169,7 @@ const ListDisplay = ({ data }) => {
         modules={[Pagination, Navigation]}
         navigation={true}
         pagination={{ clickable: true }}
-        spaceBetween={isSmallScreen ? 30 : 500}
+        // spaceBetween={1}
       >
         {dataChunks.map((chunk, pageIndex) => (
           <SwiperSlide key={pageIndex}>
@@ -182,7 +181,7 @@ const ListDisplay = ({ data }) => {
                 height: "100%",
                 width: "100%",
                 // Increase top padding on Medium to clear filters, as the column starts higher
-                paddingTop: { xs: "10px", md: "60px" },
+                paddingTop: { xs: "unset", md: "60px" },
               }}
             >
               <Grid

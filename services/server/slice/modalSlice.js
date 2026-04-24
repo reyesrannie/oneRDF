@@ -79,11 +79,16 @@ const initialState = {
   supplierData: null,
   // <-- Supplier Ends here
 
+<<<<<<< HEAD
   //ItemListing Starts here -->
   uom: false,
   uomData: null,
 
   // <-- ItemListing Ends here
+=======
+  column: false,
+  columnData: null,
+>>>>>>> AdjustmentForImageRendering
 };
 
 const modalSlice = createSlice({
@@ -312,6 +317,14 @@ const modalSlice = createSlice({
     setImportErrorMessage: (state, action) => {
       state.importErrorMessage = action.payload;
     },
+
+    setColumn: (state, action) => {
+      state.column = action.payload;
+    },
+    setColumnData: (state, action) => {
+      state.columnData = action.payload;
+    },
+
     resetModal: () => {
       return initialState;
     },
@@ -401,6 +414,9 @@ export const {
   setImportData,
   setImportError,
   setImportErrorMessage,
+
+  setColumn,
+  setColumnData,
   resetModal,
 } = modalSlice.actions;
 

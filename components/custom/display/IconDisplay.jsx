@@ -20,8 +20,8 @@ const IconDisplay = ({ data }) => {
     <Box
       sx={{
         position: "relative",
-        width: "100%",
-        height: "100vh",
+        width: { xs: "98vw", xl: "100%" },
+        height: { xs: "unset", xl: "100vh" },
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
@@ -31,8 +31,8 @@ const IconDisplay = ({ data }) => {
         <Box
           sx={{
             position: { xs: "unset", md: "absolute" },
-            bottom: { md: "150px" },
-            left: { md: "160px" },
+            bottom: { md: "1px", xl: "150px" },
+            left: { lg: "160px" },
             zIndex: 10,
           }}
         >
@@ -43,6 +43,7 @@ const IconDisplay = ({ data }) => {
             marginLeft={{ xs: 0, md: 8, lg: 20 }}
             spacing={3}
             alignItems={{ xs: "center", md: "flex-start" }}
+            width={{ xs: "90vw", md: "unset" }}
             sx={{
               animation: "fadeIn 0.5s ease-in-out",
               "@keyframes fadeIn": {
@@ -53,11 +54,12 @@ const IconDisplay = ({ data }) => {
             key={selectedSystem?.id || "system-text"}
           >
             <Typography
-              variant="h2"
+              variant={"h1"}
               sx={{
                 fontWeight: "bold",
                 color: "#FFFFFF",
                 textAlign: { xs: "center", md: "left" },
+                fontSize: { xs: "1.5rem", md: "2rem", lg: "3rem" },
               }}
             >
               {selectedSystem?.system_name}
@@ -66,17 +68,15 @@ const IconDisplay = ({ data }) => {
             <Typography
               sx={{
                 color: "#FFFFFF",
-                fontSize: "16px",
+                fontSize: { xs: "12px", md: "16px" },
                 lineHeight: 1.6,
                 maxWidth: "500px",
                 textAlign: { xs: "center", md: "left" },
 
-                // --- ADDED CLAMPING LOGIC HERE ---
                 display: "-webkit-box",
                 overflow: "hidden",
                 WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 3, // Limits text to 4 lines
-                // ---------------------------------
+                WebkitLineClamp: 3,
               }}
             >
               {selectedSystem?.description}
@@ -89,7 +89,7 @@ const IconDisplay = ({ data }) => {
                 filter: "brightness(1.2)",
                 color: "white",
                 fontWeight: "bold",
-                padding: "12px 40px",
+                padding: { sx: "12px 40px", lg: "12px 40px" },
                 "&:hover": {
                   backgroundColor: "white",
                   color: "#F7941D",
@@ -148,10 +148,6 @@ const IconDisplay = ({ data }) => {
               style={{ paddingBottom: "50px", width: "100%" }}
             >
               {data?.map((item, index) => {
-                // const image = systemImage?.find(
-                //   (img) => img?.id === item?.id,
-                // )?.url;
-
                 return (
                   <SwiperSlide
                     key={item?.id}
@@ -167,11 +163,17 @@ const IconDisplay = ({ data }) => {
                       alignItems="center"
                       sx={{
                         width: "100%",
-                        height: "400px",
+                        height: { sx: "200px", md: "300px", lg: "400px" },
                         opacity: activeIndex === index ? 1 : 0.5,
                         transition: "opacity 0.3s ease",
                         transform:
                           activeIndex === index ? "scale(1.3)" : "scale(0.7)",
+                      }}
+                      onClick={() => {
+                        const query = encodeURIComponent(
+                          JSON.stringify(selectedSystem),
+                        );
+                        window.open(`/redirect?data=${query}`, "_blank");
                       }}
                     >
                       <Box

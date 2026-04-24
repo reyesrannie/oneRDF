@@ -83,7 +83,7 @@ const SystemModal = () => {
         </DialogTitle>
       </Box>
       <DialogContent>
-        <Box minWidth={isTablet ? 400 : 300} padding={2}>
+        <Box minWidth={isTablet ? 400 : 300}>
           <System />
         </Box>
       </DialogContent>

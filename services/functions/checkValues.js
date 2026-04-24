@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 export const checkValues = (values = []) => {
   return Object.keys(values).every(
@@ -93,4 +93,58 @@ export const openFileSelect = (
   document.body.appendChild(input);
   input.click();
   document.body.removeChild(input);
+};
+
+export const generateUserPayload = (data, systemsList) => {
+  return data.map((row) => {
+    const formattedRow = {
+      id_no: String(row["ID No"] || ""),
+      id_prefix: row["ID Prefix"] || "",
+      first_name: row["First Name"] || "",
+      middle_name: row["Middle Name"] || "",
+      last_name: row["Last Name"] || "",
+      suffix: row["Suffix"] || "",
+      username: row["Username"] || "",
+      systems: [],
+    };
+
+    systemsList.forEach((system) => {
+      if (row[system.name]) {
+        formattedRow.systems.push(row[system?.name]);
+      }
+    });
+
+    return formattedRow;
+  });
+};
+
+export const useDebounceCallback = (callback, delay = 500) => {
+  const timeoutRef = useRef(null);
+
+  const callbackRef = useRef(callback);
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const debouncedFunction = useMemo(() => {
+    return (...args) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        callbackRef.current(...args);
+      }, delay);
+    };
+  }, [delay]);
+
+  return debouncedFunction;
 };

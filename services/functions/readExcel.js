@@ -43,7 +43,7 @@ const readOneChargingExcel = (
   department = [],
   unit = [],
   subUnit = [],
-  location = []
+  location = [],
 ) => {
   const payload = data?.map((items) => ({
     code: items["Code"],
@@ -51,19 +51,19 @@ const readOneChargingExcel = (
     company: company?.find((i) => i?.code === items["Company Code"]?.toString())
       ?.name,
     business_unit: business?.find(
-      (i) => i?.code === items["Business Unit Code"]?.toString()
+      (i) => i?.code === items["Business Unit Code"]?.toString(),
     )?.name,
     department: department?.find(
-      (i) => i?.code === items["Department Code"]?.toString()
+      (i) => i?.code === items["Department Code"]?.toString(),
     )?.name,
     department_unit: unit?.find(
-      (i) => i?.code === items["Unit Code"]?.toString()
+      (i) => i?.code === items["Unit Code"]?.toString(),
     )?.name,
     sub_unit: subUnit?.find(
-      (i) => i?.code === items["Subunit Code"]?.toString()
+      (i) => i?.code === items["Subunit Code"]?.toString(),
     )?.name,
     location: location?.find(
-      (i) => i?.code === items["Location Code"]?.toString()
+      (i) => i?.code === items["Location Code"]?.toString(),
     )?.name,
   }));
 

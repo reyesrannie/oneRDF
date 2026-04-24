@@ -57,6 +57,7 @@ const Autocomplete = ({
             disabled={disabled}
             {...autocomplete}
             filterOptions={filterOptions}
+            filterSelectedOptions
             error={error}
             helpertext={helpertext}
             value={value}

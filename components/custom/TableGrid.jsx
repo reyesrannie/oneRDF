@@ -62,7 +62,6 @@ const TableGrid = ({
                       const nextSort =
                         params?.sorts === sortKey ? `-${sortKey}` : sortKey;
 
-                      console.log(params);
                       onSort(nextSort);
                     }}
                   >

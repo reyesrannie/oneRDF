@@ -43,8 +43,10 @@ import {
   useAccountSubGroupQuery,
   useArchiveAccountSubGroupMutation,
   useImportAccountSubGroupMutation,
+  useLazyAccountSubGroupQuery,
 } from "../../../services/server/api/accountSubGroupAPI";
 import AccountSubGroupModal from "../../../components/modal/AccountSubGroupModal";
+import { exportToExcel } from "../../../services/functions/exportExcel";
 
 const AccountSubGroup = () => {
   const dispatch = useDispatch();
@@ -113,7 +115,7 @@ const AccountSubGroup = () => {
   const mapped = readExcelItems(importData, importHeader);
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -121,7 +123,7 @@ const AccountSubGroup = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Account Sub Group
           </Typography>
           <Stack flexDirection={"row"} gap={2}>

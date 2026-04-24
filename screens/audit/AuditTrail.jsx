@@ -116,19 +116,19 @@ const AuditTrail = () => {
           flexDirection={"row"}
           justifyContent="space-between"
         >
-          <Typography fontSize={"24px"} fontWeight={600}>
+          <Typography fontSize={"18px"} fontWeight={600}>
             Audit Trail
           </Typography>
         </Stack>
       </Stack>
-      <Stack display={"flex"} flexDirection={"column"} mt={5}>
+      <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
           flexDirection={"row"}
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Audit
           </Typography>
           <Stack flexDirection={"row"} gap={2}>

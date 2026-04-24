@@ -1,4 +1,5 @@
 import { serverAPI } from "../request/serverAPI";
+import { setUnitData } from "../slice/valuesSlice";
 
 export const departmentUnitAPI = serverAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,6 +11,13 @@ export const departmentUnitAPI = serverAPI.injectEndpoints({
         params: payload,
       }),
       providesTags: ["DepartmentUnit"],
+      async onQueryStarted(payload, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data) dispatch(setUnitData(data));
+          else dispatch(setUnitData(data?.result));
+        } catch (error) {}
+      },
     }),
     addDepartmentUnit: builder.mutation({
       query: (payload) => ({

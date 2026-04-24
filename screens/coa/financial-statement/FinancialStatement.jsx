@@ -44,8 +44,10 @@ import {
   useArchiveFinancialStatementMutation,
   useFinancialStatementQuery,
   useImportFinancialStatementMutation,
+  useLazyFinancialStatementQuery,
 } from "../../../services/server/api/financialStatementAPI";
 import FinancialStatementModal from "../../../components/modal/FinancialStatementModal";
+import { exportToExcel } from "../../../services/functions/exportExcel";
 
 const FinancialStatement = () => {
   const dispatch = useDispatch();
@@ -113,8 +115,26 @@ const FinancialStatement = () => {
 
   const mapped = readExcelItems(importData, importHeader);
 
+  const [getAll, { data: allData, isLoading: loadingAll, isError: errorAll }] =
+    useLazyFinancialStatementQuery();
+
+  const excelColumns = [{ header: "Name", key: "name", width: 15 }];
+
+  const exportData = async () => {
+    try {
+      const res = await getAll({
+        status: "active",
+        pagination: "none",
+      }).unwrap();
+
+      await exportToExcel(res, excelColumns, "Financial_Statement.xlsx");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -122,10 +142,30 @@ const FinancialStatement = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Financial Statement
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              loading={loadingAll}
+              // startIcon={<SimCardDownloadOutlinedIcon />}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "10px",
+                maxHeight: "30px",
+                "& .MuiSvgIcon-root": {
+                  fontSize: "14px",
+                },
+              }}
+              onClick={(e) => {
+                exportData();
+              }}
+            >
+              Export
+            </Button>
             <Button
               variant="contained"
               color="primary"

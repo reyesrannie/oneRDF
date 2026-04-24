@@ -64,7 +64,7 @@ const AccountUnit = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const archive = useSelector((state) => state.prompt.archive);
-  const accountTypeData = useSelector((state) => state.modal.accountTypeData);
+  const accountTypeData = useSelector((state) => state.modal.accounUnitData);
   const importData = useSelector((state) => state.modal.importData);
 
   const importHeader = [{ name: "name", value: "Name" }];
@@ -110,7 +110,7 @@ const AccountUnit = () => {
   const mapped = readExcelItems(importData, importHeader);
 
   return (
-    <Stack mt={3}>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -118,7 +118,7 @@ const AccountUnit = () => {
           justifyContent="space-between"
           alignItems={"center"}
         >
-          <Typography color="primary" fontSize={"20px"} fontWeight={600}>
+          <Typography color="primary" fontSize={"18px"} fontWeight={600}>
             Account Unit
           </Typography>
           <Stack flexDirection={"row"} gap={2}>

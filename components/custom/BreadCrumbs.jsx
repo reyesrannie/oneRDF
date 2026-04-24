@@ -12,7 +12,7 @@ const BreadCrumbs = () => {
     const breadcrumbLinks = [
       <Link
         sx={{
-          fontSize: "14px",
+          fontSize: "12px",
         }}
         color="text.secondary"
         key={index}
@@ -31,9 +31,13 @@ const BreadCrumbs = () => {
       route?.children?.forEach((childRoute) => {
         location.pathname === childRoute?.route &&
           breadcrumbLinks.push(
-            <Typography className="last-item-breadcrumbs">
+            <Typography
+              sx={{
+                fontSize: "12px",
+              }}
+            >
               {childRoute.title}
-            </Typography>
+            </Typography>,
           );
       });
     }
@@ -45,7 +49,7 @@ const BreadCrumbs = () => {
     <Breadcrumbs separator=">">
       <Link
         sx={{
-          fontSize: "14px",
+          fontSize: "12px",
         }}
         color="background.default"
         href="/"
@@ -60,7 +64,7 @@ const BreadCrumbs = () => {
       {navigation.map(
         (route, index) =>
           location.pathname.split("/").slice(0, 2).join("/") === route.route &&
-          renderBreadcrumbLinks(route, index)
+          renderBreadcrumbLinks(route, index),
       )}
     </Breadcrumbs>
   );

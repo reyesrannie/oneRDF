@@ -48,30 +48,28 @@ const usePayloadMapper = () => {
     const items = data?.map((titles) => ({
       ...titles,
       account_type_id: accountType?.find(
-        (type) => type?.name === titles?.account_type_id
+        (type) => type?.name === titles?.account_type_id,
       )?.id,
       account_group_id: accountGroup?.find(
-        (type) => type?.name === titles?.account_group_id
+        (type) => type?.name === titles?.account_group_id,
       )?.id,
       account_sub_group_id: accountSubGroup?.find(
-        (type) => type?.name === titles?.account_sub_group_id
+        (type) => type?.name === titles?.account_sub_group_id,
       )?.id,
       financial_statement_id: financialStatement?.find(
-        (type) => type?.name === titles?.financial_statement_id
+        (type) => type?.name === titles?.financial_statement_id,
       )?.id,
       normal_balance_id: normalBalance?.find(
-        (type) => type?.name === titles?.normal_balance_id
+        (type) => type?.name === titles?.normal_balance_id,
       )?.id,
       account_unit_id: accountUnit?.find(
-        (type) => type?.name === titles?.account_unit_id
+        (type) => type?.name === titles?.account_unit_id,
       )?.id,
       allocation_id:
         allocation?.find((type) => type?.name === titles?.allocation_id)?.id ||
         "",
       charge_id: charge?.find((type) => type?.name === titles?.charge_id)?.id,
     }));
-
-    console.log(accountSubGroup);
 
     return items;
   };
