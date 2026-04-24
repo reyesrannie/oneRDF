@@ -79,16 +79,13 @@ const initialState = {
   supplierData: null,
   // <-- Supplier Ends here
 
-<<<<<<< HEAD
   //ItemListing Starts here -->
   uom: false,
   uomData: null,
 
   // <-- ItemListing Ends here
-=======
   column: false,
   columnData: null,
->>>>>>> AdjustmentForImageRendering
 };
 
 const modalSlice = createSlice({

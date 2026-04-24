@@ -5,7 +5,7 @@ export const uomAPI = serverAPI.injectEndpoints({
     uom: builder.query({
       transformResponse: (response) => response?.data,
       query: (payload) => ({
-        url: `item/uom`,
+        url: `uom`,
         method: "GET",
         params: payload,
       }),
@@ -13,7 +13,7 @@ export const uomAPI = serverAPI.injectEndpoints({
     }),
     addUom: builder.mutation({
       query: (payload) => ({
-        url: "item/uom",
+        url: "uom",
         method: "POST",
         body: payload,
       }),
@@ -21,7 +21,7 @@ export const uomAPI = serverAPI.injectEndpoints({
     }),
     updateUom: builder.mutation({
       query: (payload) => ({
-        url: `item/uom/${payload?.id}`,
+        url: `uom/${payload?.id}`,
         method: "PUT",
         body: payload,
       }),
@@ -29,7 +29,7 @@ export const uomAPI = serverAPI.injectEndpoints({
     }),
     archiveUom: builder.mutation({
       query: (payload) => ({
-        url: `item/uom/${payload?.id}`,
+        url: `uom/${payload?.id}`,
         method: "DELETE",
         body: payload,
       }),

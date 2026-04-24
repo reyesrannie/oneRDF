@@ -22,10 +22,18 @@ import excel from "../../assets/svg/excel.svg";
 
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import ImportExportOutlinedIcon from "@mui/icons-material/ImportExportOutlined";
+import DownloadIcon from "@mui/icons-material/Download";
+
 import { readExcelFile } from "../../services/functions/readExcel";
 import { useSnackbar } from "notistack";
+import { exportToExcel } from "../../services/functions/exportExcel";
 
-const ImportModal = ({ title, importDataHandler, loading }) => {
+const ImportModal = ({
+  title,
+  importDataHandler,
+  loading,
+  importHeader = [],
+}) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -77,6 +85,20 @@ const ImportModal = ({ title, importDataHandler, loading }) => {
     e.preventDefault();
   };
 
+  const exportTemplate = async () => {
+    const templateColumns = importHeader.map((header) => ({
+      header: header.value,
+      key: header.name,
+      width: 20,
+    }));
+
+    try {
+      await exportToExcel([], templateColumns, `${title}_Template.xlsx`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -92,12 +114,9 @@ const ImportModal = ({ title, importDataHandler, loading }) => {
           Upload a CSV to import {title?.toLowerCase()} data to database
         </Typography>
       </DialogTitle>
-      <DialogContent
-        onClick={() => fileInputRef?.current?.click()}
-        onDragOver={handleDragOver}
-        onDrop={readFileDrop}
-      >
+      <DialogContent onDragOver={handleDragOver} onDrop={readFileDrop}>
         <Box
+          onClick={() => fileInputRef?.current?.click()}
           sx={{
             height: "200px",
             border: "2px dashed #E0E0E0",
@@ -142,6 +161,28 @@ const ImportModal = ({ title, importDataHandler, loading }) => {
             style={{ display: "none" }}
             onChange={readFile}
           />
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Button
+            variant="text"
+            startIcon={<DownloadIcon />}
+            onClick={(e) => {
+              e.stopPropagation();
+              exportTemplate(); // Prevents any accidental bubbling
+            }}
+            sx={{
+              textTransform: "none", // Keeps it looking like normal text instead of ALL CAPS
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "primary.main",
+              "&:hover": {
+                textDecoration: "underline",
+                bgcolor: "transparent",
+              },
+            }}
+          >
+            Download the template here
+          </Button>
         </Box>
       </DialogContent>
 

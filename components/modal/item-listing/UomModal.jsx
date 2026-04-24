@@ -1,10 +1,12 @@
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   IconButton,
   Stack,
   Typography,
@@ -19,7 +21,7 @@ import {
 } from "../../../services/server/slice/modalSlice";
 import "react-tabs/style/react-tabs.css";
 import "../../styles/Modal.scss";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import AppTextBox from "../../custom/AppTextBox";
 
@@ -66,6 +68,7 @@ const UomModal = () => {
       description: submitData?.description,
       is_integer: submitData?.is_integer,
     };
+
     try {
       const res =
         uomData !== null
@@ -163,6 +166,28 @@ const UomModal = () => {
                 error={Boolean(errors?.description)}
                 helperText={errors?.description?.message}
               />
+              <Controller
+                name="is_integer"
+                control={control}
+                defaultValue={false}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...field}
+                        sx={{
+                          color: "#000000",
+                        }}
+                        color="primary"
+                        checked={Boolean(field.value)}
+                      />
+                    }
+                    label={
+                      <Typography color="secondary">Allow Decimals</Typography>
+                    }
+                  />
+                )}
+              />
             </Stack>
           </Box>
         </DialogContent>
@@ -179,7 +204,7 @@ const UomModal = () => {
             type="submit"
             disabled={
               watch("code") === "" ||
-              watch("description") ||
+              watch("description") === "" ||
               loadingAddType ||
               loadingUpdateType
             }

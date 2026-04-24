@@ -6,6 +6,7 @@ const exportToExcel = async (data, columns, fileName = "Export.xlsx") => {
   const worksheet = workbook.addWorksheet("Sheet 1");
 
   worksheet.columns = columns;
+
   worksheet.getRow(1).font = { bold: true };
 
   worksheet.addRows(data);

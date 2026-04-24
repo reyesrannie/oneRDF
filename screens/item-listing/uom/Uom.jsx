@@ -39,6 +39,8 @@ import {
   useUomQuery,
 } from "../../../services/server/api/item-listing/bufferAPI";
 import UomModal from "../../../components/modal/item-listing/UomModal";
+import ImportModal from "../../../components/modal/ImportModal";
+import { readExcelItems } from "../../../services/functions/readExcel";
 
 const Uom = () => {
   const dispatch = useDispatch();
@@ -58,6 +60,7 @@ const Uom = () => {
 
   const uomData = useSelector((state) => state.modal.uomData);
   const archive = useSelector((state) => state.prompt.archive);
+  const importData = useSelector((state) => state.modal.importData);
 
   const [archiveUom, { isLoading: loadingArchive }] = useArchiveUomMutation();
 
@@ -67,14 +70,24 @@ const Uom = () => {
       value: "id",
     },
     {
-      name: "Name",
-      value: "name",
+      name: "Code",
+      value: "code",
+    },
+    {
+      name: "Description",
+      value: "description",
     },
     {
       name: params.status === "inactive" ? "Deleted At" : "Date Modified",
       value: params.status === "inactive" ? "deleted_at" : "updated_at",
-      uom: "date",
+      type: "date",
     },
+  ];
+
+  const importHeader = [
+    { name: "code", value: "Code" },
+    { name: "description", value: "Description" },
+    { name: "is_integer", value: "Allow Decimal" },
   ];
 
   const onClickHandler = async () => {
@@ -86,6 +99,22 @@ const Uom = () => {
       dispatch(resetModal());
       dispatch(resetPrompt());
     } catch (error) {}
+  };
+
+  const handleImport = async () => {
+    const mapped = readExcelItems(importData, importHeader);
+    // try {
+    //   const res = await importCharge(mapped).unwrap();
+    //   dispatch(resetModal());
+    //   enqueueSnackbar(res?.message, {
+    //     variant: "success",
+    //   });
+    // } catch (error) {
+    //   dispatch(setImportErrorMessage(error?.data?.errors));
+    //   enqueueSnackbar("Something went wrong", {
+    //     variant: "error",
+    //   });
+    // }
   };
 
   return (
@@ -116,8 +145,10 @@ const Uom = () => {
                 },
               }}
               onClick={(e) => {
-                dispatch(resetModal());
-                dispatch(setUom(true));
+                setAnchorE2({
+                  mouseX: e.clientX,
+                  mouseY: e.clientY,
+                });
               }}
             >
               Add
@@ -201,6 +232,14 @@ const Uom = () => {
       )}
 
       <UomModal />
+
+      <ImportModal
+        title="Uom"
+        importDataHandler={handleImport}
+        importHeader={importHeader}
+        // loading={loadingImport}
+      />
+
       <MenuPopper
         params={params}
         anchorEl={anchorEl}
@@ -212,6 +251,19 @@ const Uom = () => {
         archive={() => {
           setAnchorEl(null);
           dispatch(setArchive(true));
+        }}
+      />
+
+      <MenuOptions
+        anchorEl={anchorE2}
+        setAnchorEl={setAnchorE2}
+        addOption={() => {
+          dispatch(setUom(true));
+          setAnchorE2(null);
+        }}
+        importOption={() => {
+          dispatch(setImport(true));
+          setAnchorE2(null);
         }}
       />
 
