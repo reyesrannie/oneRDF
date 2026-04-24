@@ -233,6 +233,7 @@ const UserManagement = () => {
     const payload = generateUserPayload(importData, columnData);
     try {
       const res = await userCheck(payload).unwrap();
+
       await processSyncing(
         [...res?.data?.existing_users, ...res?.data?.new_users],
         systemData,
@@ -256,15 +257,21 @@ const UserManagement = () => {
     for (let i = 0; i < usersData.length; i++) {
       const user = usersData[i];
 
-      const payloadUsers = {
-        ...user,
-        systems: user?.updated_system?.map((item) => ({ system_id: item })),
-      };
+      const hasAvailableSystem = user?.systems?.some((systemId) =>
+        allAvailableSystems.some((sys) => sys.id === systemId),
+      );
 
-      try {
-        const updates = await updateUser(payloadUsers).unwrap();
-      } catch (error) {
-        singleError(error, enqueueSnackbar);
+      if (hasAvailableSystem) {
+        const payloadUsers = {
+          ...user,
+          systems: user?.updated_system?.map((item) => ({ system_id: item })),
+        };
+
+        try {
+          await updateUser(payloadUsers).unwrap();
+        } catch (error) {
+          singleError(error, enqueueSnackbar);
+        }
       }
 
       for (let j = 0; j < user.systems.length; j++) {
