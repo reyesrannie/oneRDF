@@ -56,12 +56,16 @@ import {
   resetSync,
   setProgressDialog,
   setProgressPercent,
+  setRegistering,
 } from "../../services/server/slice/syncSlice";
 import Progress from "../../components/custom/Progress";
 import ImportModal from "../../components/modal/ImportModal";
 import SimCardDownloadOutlinedIcon from "@mui/icons-material/SimCardDownloadOutlined";
 import { hasAccess } from "../../services/functions/access";
-import { exportToExcel } from "../../services/functions/exportExcel";
+import {
+  exportFlatArrayToExcel,
+  exportToExcel,
+} from "../../services/functions/exportExcel";
 import { useColumnQuery } from "../../services/server/api/masterlist/columnAPI";
 
 const UserManagement = () => {
@@ -229,15 +233,39 @@ const UserManagement = () => {
   const importHandler = async () => {
     dispatch(setIsLoading(true));
     dispatch(setProgressDialog(true));
-
+    dispatch(setRegistering(true));
     const payload = generateUserPayload(importData, columnData);
-    try {
-      const res = await userCheck(payload).unwrap();
+    const CHUNK_SIZE = 100;
 
-      await processSyncing(
-        [...res?.data?.existing_users, ...res?.data?.new_users],
-        systemData,
-      );
+    let allExistingUsers = [];
+    let allNewUsers = [];
+
+    try {
+      const chunks = [];
+      for (let i = 0; i < payload.length; i += CHUNK_SIZE) {
+        chunks.push(payload.slice(i, i + CHUNK_SIZE));
+      }
+      const totalChunks = chunks.length;
+
+      for (let i = 0; i < totalChunks; i++) {
+        const chunk = chunks[i];
+        const res = await userCheck(chunk).unwrap();
+
+        if (res?.data?.existing_users) {
+          allExistingUsers.push(...res.data.existing_users);
+        }
+        if (res?.data?.new_users) {
+          allNewUsers.push(...res.data.new_users);
+        }
+        const progressPercentage = Math.round(((i + 1) / totalChunks) * 100);
+        dispatch(setProgressPercent(progressPercentage));
+
+        // exportFlatArrayToExcel(res);
+        // console.log(res);
+      }
+      dispatch(setRegistering(false));
+      dispatch(setProgressPercent(0));
+      await processSyncing([...allExistingUsers, ...allNewUsers], systemData);
     } catch (error) {}
 
     dispatch(setIsLoading(false));

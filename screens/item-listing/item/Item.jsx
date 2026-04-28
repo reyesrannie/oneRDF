@@ -14,8 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
   setImport,
-  setUom,
-  setUomData,
+  setItem,
+  setItemData,
 } from "../../../services/server/slice/modalSlice";
 
 import { enqueueSnackbar } from "notistack";
@@ -34,15 +34,17 @@ import NoDataFound from "../../../components/custom/NoDataFound";
 import TableGrid from "../../../components/custom/TableGrid";
 import CustomPagination from "../../../components/custom/CustomPagination";
 import MenuOptions from "../../../components/custom/MenuOptions";
-import {
-  useArchiveUomMutation,
-  useUomQuery,
-} from "../../../services/server/api/item-listing/bufferAPI";
-import UomModal from "../../../components/modal/item-listing/UomModal";
+
+// import ItemModal from "../../../components/modal/item-listing/ItemModal";
 import ImportModal from "../../../components/modal/ImportModal";
 import { readExcelItems } from "../../../services/functions/readExcel";
+import {
+  useArchiveItemMutation,
+  useItemQuery,
+} from "../../../services/server/api/item-listing/itemAPI";
+import ItemModal from "../../../components/modal/item-listing/ItemModal";
 
-const Uom = () => {
+const Item = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorE2, setAnchorE2] = useState(null);
@@ -55,14 +57,14 @@ const Uom = () => {
     onStatusChange,
     onSort,
   } = useParamsHook();
-  const { data, isLoading, isError, isFetching } = useUomQuery(params);
+  const { data, isLoading, isError, isFetching } = useItemQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
 
-  const uomData = useSelector((state) => state.modal.uomData);
+  const itemData = useSelector((state) => state.modal.itemData);
   const archive = useSelector((state) => state.prompt.archive);
   const importData = useSelector((state) => state.modal.importData);
 
-  const [archiveUom, { isLoading: loadingArchive }] = useArchiveUomMutation();
+  const [archiveItem, { isLoading: loadingArchive }] = useArchiveItemMutation();
 
   const header = [
     {
@@ -92,7 +94,7 @@ const Uom = () => {
 
   const onClickHandler = async () => {
     try {
-      const res = await archiveUom(uomData).unwrap();
+      const res = await archiveItem(itemData).unwrap();
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
@@ -127,7 +129,7 @@ const Uom = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"18px"} fontWeight={600}>
-            Uom
+            Item
           </Typography>
 
           <Stack flexDirection={"row"} gap={2}>
@@ -199,7 +201,7 @@ const Uom = () => {
             mapFrom={"data"}
             title={"name"}
             open={(e, i) => {
-              dispatch(setUomData(i));
+              dispatch(setItemData(i));
               setAnchorEl({
                 mouseX: e.clientX,
                 mouseY: e.clientY,
@@ -211,7 +213,7 @@ const Uom = () => {
             header={header}
             items={data}
             onSelect={(e, i) => {
-              dispatch(setUomData(i));
+              dispatch(setItemData(i));
               setAnchorEl({
                 mouseX: e.clientX,
                 mouseY: e.clientY,
@@ -231,10 +233,10 @@ const Uom = () => {
         />
       )}
 
-      <UomModal />
+      <ItemModal />
 
       <ImportModal
-        title="Uom"
+        title="Item"
         importDataHandler={handleImport}
         importHeader={importHeader}
         // loading={loadingImport}
@@ -246,7 +248,7 @@ const Uom = () => {
         setAnchorEl={setAnchorEl}
         update={() => {
           setAnchorEl(null);
-          dispatch(setUom(true));
+          dispatch(setItem(true));
         }}
         archive={() => {
           setAnchorEl(null);
@@ -258,7 +260,7 @@ const Uom = () => {
         anchorEl={anchorE2}
         setAnchorEl={setAnchorE2}
         addOption={() => {
-          dispatch(setUom(true));
+          dispatch(setItem(true));
           setAnchorE2(null);
         }}
         importOption={() => {
@@ -281,4 +283,4 @@ const Uom = () => {
   );
 };
 
-export default Uom;
+export default Item;

@@ -32,7 +32,6 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
-import Uom from "../../screens/item-listing/uom/Uom";
 import ColumnsImport from "../../screens/masterlist/column-import/ColumnsImport";
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
@@ -131,6 +130,8 @@ const References = lazy(
 const ItemListing = lazy(
   () => import("../../screens/item-listing/ItemListing"),
 );
+const Uom = lazy(() => import("../../screens/item-listing/uom/Uom"));
+const Item = lazy(() => import("../../screens/item-listing/item/Item"));
 
 const SystemNavigation = () => {
   const navigation = [
@@ -266,7 +267,7 @@ const SystemNavigation = () => {
       icon: <InventoryOutlinedIcon />,
       route: "/item",
       element: <ItemListing />,
-      permission: ["uom"],
+      permission: ["uom", "item"],
 
       children: [
         {
@@ -276,6 +277,14 @@ const SystemNavigation = () => {
           element: <Uom />,
           route: "/item/uom",
           permission: ["uom"],
+        },
+        {
+          segment: "item",
+          title: "Item",
+          icon: <InventoryOutlinedIcon />,
+          element: <Item />,
+          route: "/item/item",
+          permission: ["item"],
         },
       ],
     },

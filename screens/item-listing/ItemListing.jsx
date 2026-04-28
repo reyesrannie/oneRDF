@@ -11,7 +11,7 @@ const ItemListing = () => {
   const item = navigation?.find((nav) => nav.segment === "item");
 
   return (
-    <Box ml={5}>
+    <Box padding={2}>
       <Stack gap={1} display={"flex"} flexDirection={"column"}>
         <BreadCrumbs />
 
@@ -20,7 +20,7 @@ const ItemListing = () => {
           flexDirection={"row"}
           justifyContent="space-between"
         >
-          <Typography fontSize={"24px"} fontWeight={600}>
+          <Typography fontSize={"18px"} fontWeight={600}>
             Item Listing
           </Typography>
         </Stack>

@@ -8,6 +8,7 @@ const initialState = {
   canConnect: false,
   progressDialog: false,
   progressPercent: 0,
+  registering: false,
   userSetupModal: false,
   userSetupData: null,
 };
@@ -37,6 +38,9 @@ const syncSlice = createSlice({
     setProgressPercent: (state, action) => {
       state.progressPercent = action.payload;
     },
+    setRegistering: (state, action) => {
+      state.registering = action.payload;
+    },
     setUserSetupModal: (state, action) => {
       state.userSetupModal = action.payload;
     },
@@ -59,6 +63,7 @@ export const {
   setProgressPercent,
   setUserSetupModal,
   setUserSetupData,
+  setRegistering,
   resetSync,
 } = syncSlice.actions;
 

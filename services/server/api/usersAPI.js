@@ -34,6 +34,7 @@ export const userAPI = serverAPI.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: ["Users"],
     }),
     createUserSystems: builder.mutation({
       query: (payload) => ({

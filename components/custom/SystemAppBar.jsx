@@ -19,7 +19,7 @@ import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDown
 
 import moment from "moment";
 
-import { Collapse, Dialog, Menu, MenuItem, Stack } from "@mui/material";
+import { Avatar, Collapse, Dialog, Menu, MenuItem, Stack } from "@mui/material";
 import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -420,6 +420,26 @@ const SystemAppBar = () => {
         onClose={(e) => setAnchorEl(null)}
         className="app-bar-menu-account"
       >
+        {/* <MenuItem disabled={false} onClick={() => console.log(userData)}> */}
+        <MenuItem disabled={true}>
+          <ListItemIcon>
+            <Avatar sx={{ width: 24, height: 24 }} />
+          </ListItemIcon>
+          <ListItemText>
+            <Stack>
+              <Typography sx={{ textTransform: "capitalize" }}>
+                {userData?.first_name?.toLowerCase()}
+                {userData?.id_prefix !== "N/A" &&
+                  ` ${userData?.last_name?.toLowerCase()}`}
+              </Typography>
+              <Typography>
+                {userData?.id_prefix !== "N/A"
+                  ? `${userData?.id_prefix}-${userData?.id_no}`
+                  : userData?.id_no}
+              </Typography>
+            </Stack>
+          </ListItemText>
+        </MenuItem>
         <MenuItem
           onClick={() => dispatch(setChangePass(true))}
           disabled={isLoading}

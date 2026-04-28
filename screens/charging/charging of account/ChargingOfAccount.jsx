@@ -55,6 +55,7 @@ import {
 } from "../../../services/constant/headers";
 import { setSyncOneCharging } from "../../../services/server/slice/syncSlice";
 import SyncOneChargingModal from "../../../components/modal/syncing/SyncOneChargingModal";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const ChargingOfAccount = () => {
   const dispatch = useDispatch();
@@ -183,7 +184,7 @@ const ChargingOfAccount = () => {
               variant="contained"
               color="primary"
               size="small"
-              startIcon={<AddCircleOutlineOutlinedIcon />}
+              startIcon={<ArrowBackIosIcon />}
               sx={{
                 textTransform: "uppercase",
                 fontSize: "10px",
@@ -199,7 +200,7 @@ const ChargingOfAccount = () => {
                 });
               }}
             >
-              New
+              Add
             </Button>
             <AppSearch onSearch={onSearchData} />
           </Stack>
@@ -302,6 +303,16 @@ const ChargingOfAccount = () => {
         title="One Charging"
         importDataHandler={handleImport}
         loading={loadingImport}
+        importHeader={[
+          { name: "code", value: "Code" },
+          { name: "name", value: "Name" },
+          { name: "company", value: "Company Code" },
+          { name: "business_unit", value: "Business Unit Code" },
+          { name: "department", value: "Department Code" },
+          { name: "department_unit", value: "Department Unit Code" },
+          { name: "sub_unit", value: "Subunit Code" },
+          { name: "location", value: "Location Code" },
+        ]}
       />
 
       <ImportErrorModal items={mapped} header={errorHeaderOC} />

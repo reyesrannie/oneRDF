@@ -57,7 +57,10 @@ const userRoles = [
 
   {
     name: "Item Listing",
-    child: [{ name: "Uom", value: "uom" }],
+    child: [
+      { name: "Uom", value: "uom" },
+      { name: "Item", value: "item" },
+    ],
   },
 
   {

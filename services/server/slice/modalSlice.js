@@ -82,6 +82,8 @@ const initialState = {
   //ItemListing Starts here -->
   uom: false,
   uomData: null,
+  item: false,
+  itemData: null,
 
   // <-- ItemListing Ends here
   column: false,
@@ -267,6 +269,12 @@ const modalSlice = createSlice({
     setUomData: (state, action) => {
       state.uomData = action.payload;
     },
+    setItem: (state, action) => {
+      state.item = action.payload;
+    },
+    setItemData: (state, action) => {
+      state.itemData = action.payload;
+    },
     // <-- ItemListing Ends here
 
     setSystemSlicer: (state, action) => {
@@ -394,6 +402,8 @@ export const {
   //ItemListing
   setUom,
   setUomData,
+  setItem,
+  setItemData,
   //ItemListing
 
   setSystemSlicer,

@@ -135,10 +135,14 @@ const TableGrid = ({
                         >
                           {Array.isArray(head.value)
                             ? head.value
-                                .map((field) => i[field])
+                                .map((field) =>
+                                  i[field] === "N/A" ? "" : i[field],
+                                )
                                 .filter(Boolean)
                                 .join(" ")
-                            : i[head.value]}
+                            : i[head.value] === "N/A"
+                              ? ""
+                              : i[head.value]}
                         </Typography>
                       )}
                       {head?.type === "multimedia" && (

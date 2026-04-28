@@ -109,7 +109,11 @@ const UserModal = () => {
 
   useEffect(() => {
     if (userData) {
-      handleSearchSedar(`${userData?.id_prefix}-${userData?.id_no}`);
+      handleSearchSedar(
+        userData?.id_prefix === "N/A"
+          ? `${userData?.id_no}`
+          : `${userData?.id_prefix}-${userData?.id_no}`,
+      );
     } else {
       sedarData?.length === 0 && handleSearchSedar(`AMSI-FO`);
       reset();
@@ -124,10 +128,11 @@ const UserModal = () => {
 
       const newData = {
         ...userData,
-        employeeID: sedarData?.find(
-          (emp) =>
-            userData?.id_prefix === emp?.general_info?.prefix_id &&
-            userData?.id_no === emp?.general_info?.id_number,
+        employeeID: sedarData?.find((emp) =>
+          userData?.id_prefix === "N/A"
+            ? userData?.id_no === emp?.general_info?.id_number
+            : userData?.id_prefix === emp?.general_info?.prefix_id &&
+              userData?.id_no === emp?.general_info?.id_number,
         ),
         access_permission: userAccess,
         systems:
@@ -261,13 +266,19 @@ const UserModal = () => {
 
   const handleAutoFill = () => {
     const employee = watch("employeeID");
+
     const newData = {
-      username: employee?.general_info?.first_name
-        ? generateUsername(
-            `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
-          )
-        : "",
-      id_prefix: employee?.general_info?.prefix_id,
+      username:
+        employee?.general_info?.full_id_number === "N/A"
+          ? employee?.general_info?.id_number?.toLowerCase() +
+            employee?.general_info?.first_name.replace(/\s+/g, "").toLowerCase()
+          : generateUsername(
+              `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
+            ),
+      id_prefix:
+        employee?.general_info?.full_id_number === "N/A"
+          ? "N/A"
+          : employee?.general_info?.prefix_id,
       id_no: employee?.general_info?.id_number,
       first_name: employee?.general_info?.first_name,
       middle_name: employee?.general_info?.middle_name,
@@ -359,13 +370,30 @@ const UserModal = () => {
                       control={control}
                       name={"employeeID"}
                       options={sedarData || []}
-                      getOptionLabel={(option) =>
-                        `${option?.general_info?.full_id_number} - ${option?.general_info?.first_name} ${option?.general_info?.last_name} `
-                      }
-                      isOptionEqualToValue={(option, value) =>
-                        option?.general_info?.full_id_number ===
-                        value?.general_info?.full_id_number
-                      }
+                      getOptionLabel={(option) => {
+                        const info = option?.general_info;
+                        const isNA = info.full_id_number === "N/A";
+                        const idPart = isNA
+                          ? info.id_number
+                          : info.full_id_number;
+                        const namePart = isNA
+                          ? info.full_id_number_full_name
+                          : `${info.first_name || ""} ${info.last_name || ""}`.trim();
+                        return `${idPart} - ${namePart}`;
+                      }}
+                      isOptionEqualToValue={(option, value) => {
+                        const optInfo = option?.general_info;
+                        const valInfo = value?.general_info;
+                        if (
+                          optInfo.full_id_number === "N/A" &&
+                          valInfo.full_id_number === "N/A"
+                        ) {
+                          return optInfo.id_number === valInfo.id_number;
+                        }
+                        return (
+                          optInfo.full_id_number === valInfo.full_id_number
+                        );
+                      }}
                       onClose={handleAutoFill}
                       componentsProps={{
                         clearIndicator: {

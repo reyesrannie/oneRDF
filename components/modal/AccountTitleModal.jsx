@@ -8,6 +8,10 @@ import {
   DialogContentText,
   DialogContent,
   DialogActions,
+  useTheme,
+  DialogTitle,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import React, { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,7 +51,7 @@ const AccountTitleModal = () => {
   const open = useSelector((state) => state.modal.accountTitle);
   const accountTitleData = useSelector((state) => state.modal.accountTitleData);
   const hasRun = useSelector((state) => state.modal.hasRun);
-
+  const theme = useTheme();
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const { data: accountTypeData, isLoading: loadingAccountType } =
@@ -167,23 +171,47 @@ const AccountTitleModal = () => {
         dispatch(resetModal());
       }}
     >
-      <DialogContentText
+      <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          minWidth: "450px",
-          justifyContent: "center",
-          marginTop: "10px",
         }}
       >
-        <img
-          src={categoryImage}
-          alt="Password"
-          draggable="false"
-          className="user-modal-image"
-        />
-      </DialogContentText>
+        <DialogTitle
+          sx={{
+            backgroundColor: theme?.palette?.primary?.main,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 20,
+              fontWeight: 600,
+            }}
+          >
+            Account Title
+          </Typography>
+
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+            }}
+            onClick={() => {
+              dispatch(resetModal());
+            }}
+          >
+            <ClearOutlinedIcon
+              fontSize="small"
+              sx={{
+                color: "#ffffff",
+              }}
+            />
+          </IconButton>
+        </DialogTitle>
+      </Box>
 
       <form onSubmit={handleSubmit(submitHandler)}>
         <DialogContent>
@@ -409,7 +437,7 @@ const AccountTitleModal = () => {
               <AppTextBox
                 control={control}
                 name={"cash_disbursement_book"}
-                label="Cash Disbutsement Book"
+                label="Cash Disbursement Book"
                 error={Boolean(errors?.cash_disbursement_book)}
                 helperText={errors?.cash_disbursement_book?.message}
               />

@@ -28,7 +28,7 @@ const valuesSlice = createSlice({
       state.sedarData = mergeUniqueByKey(
         state.sedarData,
         incomingData,
-        "general_info.full_id_number",
+        "general_info.full_id_number_full_name",
       );
     },
     setCompanyData: (state, action) => {
