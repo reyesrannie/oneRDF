@@ -30,13 +30,14 @@ import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 import { useSnackbar } from "notistack";
 import { objectError } from "../../../services/functions/errorResponse";
-import {
-  useAddUomMutation,
-  useUomQuery,
-  useUpdateUomMutation,
-} from "../../../services/server/api/item-listing/bufferAPI";
+
 import Autocomplete from "../../custom/AutoComplete";
 import { useSystemsQuery } from "../../../services/server/api/systemAPI";
+import {
+  useAddItemMutation,
+  useUpdateItemMutation,
+} from "../../../services/server/api/item-listing/itemAPI";
+import { useUomQuery } from "../../../services/server/api/item-listing/uomAPI";
 
 const ItemModal = () => {
   const dispatch = useDispatch();
@@ -46,8 +47,8 @@ const ItemModal = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
   const theme = useTheme();
 
-  const [addUom, { isLoading: loadingAddType }] = useAddUomMutation();
-  const [updateUom, { isLoading: loadingUpdateType }] = useUpdateUomMutation();
+  const [addUom, { isLoading: loadingAddType }] = useAddItemMutation();
+  const [updateUom, { isLoading: loadingUpdateType }] = useUpdateItemMutation();
 
   const { data: systemData } = useSystemsQuery({
     status: "active",
@@ -81,14 +82,15 @@ const ItemModal = () => {
       id: itemData?.id,
       code: submitData?.code,
       description: submitData?.description,
-      is_integer: submitData?.is_integer,
+      uom_id: submitData?.uom?.id,
+      systems: submitData?.systems?.map((system) => system.id),
     };
 
     try {
       const res =
         itemData !== null
           ? await updateUom(updatePayload).unwrap()
-          : await addUom(submitData).unwrap();
+          : await addUom(updatePayload).unwrap();
       enqueueSnackbar(res?.message, { variant: "success" });
       dispatch(resetModal());
     } catch (error) {
@@ -167,71 +169,68 @@ const ItemModal = () => {
         <DialogContent>
           <Box minWidth={isTablet ? 400 : 300}>
             <Stack gap={2}>
-              <Stack gap={2} flexDirection={"row"}>
-                <AppTextBox
+              <AppTextBox
+                control={control}
+                name={"code"}
+                label="Code"
+                error={Boolean(errors?.code)}
+                helperText={errors?.code?.message}
+              />
+              <AppTextBox
+                multiline
+                control={control}
+                name={"description"}
+                label="Description"
+                error={Boolean(errors?.description)}
+                helperText={errors?.description?.message}
+              />
+              <Box flex={1}>
+                <Autocomplete
+                  loading={true}
                   control={control}
-                  name={"code"}
-                  label="Code"
-                  error={Boolean(errors?.code)}
-                  helperText={errors?.code?.message}
+                  name={"uom"}
+                  options={uomData || []}
+                  getOptionLabel={(option) =>
+                    `${option.code} - ${option.description}`
+                  }
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Uom"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.uom)}
+                      helperText={errors.uom?.message}
+                    />
+                  )}
                 />
-                <AppTextBox
+              </Box>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={true}
+                  multiple
                   control={control}
-                  name={"description"}
-                  label="Description"
-                  error={Boolean(errors?.description)}
-                  helperText={errors?.description?.message}
+                  name={"systems"}
+                  options={systemData || []}
+                  getOptionLabel={(option) => `${option.system_name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="System"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.systems)}
+                      helperText={errors.systems?.message}
+                    />
+                  )}
                 />
-              </Stack>
-              <Stack gap={2} flexDirection={"row"}>
-                <Box flex={1}>
-                  <Autocomplete
-                    loading={true}
-                    control={control}
-                    name={"uom"}
-                    options={uomData || []}
-                    getOptionLabel={(option) =>
-                      `${option.code} - ${option.description}`
-                    }
-                    isOptionEqualToValue={(option, value) =>
-                      option?.id === value?.id
-                    }
-                    renderInput={(params) => (
-                      <MuiTextField
-                        {...params}
-                        label="Uom"
-                        size="small"
-                        variant="outlined"
-                        error={Boolean(errors.uom)}
-                        helperText={errors.uom?.message}
-                      />
-                    )}
-                  />
-                </Box>
-                <Box flex={1}>
-                  <Autocomplete
-                    loading={true}
-                    multiple
-                    control={control}
-                    name={"systems"}
-                    options={systemData || []}
-                    getOptionLabel={(option) => `${option.system_name}`}
-                    isOptionEqualToValue={(option, value) =>
-                      option?.id === value?.id
-                    }
-                    renderInput={(params) => (
-                      <MuiTextField
-                        {...params}
-                        label="System"
-                        size="small"
-                        variant="outlined"
-                        error={Boolean(errors.systems)}
-                        helperText={errors.systems?.message}
-                      />
-                    )}
-                  />
-                </Box>
-              </Stack>
+              </Box>
             </Stack>
           </Box>
         </DialogContent>

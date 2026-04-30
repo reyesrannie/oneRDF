@@ -37,7 +37,7 @@ import MenuOptions from "../../../components/custom/MenuOptions";
 import {
   useArchiveUomMutation,
   useUomQuery,
-} from "../../../services/server/api/item-listing/bufferAPI";
+} from "../../../services/server/api/item-listing/uomAPI";
 import UomModal from "../../../components/modal/item-listing/UomModal";
 import ImportModal from "../../../components/modal/ImportModal";
 import { readExcelItems } from "../../../services/functions/readExcel";

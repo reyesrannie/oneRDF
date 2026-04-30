@@ -32,7 +32,7 @@ import { objectError } from "../../../services/functions/errorResponse";
 import {
   useAddUomMutation,
   useUpdateUomMutation,
-} from "../../../services/server/api/item-listing/bufferAPI";
+} from "../../../services/server/api/item-listing/uomAPI";
 
 const UomModal = () => {
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ const UomModal = () => {
       const res =
         uomData !== null
           ? await updateUom(updatePayload).unwrap()
-          : await addUom(submitData).unwrap();
+          : await addUom(updatePayload).unwrap();
       enqueueSnackbar(res?.message, { variant: "success" });
       dispatch(resetModal());
     } catch (error) {
