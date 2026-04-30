@@ -268,13 +268,19 @@ const UserModal = () => {
     const employee = watch("employeeID");
 
     const newData = {
+      // username:
+      //   employee?.general_info?.full_id_number === "N/A"
+      //     ? employee?.general_info?.id_number?.toLowerCase() +
+      //       employee?.general_info?.first_name.replace(/\s+/g, "").toLowerCase()
+      //     : generateUsername(
+      //         `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
+      //       ),
       username:
         employee?.general_info?.full_id_number === "N/A"
           ? employee?.general_info?.id_number?.toLowerCase() +
             employee?.general_info?.first_name.replace(/\s+/g, "").toLowerCase()
-          : generateUsername(
-              `${employee?.general_info?.first_name} ${employee?.general_info?.last_name}`,
-            ),
+          : `${employee?.general_info?.prefix_id}-${employee?.general_info?.id_number}`,
+
       id_prefix:
         employee?.general_info?.full_id_number === "N/A"
           ? "N/A"

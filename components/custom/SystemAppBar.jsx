@@ -245,7 +245,7 @@ const SystemAppBar = () => {
               color="#FFFFFF"
               textTransform={"capitalize"}
             >
-              {userData?.username?.toLowerCase()}
+              {`${userData?.first_name?.toLowerCase()} ${userData?.last_name?.toLowerCase()}`}
             </Typography>
             <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
               <AccountCircleOutlinedIcon
