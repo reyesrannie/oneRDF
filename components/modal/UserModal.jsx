@@ -166,7 +166,7 @@ const UserModal = () => {
     return username;
   };
 
-  const checkHasChanged = () => {
+  const checkHasChanged = (items) => {
     const original = userData?.user_system || [];
     const current = watch("systems") || [];
     const removed = current.filter(
@@ -175,7 +175,7 @@ const UserModal = () => {
           (u) => u?.system_id?.toString() === item?.id?.toString(),
         ),
     );
-    return removed;
+    return userData?.username === items?.username ? removed : current;
   };
 
   const submitHandler = async (data) => {
@@ -214,7 +214,7 @@ const UserModal = () => {
         ? await updateUser(payload).unwrap()
         : await createUser(payload).unwrap();
 
-      const systems = userData ? checkHasChanged() : data?.systems;
+      const systems = userData ? checkHasChanged(res?.data) : data?.systems;
 
       dispatch(setProgressPercent(0));
 

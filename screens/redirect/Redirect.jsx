@@ -18,13 +18,13 @@ const Redirect = () => {
   const userData = useSelector((state) => state.auth.userData);
   const hasCalled = useRef(false);
 
-  const [login, { isError }] = useLoginAllMutation();
+  const [login, { isError, reset }] = useLoginAllMutation();
 
   const handleLogin = async (data) => {
+    reset();
     try {
       const payload = {
         username: userData?.username,
-        // password: userData?.password,
         id_prefix: userData?.id_prefix,
         id_no: userData?.id_no,
         endpoint: {

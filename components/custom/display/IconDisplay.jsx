@@ -82,28 +82,30 @@ const IconDisplay = ({ data }) => {
               {selectedSystem?.description}
             </Typography>
 
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#F7941D",
-                filter: "brightness(1.2)",
-                color: "white",
-                fontWeight: "bold",
-                padding: { sx: "12px 40px", lg: "12px 40px" },
-                "&:hover": {
-                  backgroundColor: "white",
-                  color: "#F7941D",
-                },
-              }}
-              onClick={() => {
-                const query = encodeURIComponent(
-                  JSON.stringify(selectedSystem),
-                );
-                window.open(`/redirect?data=${query}`, "_blank");
-              }}
-            >
-              Proceed
-            </Button>
+            {selectedSystem && (
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#F7941D",
+                  filter: "brightness(1.2)",
+                  color: "white",
+                  fontWeight: "bold",
+                  padding: { sx: "12px 40px", lg: "12px 40px" },
+                  "&:hover": {
+                    backgroundColor: "white",
+                    color: "#F7941D",
+                  },
+                }}
+                onClick={() => {
+                  const query = encodeURIComponent(
+                    JSON.stringify(selectedSystem),
+                  );
+                  window.open(`/redirect?data=${query}`, "_blank");
+                }}
+              >
+                Proceed
+              </Button>
+            )}
           </Stack>
         </Grid>
 

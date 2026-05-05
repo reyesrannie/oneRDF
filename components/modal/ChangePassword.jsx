@@ -24,7 +24,10 @@ import { objectError } from "../../services/functions/errorResponse";
 import { loginUser } from "../../services/functions/loginServices";
 import { useNavigate } from "react-router-dom";
 import { decodeUser } from "../../services/functions/saveUser";
-import { usePasswordChangeAllMutation } from "../../services/server/api/usersAPI";
+import {
+  useCreateUserSystemsMutation,
+  usePasswordChangeAllMutation,
+} from "../../services/server/api/usersAPI";
 import { useSystemsQuery } from "../../services/server/api/systemAPI";
 import { checkObject } from "../../services/functions/checkValues";
 import { setProgressPercent } from "../../services/server/slice/syncSlice";
@@ -39,6 +42,9 @@ const ChangePassword = () => {
   const [passwordChange, { isLoading }] = usePasswordChangeMutation();
   const [passwordChangeAll, { isLoading: loadingChangePasswordALl }] =
     usePasswordChangeAllMutation();
+
+  const [createUserSystem, { isLoading: loadingCreateSystems }] =
+    useCreateUserSystemsMutation();
 
   const {
     data: systemData,
@@ -80,19 +86,22 @@ const ChangePassword = () => {
 
       for (let i = 0; i < getSystem.length; i++) {
         const payloadSystems = {
-          id_prefix: userData?.id_prefix,
-          id_no: userData?.id_no,
-          password: submitData?.password,
-          old_password: payload?.old_password,
+          id_prefix: userData?.id_prefix || "",
+          id_no: userData?.id_no || "",
+          username: userData?.username || "",
+          first_name: userData?.first_name || "",
+          middle_name: userData?.middle_name || undefined,
+          last_name: userData?.last_name || "",
+          suffix: userData?.suffix || undefined,
           endpoint: {
             id: getSystem[i]?.id,
             name: getSystem[i]?.system_name,
-            url: `${getSystem[i]?.backend_url}${checkObject(getSystem[i]?.slice)?.changePassword}`,
+            url: `${getSystem[i]?.backend_url}${checkObject(getSystem[i]?.slice)?.pending}`,
             token: getSystem[i]?.token,
           },
         };
 
-        const resAll = await passwordChangeAll(payloadSystems).unwrap();
+        const resAll = await createUserSystem(payloadSystems).unwrap();
       }
 
       loginUser(userData, payload?.password);
@@ -174,7 +183,9 @@ const ChangePassword = () => {
             >
               <Button
                 className="change-password-button"
-                disabled={isLoading || loadingChangePasswordALl}
+                disabled={
+                  isLoading || loadingChangePasswordALl || loadingCreateSystems
+                }
                 onClick={() => dispatch(setChangePass(false))}
                 loadingPosition="start"
                 startIcon={<DoDisturbAltOutlinedIcon />}
@@ -187,7 +198,9 @@ const ChangePassword = () => {
               <Button
                 type="submit"
                 className="change-password-button"
-                loading={isLoading || loadingChangePasswordALl}
+                loading={
+                  isLoading || loadingChangePasswordALl || loadingCreateSystems
+                }
                 loadingPosition="start"
                 startIcon={<SwapHorizontalCircleOutlinedIcon />}
                 variant="contained"
