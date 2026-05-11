@@ -29,7 +29,10 @@ import BreadCrumbs from "../../components/custom/BreadCrumbs";
 
 import MenuOptions from "../../components/custom/MenuOptions";
 
-import { useAuditQuery } from "../../services/server/api/auditTrail";
+import {
+  useArchiveAuditMutation,
+  useAuditQuery,
+} from "../../services/server/api/auditTrail";
 
 const AuditTrail = () => {
   const dispatch = useDispatch();
@@ -50,10 +53,11 @@ const AuditTrail = () => {
   const userData = useSelector((state) => state.modal.userData);
   const isTablet = useMediaQuery("(min-width:768px)");
 
-  const [userReset, { isLoading: loadingUserReset }] = useUserResetMutation();
-  const onResetHandler = async () => {
+  const [archive, { isLoading: loadingArchive }] = useArchiveAuditMutation();
+
+  const onArchiveHandler = async () => {
     try {
-      const res = await userReset({ id: userData?.id }).unwrap();
+      const res = await archive({ id: userData?.id }).unwrap();
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
@@ -197,10 +201,11 @@ const AuditTrail = () => {
             onSort={onSort}
             onSelect={(e, i) => {
               dispatch(setUserData(i));
-              setAnchorEl({
-                mouseX: e.clientX,
-                mouseY: e.clientY,
-              });
+              params?.status === "active" &&
+                setAnchorEl({
+                  mouseX: e.clientX,
+                  mouseY: e.clientY,
+                });
             }}
           />
         )}
@@ -232,29 +237,21 @@ const AuditTrail = () => {
         params={params}
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
-        update={() => {
+        complete={() => {
           setAnchorEl(null);
-          dispatch(setUser(true));
-        }}
-        archive={() => {
-          setAnchorEl(null);
-          dispatch(setArchive(true));
-        }}
-        reset={() => {
-          setAnchorEl(null);
-          dispatch(setReset(true));
+          onArchiveHandler();
         }}
       />
-      <AppPrompt
+      {/* <AppPrompt
         open={reset}
         image={warning}
         title={`Reset password?`}
         message={`Are you sure you want to reset the password?`}
         confirmButton={`Yes, Reset it!`}
         cancelButton={` No, Keep it! `}
-        confirmOnClick={onResetHandler}
-        isLoading={loadingUserReset}
-      />
+        confirmOnClick={onArchiveHandler}
+        isLoading={loadingArchive}
+      /> */}
       <UserModal />
     </Box>
   );

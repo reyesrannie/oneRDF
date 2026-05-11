@@ -5,6 +5,7 @@ import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRen
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
+import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
 import { useDispatch, useSelector } from "react-redux";
 import { resetModal } from "../../services/server/slice/modalSlice";
 import { decodeUser } from "../../services/functions/saveUser";
@@ -16,6 +17,7 @@ const MenuPopper = ({
   update,
   archive,
   reset,
+  complete,
 }) => {
   const dispatch = useDispatch();
   const loggedInUser = decodeUser();
@@ -48,6 +50,14 @@ const MenuPopper = ({
             <HistoryOutlinedIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Reset</ListItemText>
+        </MenuItem>
+      )}
+      {complete && params?.status === "active" && (
+        <MenuItem onClick={complete}>
+          <ListItemIcon>
+            <DoneAllRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Complete</ListItemText>
         </MenuItem>
       )}
       {archive && (
