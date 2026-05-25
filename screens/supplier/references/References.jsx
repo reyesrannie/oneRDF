@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
   setImport,
+  setImportErrorMessage,
   setReference,
   setReferenceData,
 } from "../../../services/server/slice/modalSlice";
@@ -25,6 +26,7 @@ import {
 } from "../../../services/server/slice/promptSlice";
 import {
   useArchiveReferenceMutation,
+  useImportReferenceMutation,
   useReferenceQuery,
 } from "../../../services/server/api/supplier/referenceAPI";
 
@@ -40,6 +42,8 @@ import CustomPagination from "../../../components/custom/CustomPagination";
 import MenuOptions from "../../../components/custom/MenuOptions";
 import BufferModal from "../../../components/modal/supplier/BUfferModal";
 import ReferenceModal from "../../../components/modal/supplier/ReferenceModal";
+import ImportModal from "../../../components/modal/ImportModal";
+import { readExcelItems } from "../../../services/functions/readExcel";
 
 const References = () => {
   const dispatch = useDispatch();
@@ -59,9 +63,13 @@ const References = () => {
 
   const referenceData = useSelector((state) => state.modal.referenceData);
   const archive = useSelector((state) => state.prompt.archive);
+  const importData = useSelector((state) => state.modal.importData);
 
   const [archiveBuffer, { isLoading: loadingArchiveBuffer }] =
     useArchiveReferenceMutation();
+
+  const [importReference, { isLoading: loadingImport }] =
+    useImportReferenceMutation();
 
   const header = [
     {
@@ -89,6 +97,24 @@ const References = () => {
       dispatch(resetModal());
       dispatch(resetPrompt());
     } catch (error) {}
+  };
+
+  const handleImport = async () => {
+    const mapped = readExcelItems(importData, [
+      { name: "name", value: "Name" },
+    ]);
+    try {
+      const res = await importReference(mapped).unwrap();
+      dispatch(resetModal());
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+    } catch (error) {
+      dispatch(setImportErrorMessage(error?.data?.errors));
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+      });
+    }
   };
 
   return (
@@ -242,6 +268,12 @@ const References = () => {
         cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
         confirmOnClick={onClickHandler}
         isLoading={loadingArchiveBuffer}
+      />
+      <ImportModal
+        importDataHandler={handleImport}
+        title={"Reference"}
+        loading={loadingImport}
+        importHeader={[{ name: "Name", value: "name" }]}
       />
     </Stack>
   );

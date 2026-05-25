@@ -35,6 +35,14 @@ export const referenceAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Reference"],
     }),
+    importReference: builder.mutation({
+      query: (payload) => ({
+        url: `import/supplier_reference`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Reference"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useAddReferenceMutation,
   useUpdateReferenceMutation,
   useArchiveReferenceMutation,
+  useImportReferenceMutation,
 } = referenceAPI;

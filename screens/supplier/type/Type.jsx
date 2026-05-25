@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
   setImport,
+  setImportErrorMessage,
   setType,
   setTypeData,
 } from "../../../services/server/slice/modalSlice";
@@ -37,8 +38,11 @@ import MenuOptions from "../../../components/custom/MenuOptions";
 import TypeModal from "../../../components/modal/supplier/TypeModal";
 import {
   useArchiveTypeMutation,
+  useImportTypeMutation,
   useTypeQuery,
 } from "../../../services/server/api/supplier/typeAPI";
+import ImportModal from "../../../components/modal/ImportModal";
+import { readExcelItems } from "../../../services/functions/readExcel";
 
 const Type = () => {
   const dispatch = useDispatch();
@@ -58,8 +62,10 @@ const Type = () => {
 
   const typeData = useSelector((state) => state.modal.typeData);
   const archive = useSelector((state) => state.prompt.archive);
+  const importData = useSelector((state) => state.modal.importData);
 
   const [archiveType, { isLoading: loadingArchive }] = useArchiveTypeMutation();
+  const [importType, { isLoading: loadingImport }] = useImportTypeMutation();
 
   const header = [
     {
@@ -86,6 +92,24 @@ const Type = () => {
       dispatch(resetModal());
       dispatch(resetPrompt());
     } catch (error) {}
+  };
+
+  const handleImport = async () => {
+    const mapped = readExcelItems(importData, [
+      { name: "name", value: "Name" },
+    ]);
+    try {
+      const res = await importType(mapped).unwrap();
+      dispatch(resetModal());
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+    } catch (error) {
+      dispatch(setImportErrorMessage(error?.data?.errors));
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+      });
+    }
   };
 
   return (
@@ -239,6 +263,12 @@ const Type = () => {
         cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
         confirmOnClick={onClickHandler}
         isLoading={loadingArchive}
+      />
+      <ImportModal
+        importDataHandler={handleImport}
+        title={"Type"}
+        loading={loadingImport}
+        importHeader={[{ name: "name", value: "Name" }]}
       />
     </Stack>
   );

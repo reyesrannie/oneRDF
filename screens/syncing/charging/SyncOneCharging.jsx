@@ -59,7 +59,7 @@ const SyncOneCharging = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const archive = useSelector((state) => state.prompt.archive);
-  const syncModalData = useSelector((state) => state.modal.syncModalData);
+  const syncModalData = useSelector((state) => state.sync.syncModalData);
   const importData = useSelector((state) => state.modal.importData);
 
   const header = [

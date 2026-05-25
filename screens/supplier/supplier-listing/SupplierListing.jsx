@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
   setImport,
+  setImportErrorMessage,
   setSupplier,
   setSupplierData,
 } from "../../../services/server/slice/modalSlice";
@@ -36,9 +37,15 @@ import CustomPagination from "../../../components/custom/CustomPagination";
 import MenuOptions from "../../../components/custom/MenuOptions";
 import {
   useArchiveSuppliersMutation,
+  useImportSupplierMutation,
   useSuppliersQuery,
 } from "../../../services/server/api/supplier/supplierAPI";
 import SupplierModal from "../../../components/modal/supplier/SupplierModal";
+import ImportModal from "../../../components/modal/ImportModal";
+import { readExcelItems } from "../../../services/functions/readExcel";
+import { generateSupplierPayload } from "../../../services/functions/checkValues";
+import { useColumnQuery } from "../../../services/server/api/masterlist/columnAPI";
+import { useSystemsQuery } from "../../../services/server/api/systemAPI";
 
 const SupplierListing = () => {
   const dispatch = useDispatch();
@@ -53,15 +60,39 @@ const SupplierListing = () => {
     onStatusChange,
     onSort,
   } = useParamsHook();
+
+  const {
+    data: columnData,
+    isLoading: loadingColumn,
+    isError: erroColumn,
+    isFetching: fetchingColumn,
+  } = useColumnQuery({
+    status: "active",
+    pagination: "none",
+  });
+
+  const {
+    data: systemData,
+    isLoading: loadingSystem,
+    isError: erroSystem,
+    isFetching: fetchingSystem,
+  } = useSystemsQuery({
+    status: "active",
+    pagination: "none",
+  });
+
   const { data, isLoading, isError, isFetching } = useSuppliersQuery(params);
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const supplierData = useSelector((state) => state.modal.supplierData);
   const archive = useSelector((state) => state.prompt.archive);
+  const importData = useSelector((state) => state.modal.importData);
 
   const [archiveBuffer, { isLoading: loadingArchiveBuffer }] =
     useArchiveSuppliersMutation();
 
+  const [importSupplier, { isLoading: loadingImport }] =
+    useImportSupplierMutation();
   const header = [
     {
       name: "ID",
@@ -106,6 +137,15 @@ const SupplierListing = () => {
     },
   ];
 
+  const importHeader = [
+    { name: "Supplier Code", value: "code" },
+    { name: "Supplier Name", value: "name" },
+    { name: "Term", value: "terms" },
+    { name: "Type", value: "supplier_type" },
+    { name: "Buffer Severity", value: "supplier_buffer" },
+    { name: "Reference", value: "supplier_reference" },
+  ];
+
   const onClickHandler = async () => {
     try {
       const res = await archiveBuffer(supplierData).unwrap();
@@ -115,6 +155,24 @@ const SupplierListing = () => {
       dispatch(resetModal());
       dispatch(resetPrompt());
     } catch (error) {}
+  };
+
+  const importHandler = async () => {
+    const payload = generateSupplierPayload(importData, columnData);
+    try {
+      const res = await importSupplier(payload).unwrap();
+      dispatch(resetModal());
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+    } catch (error) {
+      dispatch(setImportErrorMessage(error?.data?.errors));
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+      });
+    }
+
+    console.log(payload);
   };
 
   return (
@@ -268,6 +326,25 @@ const SupplierListing = () => {
         cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
         confirmOnClick={onClickHandler}
         isLoading={loadingArchiveBuffer}
+      />
+
+      <ImportModal
+        importDataHandler={importHandler}
+        title={"Supplier"}
+        loading={loadingImport}
+        importHeader={[
+          { name: "code", value: "Supplier Code" },
+          { name: "name", value: "Supplier Name" },
+          { name: "address", value: "Supplier Address" },
+          { name: "terms", value: "Term" },
+          { name: "supplier_type", value: "Type" },
+          { name: "buffer", value: "Buffer Severity" },
+          { name: "reference", value: "Reference" },
+          ...(systemData?.map((system) => ({
+            name: system.id,
+            value: system.system_name,
+          })) || []),
+        ]}
       />
     </Stack>
   );

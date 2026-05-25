@@ -245,6 +245,7 @@ const AccountTitle = () => {
         title="Account Title"
         importDataHandler={handleImport}
         loading={loadingImport}
+        importHeader={importHeader}
       />
 
       <MenuPopper

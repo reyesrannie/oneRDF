@@ -35,6 +35,14 @@ export const bufferAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Buffer"],
     }),
+    importBuffer: builder.mutation({
+      query: (payload) => ({
+        url: `import/supplier_buffer`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Buffer"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useAddBufferMutation,
   useUpdateBufferMutation,
   useArchiveBufferMutation,
+  useImportBufferMutation,
 } = bufferAPI;

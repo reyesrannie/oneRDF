@@ -35,6 +35,14 @@ export const typeAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Type"],
     }),
+    importType: builder.mutation({
+      query: (payload) => ({
+        url: `import/supplier_type`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Type"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useAddTypeMutation,
   useUpdateTypeMutation,
   useArchiveTypeMutation,
+  useImportTypeMutation,
 } = typeAPI;

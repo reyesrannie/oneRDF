@@ -26,6 +26,7 @@ import {
 import {
   useArchiveBufferMutation,
   useBufferQuery,
+  useImportBufferMutation,
 } from "../../../services/server/api/supplier/bufferAPI";
 
 import MenuPopper from "../../../components/custom/MenuPopper";
@@ -39,6 +40,8 @@ import TableGrid from "../../../components/custom/TableGrid";
 import CustomPagination from "../../../components/custom/CustomPagination";
 import MenuOptions from "../../../components/custom/MenuOptions";
 import BufferModal from "../../../components/modal/supplier/BUfferModal";
+import ImportModal from "../../../components/modal/ImportModal";
+import { readExcelItems } from "../../../services/functions/readExcel";
 
 const BufferSeverity = () => {
   const dispatch = useDispatch();
@@ -58,9 +61,12 @@ const BufferSeverity = () => {
 
   const bufferData = useSelector((state) => state.modal.bufferData);
   const archive = useSelector((state) => state.prompt.archive);
+  const importData = useSelector((state) => state.modal.importData);
 
   const [archiveBuffer, { isLoading: loadingArchiveBuffer }] =
     useArchiveBufferMutation();
+  const [importBuffer, { isLoading: loadingImport }] =
+    useImportBufferMutation();
 
   const header = [
     {
@@ -87,6 +93,24 @@ const BufferSeverity = () => {
       dispatch(resetModal());
       dispatch(resetPrompt());
     } catch (error) {}
+  };
+
+  const handleImport = async () => {
+    const mapped = readExcelItems(importData, [
+      { name: "name", value: "Name" },
+    ]);
+    try {
+      const res = await importBuffer(mapped).unwrap();
+      dispatch(resetModal());
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+    } catch (error) {
+      dispatch(setImportErrorMessage(error?.data?.errors));
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+      });
+    }
   };
 
   return (
@@ -240,6 +264,12 @@ const BufferSeverity = () => {
         cancelButton={`${params?.status === "active" ? "No, Keep it!" : "Cancel"} `}
         confirmOnClick={onClickHandler}
         isLoading={loadingArchiveBuffer}
+      />
+      <ImportModal
+        importDataHandler={handleImport}
+        title={"Buffer Severity"}
+        loading={loadingImport}
+        importHeader={[{ name: "Name", value: "name" }]}
       />
     </Stack>
   );

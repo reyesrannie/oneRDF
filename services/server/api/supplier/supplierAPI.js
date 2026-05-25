@@ -35,6 +35,14 @@ export const supplierAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Suppliers"],
     }),
+    importSupplier: builder.mutation({
+      query: (payload) => ({
+        url: `import/supplier`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Suppliers"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useAddSuppliersMutation,
   useUpdateSuppliersMutation,
   useArchiveSuppliersMutation,
+  useImportSupplierMutation,
 } = supplierAPI;

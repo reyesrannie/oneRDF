@@ -118,6 +118,29 @@ export const generateUserPayload = (data, systemsList) => {
   });
 };
 
+export const generateSupplierPayload = (data, systemsList) => {
+  return data.map((row) => {
+    const formattedRow = {
+      code: String(row["Supplier Code"] || ""),
+      name: row["Supplier Name"] || "",
+      address: row["Supplier Address"] || "",
+      terms: row["Term"] || "",
+      supplier_type: row["Type"] || "",
+      buffer: row["Buffer Severity"] || "",
+      reference: row["Reference"] || "",
+      systems: [],
+    };
+
+    systemsList.forEach((system) => {
+      if (row[system.name]) {
+        formattedRow.systems.push(row[system?.name]);
+      }
+    });
+
+    return formattedRow;
+  });
+};
+
 export const useDebounceCallback = (callback, delay = 500) => {
   const timeoutRef = useRef(null);
 

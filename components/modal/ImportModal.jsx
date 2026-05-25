@@ -33,6 +33,7 @@ const ImportModal = ({
   importDataHandler,
   loading,
   importHeader = [],
+  fileImport = false,
 }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -49,13 +50,22 @@ const ImportModal = ({
     setFileName(null);
     dispatch(setImportError(false));
     dispatch(setImportData(null));
+
     const filesArray = Array.from(e.target.files);
-    setFileName(filesArray[0]?.name);
+    const file = filesArray[0];
+
+    if (!file) return;
+    setFileName(file.name);
 
     try {
       dispatch(setIsLoading(true));
-      const read = await readExcelFile(filesArray);
-      dispatch(setImportData(read));
+
+      if (fileImport) {
+        dispatch(setImportData(file));
+      } else {
+        const read = await readExcelFile(filesArray);
+        dispatch(setImportData(read));
+      }
     } catch (error) {
       enqueueSnackbar("This file is not supported", { variant: "error" });
       dispatch(setImportError(true));
@@ -68,12 +78,22 @@ const ImportModal = ({
     setFileName(null);
     dispatch(setImportError(false));
     dispatch(setImportData(null));
+
     const filesArray = e?.dataTransfer?.files;
-    setFileName(filesArray[0]?.name);
+    const file = filesArray[0];
+
+    if (!file) return;
+    setFileName(file.name);
+
     try {
       dispatch(setIsLoading(true));
-      const read = await readExcelFile(filesArray);
-      dispatch(setImportData(read));
+
+      if (fileImport) {
+        dispatch(setImportData(file));
+      } else {
+        const read = await readExcelFile(filesArray);
+        dispatch(setImportData(read));
+      }
     } catch (error) {
       enqueueSnackbar("This file is not supported", { variant: "error" });
       dispatch(setImportError(true));
@@ -160,6 +180,7 @@ const ImportModal = ({
             ref={fileInputRef}
             style={{ display: "none" }}
             onChange={readFile}
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           />
         </Box>
         {importHeader?.length !== 0 && (
@@ -169,10 +190,10 @@ const ImportModal = ({
               startIcon={<DownloadIcon />}
               onClick={(e) => {
                 e.stopPropagation();
-                exportTemplate(); // Prevents any accidental bubbling
+                exportTemplate();
               }}
               sx={{
-                textTransform: "none", // Keeps it looking like normal text instead of ALL CAPS
+                textTransform: "none",
                 fontSize: "12px",
                 fontWeight: 600,
                 color: "primary.main",
