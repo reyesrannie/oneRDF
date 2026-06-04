@@ -18,7 +18,7 @@ import { loginUser } from "../../services/functions/loginServices";
 import loginSchema from "../../components/schema/loginSchema";
 import AppTextBox from "../../components/custom/AppTextBox";
 import background from "../../assets/webp/background.webp";
-import secondLayer from "../../assets/png/secondLayer.png";
+import secondLayer from "../../assets/webp/secondLayer.webp";
 import logo from "../../assets/png/logo.png";
 import misLogo from "../../assets/png/misLogo.png";
 

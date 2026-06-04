@@ -35,6 +35,14 @@ export const itemAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Item"],
     }),
+    checkItemImport: builder.mutation({
+      query: (payload) => ({
+        url: `/import/item`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Item"],
+    }),
   }),
 });
 
@@ -43,4 +51,5 @@ export const {
   useAddItemMutation,
   useUpdateItemMutation,
   useArchiveItemMutation,
+  useCheckItemImportMutation,
 } = itemAPI;

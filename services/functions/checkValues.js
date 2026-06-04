@@ -141,6 +141,25 @@ export const generateSupplierPayload = (data, systemsList) => {
   });
 };
 
+export const generateItemPayload = (data, systemsList, uomList) => {
+  return data.map((row) => {
+    const formattedRow = {
+      code: String(row["Code"] || ""),
+      description: row["Description"] || "",
+      uom_id: uomList?.find((uom) => uom?.code === row["Uom Code"])?.id,
+      systems: [],
+    };
+
+    systemsList.forEach((system) => {
+      if (row[system.name]) {
+        formattedRow.systems.push(row[system?.name]);
+      }
+    });
+
+    return formattedRow;
+  });
+};
+
 export const useDebounceCallback = (callback, delay = 500) => {
   const timeoutRef = useRef(null);
 

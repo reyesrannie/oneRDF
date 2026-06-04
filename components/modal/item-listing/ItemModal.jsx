@@ -100,7 +100,13 @@ const ItemModal = () => {
 
   useEffect(() => {
     if (itemData && open) {
-      Object.entries(itemData)?.forEach(([key, value]) => {
+      const newData = {
+        ...itemData,
+        systems: itemData?.systems?.map((sys) =>
+          systemData?.find((sysData) => sys?.id === sysData?.id),
+        ),
+      };
+      Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
     } else {

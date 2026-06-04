@@ -34,16 +34,18 @@ const IconDisplay = ({ data }) => {
             bottom: { md: "1px", xl: "150px" },
             left: { lg: "160px" },
             zIndex: 10,
+            marginTop: { xs: 2, md: 0 },
+            marginBottom: { xs: 2, md: 0 },
           }}
         >
           <DisplayOptions data={data} />
         </Box>
         <Grid size={{ xs: 12, md: 6 }}>
           <Stack
-            marginLeft={{ xs: 0, md: 8, lg: 20 }}
-            spacing={3}
+            marginLeft={{ xs: "unset", md: 8, lg: 20 }}
+            spacing={{ xs: 0, md: 2, lg: 3 }}
             alignItems={{ xs: "center", md: "flex-start" }}
-            width={{ xs: "90vw", md: "unset" }}
+            // width={{ xs: "unset", md: "unset" }}
             sx={{
               animation: "fadeIn 0.5s ease-in-out",
               "@keyframes fadeIn": {
@@ -59,7 +61,7 @@ const IconDisplay = ({ data }) => {
                 fontWeight: "bold",
                 color: "#FFFFFF",
                 textAlign: { xs: "center", md: "left" },
-                fontSize: { xs: "1.5rem", md: "2rem", lg: "3rem" },
+                fontSize: { xs: "1.3rem", md: "2rem", lg: "3rem" },
               }}
             >
               {selectedSystem?.system_name}
@@ -68,11 +70,10 @@ const IconDisplay = ({ data }) => {
             <Typography
               sx={{
                 color: "#FFFFFF",
-                fontSize: { xs: "12px", md: "16px" },
+                fontSize: { xs: "10px", md: "16px" },
                 lineHeight: 1.6,
-                maxWidth: "500px",
+                maxWidth: { xs: "unset", md: "400px", lg: "500px" },
                 textAlign: { xs: "center", md: "left" },
-
                 display: "-webkit-box",
                 overflow: "hidden",
                 WebkitBoxOrient: "vertical",
@@ -163,6 +164,7 @@ const IconDisplay = ({ data }) => {
                       display="flex"
                       justifyContent="center"
                       alignItems="center"
+                      marginTop={{ xs: 5, md: 0 }}
                       sx={{
                         width: "100%",
                         height: { sx: "200px", md: "300px", lg: "400px" },
@@ -180,8 +182,8 @@ const IconDisplay = ({ data }) => {
                     >
                       <Box
                         sx={{
-                          width: "200px",
-                          height: "200px",
+                          width: { xs: "150px", md: "200px", lg: "200px" },
+                          height: { xs: "150px", md: "200px", lg: "200px" },
                           borderRadius: "50%",
                           backgroundColor: "white",
                           display: "flex",
@@ -198,8 +200,9 @@ const IconDisplay = ({ data }) => {
                           src={`${baseURL}/${item?.system_image?.replace("public/", "storage/")?.replace("//", "/")}`}
                           alt={item?.system_name}
                           style={{
-                            width: "150px",
-                            objectFit: "contain",
+                            width: "75%", // Shrinks the image so the white Box background shows around it
+                            height: "75%", // Keeps it proportional
+                            objectFit: "contain", // Ensures the whole image fits inside its new 75% boundary without being cropped
                           }}
                         />
                       </Box>

@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
   setImport,
+  setImportErrorMessage,
   setItem,
   setItemData,
 } from "../../../services/server/slice/modalSlice";
@@ -40,9 +41,13 @@ import ImportModal from "../../../components/modal/ImportModal";
 import { readExcelItems } from "../../../services/functions/readExcel";
 import {
   useArchiveItemMutation,
+  useCheckItemImportMutation,
   useItemQuery,
 } from "../../../services/server/api/item-listing/itemAPI";
 import ItemModal from "../../../components/modal/item-listing/ItemModal";
+import { useColumnQuery } from "../../../services/server/api/masterlist/columnAPI";
+import { generateItemPayload } from "../../../services/functions/checkValues";
+import { useUomQuery } from "../../../services/server/api/item-listing/uomAPI";
 
 const Item = () => {
   const dispatch = useDispatch();
@@ -58,6 +63,15 @@ const Item = () => {
     onSort,
   } = useParamsHook();
   const { data, isLoading, isError, isFetching } = useItemQuery(params);
+  const { data: columnData } = useColumnQuery({
+    status: "active",
+    pagination: "none",
+  });
+  const { data: uomData } = useUomQuery({
+    status: "active",
+    pagination: "none",
+  });
+
   const isTablet = useMediaQuery("(min-width:768px)");
 
   const itemData = useSelector((state) => state.modal.itemData);
@@ -65,6 +79,8 @@ const Item = () => {
   const importData = useSelector((state) => state.modal.importData);
 
   const [archiveItem, { isLoading: loadingArchive }] = useArchiveItemMutation();
+
+  const [importCheck] = useCheckItemImportMutation();
 
   const header = [
     {
@@ -104,19 +120,19 @@ const Item = () => {
   };
 
   const handleImport = async () => {
-    const mapped = readExcelItems(importData, importHeader);
-    // try {
-    //   const res = await importCharge(mapped).unwrap();
-    //   dispatch(resetModal());
-    //   enqueueSnackbar(res?.message, {
-    //     variant: "success",
-    //   });
-    // } catch (error) {
-    //   dispatch(setImportErrorMessage(error?.data?.errors));
-    //   enqueueSnackbar("Something went wrong", {
-    //     variant: "error",
-    //   });
-    // }
+    const mapped = generateItemPayload(importData, columnData, uomData);
+    try {
+      const res = await importCheck(mapped).unwrap();
+      dispatch(resetModal());
+      enqueueSnackbar(res?.message, {
+        variant: "success",
+      });
+    } catch (error) {
+      dispatch(setImportErrorMessage(error?.data?.errors));
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+      });
+    }
   };
 
   return (
