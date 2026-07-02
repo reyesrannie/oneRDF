@@ -38,6 +38,7 @@ import {
   useUpdateItemMutation,
 } from "../../../services/server/api/item-listing/itemAPI";
 import { useUomQuery } from "../../../services/server/api/item-listing/uomAPI";
+import { useAccountTitleQuery } from "../../../services/server/api/accountTitleAPI";
 
 const ItemModal = () => {
   const dispatch = useDispatch();
@@ -60,6 +61,11 @@ const ItemModal = () => {
     pagination: "none",
   });
 
+  const { data: accounTitleData } = useAccountTitleQuery({
+    status: "active",
+    pagination: "none",
+  });
+
   const {
     control,
     handleSubmit,
@@ -74,6 +80,7 @@ const ItemModal = () => {
       description: "",
       uom: null,
       systems: [],
+      account_title: [],
     },
   });
 
@@ -84,6 +91,7 @@ const ItemModal = () => {
       description: submitData?.description,
       uom_id: submitData?.uom?.id,
       systems: submitData?.systems?.map((system) => system.id),
+      account_title: submitData?.account_title?.map((acct) => acct.id),
     };
 
     try {
@@ -102,10 +110,17 @@ const ItemModal = () => {
     if (itemData && open) {
       const newData = {
         ...itemData,
-        systems: itemData?.systems?.map((sys) =>
-          systemData?.find((sysData) => sys?.id === sysData?.id),
-        ),
+        systems:
+          itemData?.systems?.map((sys) =>
+            systemData?.find((sysData) => sys?.id === sysData?.id),
+          ) || [],
+        account_title:
+          itemData?.account_title?.map((acct) =>
+            accounTitleData?.find((accData) => acct?.id === accData?.id),
+          ) || [],
       };
+
+      console.log(newData);
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
@@ -210,6 +225,29 @@ const ItemModal = () => {
                       variant="outlined"
                       error={Boolean(errors.uom)}
                       helperText={errors.uom?.message}
+                    />
+                  )}
+                />
+              </Box>
+              <Box flex={1}>
+                <Autocomplete
+                  loading={true}
+                  multiple
+                  control={control}
+                  name={"account_title"}
+                  options={accounTitleData || []}
+                  getOptionLabel={(option) => `${option.code} - ${option.name}`}
+                  isOptionEqualToValue={(option, value) =>
+                    option?.id === value?.id
+                  }
+                  renderInput={(params) => (
+                    <MuiTextField
+                      {...params}
+                      label="Account Title"
+                      size="small"
+                      variant="outlined"
+                      error={Boolean(errors.account_title)}
+                      helperText={errors.account_title?.message}
                     />
                   )}
                 />

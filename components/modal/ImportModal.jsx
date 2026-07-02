@@ -34,6 +34,7 @@ const ImportModal = ({
   loading,
   importHeader = [],
   fileImport = false,
+  formData = false, // <-- Added formData prop here
 }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -60,7 +61,12 @@ const ImportModal = ({
     try {
       dispatch(setIsLoading(true));
 
-      if (fileImport) {
+      // Check for formData first
+      if (formData) {
+        const formDataPayload = new FormData();
+        formDataPayload.append("file", file);
+        dispatch(setImportData(formDataPayload));
+      } else if (fileImport) {
         dispatch(setImportData(file));
       } else {
         const read = await readExcelFile(filesArray);
@@ -88,7 +94,12 @@ const ImportModal = ({
     try {
       dispatch(setIsLoading(true));
 
-      if (fileImport) {
+      // Check for formData first
+      if (formData) {
+        const formDataPayload = new FormData();
+        formDataPayload.append("file", file);
+        dispatch(setImportData(formDataPayload));
+      } else if (fileImport) {
         dispatch(setImportData(file));
       } else {
         const read = await readExcelFile(filesArray);

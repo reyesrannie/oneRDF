@@ -355,7 +355,7 @@ const UserModal = () => {
             />
           </IconButton>
         </DialogTitle>
-        {userData && (loadingSedar || fetchingSedar) ? (
+        {userData && loadingSedar ? (
           <MobileLoading />
         ) : (
           <form onSubmit={handleSubmit(submitHandler)}>

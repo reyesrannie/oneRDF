@@ -40,6 +40,8 @@ const Redirect = () => {
       const encoded = encodeURIComponent(JSON.stringify(res?.data));
       window.name = data?.system_name;
       window.location.href = `${data?.url_holder}redirect?data=${encoded}`;
+
+      console.log(`${data?.url_holder}redirect?data=${encoded}`);
     } catch (error) {
       console.log(error);
       setHasError(true);

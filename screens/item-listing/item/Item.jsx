@@ -120,16 +120,18 @@ const Item = () => {
   };
 
   const handleImport = async () => {
-    const mapped = generateItemPayload(importData, columnData, uomData);
     try {
-      const res = await importCheck(mapped).unwrap();
+      const res = await importCheck(importData).unwrap();
       dispatch(resetModal());
       enqueueSnackbar(res?.message, {
         variant: "success",
       });
     } catch (error) {
-      dispatch(setImportErrorMessage(error?.data?.errors));
-      enqueueSnackbar("Something went wrong", {
+      const specificFileError = error?.data?.errors[0]?.detail;
+      const genericError =
+        error?.data?.message || "Something went wrong during import";
+      const errorMessage = specificFileError || genericError;
+      enqueueSnackbar(errorMessage, {
         variant: "error",
       });
     }
@@ -255,6 +257,7 @@ const Item = () => {
         title="Item"
         importDataHandler={handleImport}
         importHeader={importHeader}
+        formData
         // loading={loadingImport}
       />
 
