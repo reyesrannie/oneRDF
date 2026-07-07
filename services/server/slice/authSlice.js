@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { decodeUser } from "../../functions/saveUser";
 
-const userData = decodeUser();
-
 const initialState = {
-  token: userData?.token,
-  userData: userData,
+  token: null,
+  userData: null,
   changePass: false,
 };
 

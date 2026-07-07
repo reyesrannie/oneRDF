@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFadeOut, setRenderLogo } from "./services/server/slice/renderSlice";
 import { closeSnackbar, SnackbarProvider } from "notistack";
 import CloseIcon from "@mui/icons-material/Close";
+import { useRefreshUserQuery } from "./services/server/api/authAPI";
 
 const Routing = lazy(() => import("./services/routes/Routing"));
 
@@ -16,7 +17,10 @@ if (!window.name) {
 
 function App() {
   const renderLogo = useSelector((state) => state.render.renderLogo);
+
   const dispatch = useDispatch();
+
+  const { data, isLoading: loadingUser } = useRefreshUserQuery();
 
   useEffect(() => {
     const sessionTheme = localStorage?.getItem("theme");
@@ -46,7 +50,7 @@ function App() {
           </IconButton>
         )}
       >
-        {renderLogo && <LoadingRender />}
+        {(renderLogo || loadingUser) && <LoadingRender />}
         {!renderLogo && (
           <Suspense fallback={<LoadingRender />}>
             <Routing />

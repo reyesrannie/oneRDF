@@ -8,7 +8,6 @@ import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
 import { useDispatch, useSelector } from "react-redux";
 import { resetModal } from "../../services/server/slice/modalSlice";
-import { decodeUser } from "../../services/functions/saveUser";
 
 const MenuPopper = ({
   params,
@@ -20,7 +19,7 @@ const MenuPopper = ({
   complete,
 }) => {
   const dispatch = useDispatch();
-  const loggedInUser = decodeUser();
+  const loggedInUser = useSelector((state) => state.auth.userData);
   const userData = useSelector((state) => state.modal.userData);
 
   return (

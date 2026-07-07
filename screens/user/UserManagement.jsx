@@ -61,15 +61,18 @@ import {
 import Progress from "../../components/custom/Progress";
 import ImportModal from "../../components/modal/ImportModal";
 import SimCardDownloadOutlinedIcon from "@mui/icons-material/SimCardDownloadOutlined";
-import { hasAccess } from "../../services/functions/access";
 import {
   exportFlatArrayToExcel,
   exportToExcel,
 } from "../../services/functions/exportExcel";
 import { useColumnQuery } from "../../services/server/api/masterlist/columnAPI";
+import SystemNavigation from "../../services/constant/SystemNavigation";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
+
+  const { hasAccess } = SystemNavigation();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorE2, setAnchorE2] = useState(null);
   const importData = useSelector((state) => state.modal.importData);

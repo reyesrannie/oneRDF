@@ -33,6 +33,7 @@ import ChecklistIcon from "@mui/icons-material/Checklist";
 import LanOutlinedIcon from "@mui/icons-material/LanOutlined";
 import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import ColumnsImport from "../../screens/masterlist/column-import/ColumnsImport";
+import { useSelector } from "react-redux";
 
 const Dashboard = lazy(() => import("../../screens/dashboard/Dashboard"));
 const UserManagement = lazy(() => import("../../screens/user/UserManagement"));
@@ -134,6 +135,8 @@ const Uom = lazy(() => import("../../screens/item-listing/uom/Uom"));
 const Item = lazy(() => import("../../screens/item-listing/item/Item"));
 
 const SystemNavigation = () => {
+  const user = useSelector((state) => state.auth.userData);
+
   const navigation = [
     {
       segment: "",
@@ -540,7 +543,15 @@ const SystemNavigation = () => {
     return "/";
   };
 
-  return { navigation, getFirstAccessibleRoute };
+  const hasAccess = (item = []) => {
+    const withAccess = user?.access_permission?.some((access) =>
+      item?.includes(access),
+    );
+
+    return withAccess;
+  };
+
+  return { navigation, getFirstAccessibleRoute, hasAccess };
 };
 
 export default SystemNavigation;

@@ -23,7 +23,6 @@ import { useSnackbar } from "notistack";
 import { objectError } from "../../services/functions/errorResponse";
 import { loginUser } from "../../services/functions/loginServices";
 import { useNavigate } from "react-router-dom";
-import { decodeUser } from "../../services/functions/saveUser";
 import {
   useCreateUserSystemsMutation,
   usePasswordChangeAllMutation,
@@ -35,7 +34,6 @@ import { setProgressPercent } from "../../services/server/slice/syncSlice";
 const ChangePassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const hasData = decodeUser();
   const { enqueueSnackbar } = useSnackbar();
   const userData = useSelector((state) => state.auth.userData);
 
@@ -106,10 +104,6 @@ const ChangePassword = () => {
 
       loginUser(userData, payload?.password);
       dispatch(setUserData({ ...userData, password: submitData?.password }));
-
-      // if (hasData === undefined) {
-      //   loginUser(userData, payload?.password);
-      // }
 
       dispatch(setChangePass(false));
       navigate("/");

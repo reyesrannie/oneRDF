@@ -1,4 +1,5 @@
 import { serverAPI } from "../request/serverAPI";
+import { setToken, setUserData } from "../slice/authSlice";
 
 export const authAPI = serverAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,6 +32,22 @@ export const authAPI = serverAPI.injectEndpoints({
         body: payload,
       }),
     }),
+    refreshUser: builder.query({
+      transformResponse: (response) => response,
+      query: (payload) => ({
+        url: `/refresh_user`,
+        method: "GET",
+        params: payload,
+      }),
+      async onQueryStarted(payload, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data?.data) {
+            dispatch(setUserData(data?.data));
+          }
+        } catch (error) {}
+      },
+    }),
   }),
 });
 
@@ -39,4 +56,5 @@ export const {
   useLoginAllMutation,
   usePasswordChangeMutation,
   useLogoutMutation,
+  useRefreshUserQuery,
 } = authAPI;

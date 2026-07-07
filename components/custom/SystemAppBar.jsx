@@ -38,8 +38,7 @@ import {
   setIsDrawerOpen,
 } from "../../services/server/slice/drawerSlice";
 import { resetTheme } from "../../services/server/slice/themeSlice";
-import { decodeUser } from "../../services/functions/saveUser";
-import { hasAccess } from "../../services/functions/access";
+
 import { resetModal } from "../../services/server/slice/modalSlice";
 import { resetPrompt } from "../../services/server/slice/promptSlice";
 import { resetSync } from "../../services/server/slice/syncSlice";
@@ -165,7 +164,7 @@ const SystemAppBar = () => {
   const [open, setOpen] = useState(false);
   const [currentDisplay, setCurrentDisplay] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const { navigation } = SystemNavigation();
+  const { navigation, hasAccess } = SystemNavigation();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
