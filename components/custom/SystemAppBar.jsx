@@ -197,7 +197,8 @@ const SystemAppBar = () => {
     dispatch(resetModal());
     dispatch(resetPrompt());
     dispatch(resetSync());
-    window.location.reload();
+    const timestamp = new Date().getTime();
+    window.location.href = `/login?v=${timestamp}`;
   };
 
   return (
