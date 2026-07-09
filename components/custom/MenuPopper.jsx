@@ -6,6 +6,7 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
+import AutoFixHighRoundedIcon from "@mui/icons-material/AutoFixHighRounded";
 import { useDispatch, useSelector } from "react-redux";
 import { resetModal } from "../../services/server/slice/modalSlice";
 
@@ -16,6 +17,7 @@ const MenuPopper = ({
   update,
   archive,
   reset,
+  generate,
   complete,
 }) => {
   const dispatch = useDispatch();
@@ -57,6 +59,14 @@ const MenuPopper = ({
             <DoneAllRoundedIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Complete</ListItemText>
+        </MenuItem>
+      )}
+      {generate && (
+        <MenuItem onClick={generate}>
+          <ListItemIcon>
+            <AutoFixHighRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Generate OTP</ListItemText>
         </MenuItem>
       )}
       {archive && (

@@ -77,6 +77,13 @@ export const userAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["UsersSystems", "Audit"],
     }),
+    generateOTP: builder.mutation({
+      query: (payload) => ({
+        url: `/generate_support_token`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -91,4 +98,5 @@ export const {
   useArchiveUserMutation,
   usePasswordChangeAllMutation,
   useResetAllSystemMutation,
+  useGenerateOTPMutation,
 } = userAPI;

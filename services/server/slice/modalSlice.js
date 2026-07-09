@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: false,
   userData: null,
+  generateOTP: false,
   system: false,
   systemData: null,
   systemEndpoint: false,
@@ -99,6 +100,9 @@ const modalSlice = createSlice({
     },
     setUserData: (state, action) => {
       state.userData = action.payload;
+    },
+    setGenerateOTP: (state, action) => {
+      state.generateOTP = action.payload;
     },
     setSystem: (state, action) => {
       state.system = action.payload;
@@ -339,6 +343,7 @@ const modalSlice = createSlice({
 export const {
   setUser,
   setUserData,
+  setGenerateOTP,
   setSystem,
   setSystemData,
   setSystemEndpoint,

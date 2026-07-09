@@ -14,43 +14,43 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { resetModal } from "../../services/server/slice/modalSlice";
+import { resetModal } from "../../../services/server/slice/modalSlice";
 import "react-tabs/style/react-tabs.css";
-import "../styles/Modal.scss";
-import AppTextBox from "../custom/AppTextBox";
+import "../../styles/Modal.scss";
+import AppTextBox from "../../custom/AppTextBox";
 import { useForm } from "react-hook-form";
 
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
-import { userRoles } from "../../services/constant/systemConstants";
+import { userRoles } from "../../../services/constant/systemConstants";
 import { enqueueSnackbar } from "notistack";
-import Autocomplete from "../custom/AutoComplete";
+import Autocomplete from "../../custom/AutoComplete";
 import {
   useStoreFileMutation,
   useSystemsQuery,
-} from "../../services/server/api/systemAPI";
+} from "../../../services/server/api/systemAPI";
 import {
   useCreateUserMutation,
   useCreateUserSystemsMutation,
   useUpdateUserMutation,
-} from "../../services/server/api/usersAPI";
-import { objectError } from "../../services/functions/errorResponse";
+} from "../../../services/server/api/usersAPI";
+import { objectError } from "../../../services/functions/errorResponse";
 import {
   useEmployeeQuery,
   useLazyEmployeeQuery,
-} from "../../services/server/request/sedarAPI";
-import SignatureBox from "../custom/SignatureBox";
-import { base64ToFile } from "../../services/functions/saveUser";
+} from "../../../services/server/request/sedarAPI";
+import SignatureBox from "../../custom/SignatureBox";
+import { base64ToFile } from "../../../services/functions/saveUser";
 import {
   checkObject,
   useDebounceCallback,
-} from "../../services/functions/checkValues";
-import Progress from "../custom/Progress";
-import MobileLoading from "../custom/MobileLoading";
+} from "../../../services/functions/checkValues";
+import Progress from "../../custom/Progress";
+import MobileLoading from "../../custom/MobileLoading";
 import {
   resetSync,
   setProgressDialog,
   setProgressPercent,
-} from "../../services/server/slice/syncSlice";
+} from "../../../services/server/slice/syncSlice";
 
 const UserModal = () => {
   const dispatch = useDispatch();

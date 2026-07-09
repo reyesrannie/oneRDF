@@ -11,12 +11,12 @@ import AppSearch from "../../components/custom/AppSearch";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
+  setGenerateOTP,
   setImport,
   setIsLoading,
   setUser,
   setUserData,
 } from "../../services/server/slice/modalSlice";
-import UserModal from "../../components/modal/UserModal";
 import CardList from "../../components/custom/CardList";
 import useParamsHook from "../../services/hooks/useParamsHook";
 import {
@@ -67,6 +67,8 @@ import {
 } from "../../services/functions/exportExcel";
 import { useColumnQuery } from "../../services/server/api/masterlist/columnAPI";
 import SystemNavigation from "../../services/constant/SystemNavigation";
+import UserModal from "../../components/modal/user/UserModal";
+import GenerateOTP from "../../components/modal/user/GenerateOTP";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
@@ -529,6 +531,10 @@ const UserManagement = () => {
           setAnchorEl(null);
           dispatch(setReset(true));
         }}
+        generate={() => {
+          setAnchorEl(null);
+          dispatch(setGenerateOTP(true));
+        }}
       />
       <AppPrompt
         open={reset}
@@ -552,6 +558,7 @@ const UserManagement = () => {
         isLoading={loadingArchive}
       />
       <UserModal />
+      <GenerateOTP />
       <Progress />
 
       <ImportModal
