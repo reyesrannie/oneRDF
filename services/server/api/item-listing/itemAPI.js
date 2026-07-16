@@ -43,6 +43,14 @@ export const itemAPI = serverAPI.injectEndpoints({
       }),
       invalidatesTags: ["Item"],
     }),
+    syncItem: builder.mutation({
+      query: (payload) => ({
+        url: "store_item_sync",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["Item"],
+    }),
   }),
 });
 
@@ -52,4 +60,5 @@ export const {
   useUpdateItemMutation,
   useArchiveItemMutation,
   useCheckItemImportMutation,
+  useSyncItemMutation,
 } = itemAPI;

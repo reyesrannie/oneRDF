@@ -38,7 +38,7 @@ const SystemController = () => {
     defaultValues: {
       login: "",
       roles: "",
-      user: "",
+      item: "",
       pending: "",
       changePassword: "",
       reset: "",
@@ -49,7 +49,7 @@ const SystemController = () => {
     const endpointMapped = {
       login: submitData?.login,
       roles: submitData?.roles,
-      user: submitData?.user,
+      item: submitData?.item,
       pending: submitData?.pending,
       changePassword: submitData?.changePassword,
       reset: submitData?.reset,
@@ -86,7 +86,7 @@ const SystemController = () => {
               {[
                 { name: "login", label: "Login" },
                 { name: "roles", label: "Access Permission" },
-                { name: "user", label: "Users" },
+                { name: "item", label: "Item" },
                 { name: "pending", label: "Pending Request" },
                 { name: "changePassword", label: "Password Change" },
                 { name: "reset", label: "Reset Password" },

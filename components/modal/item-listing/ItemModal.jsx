@@ -35,10 +35,18 @@ import Autocomplete from "../../custom/AutoComplete";
 import { useSystemsQuery } from "../../../services/server/api/systemAPI";
 import {
   useAddItemMutation,
+  useSyncItemMutation,
   useUpdateItemMutation,
 } from "../../../services/server/api/item-listing/itemAPI";
 import { useUomQuery } from "../../../services/server/api/item-listing/uomAPI";
 import { useAccountTitleQuery } from "../../../services/server/api/accountTitleAPI";
+import {
+  resetSync,
+  setProgressDialog,
+  setProgressPercent,
+} from "../../../services/server/slice/syncSlice";
+import { checkObject } from "../../../services/functions/checkValues";
+import Progress from "../../custom/Progress";
 
 const ItemModal = () => {
   const dispatch = useDispatch();
@@ -48,8 +56,10 @@ const ItemModal = () => {
   const isTablet = useMediaQuery("(min-width:768px)");
   const theme = useTheme();
 
-  const [addUom, { isLoading: loadingAddType }] = useAddItemMutation();
-  const [updateUom, { isLoading: loadingUpdateType }] = useUpdateItemMutation();
+  const [addItem, { isLoading: loadingAddType }] = useAddItemMutation();
+  const [updateItem, { isLoading: loadingUpdateType }] =
+    useUpdateItemMutation();
+  const [syncItem, { isLoading: loadingSyncItem }] = useSyncItemMutation();
 
   const { data: systemData } = useSystemsQuery({
     status: "active",
@@ -84,7 +94,22 @@ const ItemModal = () => {
     },
   });
 
+  const checkHasChanged = (items) => {
+    const original = itemData?.systems || [];
+    const current = watch("systems") || [];
+
+    const removed = current.filter(
+      (item) =>
+        !original.some((u) => u?.id?.toString() === item?.id?.toString()),
+    );
+
+    return current;
+  };
+
   const submitHandler = async (submitData) => {
+    dispatch(setProgressDialog(true));
+    dispatch(setProgressPercent(0));
+
     const updatePayload = {
       id: itemData?.id,
       code: submitData?.code,
@@ -97,11 +122,40 @@ const ItemModal = () => {
     try {
       const res =
         itemData !== null
-          ? await updateUom(updatePayload).unwrap()
-          : await addUom(updatePayload).unwrap();
+          ? await updateItem(updatePayload).unwrap()
+          : await addItem(updatePayload).unwrap();
+
+      const systems = checkHasChanged();
+
+      for (let i = 0; i < systems.length; i++) {
+        const payloadSystems = {
+          code: submitData?.code,
+          description: submitData?.description,
+          uom_code: submitData?.uom?.code,
+          account_title: submitData?.account_title?.map((acct) => ({
+            code: acct?.code,
+            name: acct?.name,
+          })),
+          endpoint: {
+            id: systems[i]?.id,
+            name: systems[i]?.system_name,
+            url: `${systems[i]?.backend_url}${checkObject(systems[i]?.slice)?.item}`,
+            token: systems[i]?.token,
+          },
+        };
+
+        const resAll = await syncItem(payloadSystems).unwrap();
+
+        dispatch(
+          setProgressPercent(Math.round(((i + 1) / systems.length) * 100)),
+        );
+      }
+
       enqueueSnackbar(res?.message, { variant: "success" });
+      dispatch(resetSync());
       dispatch(resetModal());
     } catch (error) {
+      dispatch(resetSync());
       objectError(error, setError, enqueueSnackbar);
     }
   };
@@ -120,7 +174,6 @@ const ItemModal = () => {
           ) || [],
       };
 
-      console.log(newData);
       Object.entries(newData)?.forEach(([key, value]) => {
         setValue(key, value);
       });
@@ -307,6 +360,7 @@ const ItemModal = () => {
           </Button>
         </DialogActions>
       </form>
+      <Progress />
     </Dialog>
   );
 };
