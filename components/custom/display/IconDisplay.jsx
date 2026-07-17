@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Typography, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, EffectCreative, Navigation } from "swiper/modules";
+import {
+  Pagination,
+  EffectCreative,
+  Navigation,
+  Keyboard,
+} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -15,6 +20,25 @@ const IconDisplay = ({ data }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const selectedSystem = useSelector((state) => state.render.selectedSystem);
   const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const handleGlobalEnter = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+
+        if (selectedSystem) {
+          const query = encodeURIComponent(JSON.stringify(selectedSystem));
+          window.open(`/redirect?data=${query}`, "_blank");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalEnter);
+
+    return () => {
+      window.removeEventListener("keydown", handleGlobalEnter);
+    };
+  }, [selectedSystem]);
 
   return (
     <Box
@@ -45,7 +69,6 @@ const IconDisplay = ({ data }) => {
             marginLeft={{ xs: "unset", md: 8, lg: 20 }}
             spacing={{ xs: 0, md: 2, lg: 3 }}
             alignItems={{ xs: "center", md: "flex-start" }}
-            // width={{ xs: "unset", md: "unset" }}
             sx={{
               animation: "fadeIn 0.5s ease-in-out",
               "@keyframes fadeIn": {
@@ -134,13 +157,16 @@ const IconDisplay = ({ data }) => {
             }}
           >
             <Swiper
-              modules={[Pagination, EffectCreative, Navigation]}
+              modules={[Pagination, EffectCreative, Navigation, Keyboard]}
+              keyboard={{
+                enabled: true,
+              }}
               navigation={true}
               loop={true}
               spaceBetween={-50}
               slidesPerView="auto"
               centeredSlides={true}
-              slideToClickedSlide={true}
+              slideToClickedSlide={false}
               speed={600}
               grabCursor={true}
               onSlideChange={(swiper) => {
@@ -173,11 +199,15 @@ const IconDisplay = ({ data }) => {
                         transform:
                           activeIndex === index ? "scale(1.3)" : "scale(0.7)",
                       }}
-                      onClick={() => {
-                        const query = encodeURIComponent(
-                          JSON.stringify(selectedSystem),
-                        );
-                        window.open(`/redirect?data=${query}`, "_blank");
+                      onClick={(e) => {
+                        if (activeIndex === index) {
+                          const query = encodeURIComponent(
+                            JSON.stringify(selectedSystem),
+                          );
+                          window.open(`/redirect?data=${query}`, "_blank");
+                        } else {
+                          e?.preventDefault();
+                        }
                       }}
                     >
                       <Box
