@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  TextField,
+  TextField as MuiTextField,
   MenuItem,
   Box,
   Typography,
@@ -26,28 +26,55 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetModal } from "../../../services/server/slice/modalSlice";
 import { Controller, useForm } from "react-hook-form";
 
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { MobileDateTimePicker } from "@mui/x-date-pickers/MobileDateTimePicker";
 import dayjs from "dayjs";
-import { useGenerateOTPMutation } from "../../../services/server/api/usersAPI";
+import {
+  useGenerateOTPMutation,
+  useUserQuery,
+} from "../../../services/server/api/usersAPI";
 import { useSnackbar } from "notistack";
 import { singleError } from "../../../services/functions/errorResponse";
+import Autocomplete from "../../custom/AutoComplete";
+import useParamsHook from "../../../services/hooks/useParamsHook";
+import { handleScroll } from "../../../services/functions/reusableFunction";
 
 const GenerateOTP = ({ open, handleClose, userId }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const [generatedCode, setGeneratedCode] = useState();
+  const [isPickerOpen, setIsPickerOpen] = useState();
 
   const generateOTP = useSelector((state) => state.modal.generateOTP);
   const userData = useSelector((state) => state.modal.userData);
+  const usersData = useSelector((state) => state.values.usersData);
 
   const defaultTheme = createTheme();
+
+  const debounceTimeout = useRef(null);
 
   const theme = useTheme();
   const isTablet = useMediaQuery("(min-width:768px)");
 
+  const {
+    params,
+    onSearchData,
+    onStatusChange,
+    onPageChange,
+    onRowChange,
+    onSelectPage,
+    onSort,
+    onReset,
+  } = useParamsHook();
+
   const [generateOTPMutation, { isLoading: loadingGenerate }] =
     useGenerateOTPMutation();
+
+  const {
+    data: allData,
+    isLoading: loadingUsers,
+    isError: errorAll,
+  } = useUserQuery(params);
 
   const {
     control,
@@ -60,6 +87,7 @@ const GenerateOTP = ({ open, handleClose, userId }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      requested_by_id: null,
       user_id: "",
       expires_at: null,
     },
@@ -84,6 +112,7 @@ const GenerateOTP = ({ open, handleClose, userId }) => {
 
   const handleGenerateOTP = async (data) => {
     const payload = {
+      requested_by_id: data?.requested_by_id?.id,
       user_id: userData?.id,
       expires_at: data?.expires_at?.toISOString(),
     };
@@ -96,6 +125,15 @@ const GenerateOTP = ({ open, handleClose, userId }) => {
       singleError(error, enqueueSnackbar);
     }
   };
+
+  const getValue = useCallback((e, func) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    debounceTimeout.current = setTimeout(() => {
+      func(e.target.value);
+    }, 500);
+  }, []);
 
   return (
     <Dialog
@@ -139,6 +177,7 @@ const GenerateOTP = ({ open, handleClose, userId }) => {
             }}
             onClick={() => {
               reset();
+              setGeneratedCode();
               dispatch(resetModal());
             }}
           >
@@ -177,23 +216,80 @@ const GenerateOTP = ({ open, handleClose, userId }) => {
                 <DialogContentText color="warning" fontWeight={600}>
                   {`${userData?.id_prefix}-${userData?.id_no} - ${userData?.first_name} ${userData?.last_name}`}
                 </DialogContentText>
+                <Stack gap={2}>
+                  <Autocomplete
+                    control={control}
+                    name={"requested_by_id"}
+                    options={usersData || []}
+                    getOptionLabel={(option) =>
+                      `${option?.id_prefix}-${option?.id_no} - ${option?.first_name} ${option?.last_name}`
+                    }
+                    isOptionEqualToValue={(option, value) =>
+                      option?.id === value?.id
+                    }
+                    loading={loadingUsers}
+                    scrollChange={(e) =>
+                      handleScroll(e, () => onSelectPage(params?.page + 1))
+                    }
+                    onKeyUp={(e) => {
+                      console.log(e);
 
-                <Controller
-                  control={control}
-                  name="expires_at"
-                  render={({ field }) => (
-                    <ThemeProvider theme={defaultTheme}>
-                      <DateTimePicker
-                        minDateTime={dayjs()}
+                      if (e?.target?.value === "") {
+                        onReset();
+                      } else {
+                        getValue(e, onSearchData);
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <MuiTextField
+                        {...params}
+                        label="Requested By"
+                        size="small"
+                        variant="outlined"
+                        error={Boolean(errors?.requested_by_id)}
+                        helperText={errors?.requested_by_id?.message}
+                      />
+                    )}
+                    minWidth={"100%"}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="expires_at"
+                    render={({ field }) => (
+                      <MobileDateTimePicker
+                        {...field}
                         label="OTP Expiration Date"
-                        value={field?.value}
-                        onChange={(newValue) => {
-                          field.onChange(newValue);
+                        minDateTime={dayjs()}
+                        referenceDate={dayjs().add(5, "minute")}
+                        slotProps={{
+                          textField: {
+                            sx: {
+                              input: { color: "#FF5722", fontSize: ".8rem" },
+                              "& .MuiInputBase-root": {
+                                height: "46px",
+                              },
+                            },
+                          },
+                          mobilePaper: {
+                            sx: {
+                              color: "#000000",
+                              "& .MuiPickersDay-root": {
+                                color: "#000000",
+                              },
+                              "& .MuiPickersDay-root.Mui-selected": {
+                                color: "#000000",
+                              },
+                              "& .MuiClockNumber-root": {
+                                color: "#000000",
+                              },
+                            },
+                          },
                         }}
                       />
-                    </ThemeProvider>
-                  )}
-                />
+                    )}
+                  />
+                </Stack>
               </Stack>
             </DialogContent>
           )}

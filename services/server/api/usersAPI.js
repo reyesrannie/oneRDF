@@ -1,4 +1,5 @@
 import { serverAPI } from "../request/serverAPI";
+import { setUsersData } from "../slice/valuesSlice";
 
 export const userAPI = serverAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -10,6 +11,13 @@ export const userAPI = serverAPI.injectEndpoints({
         params: payload,
       }),
       providesTags: ["Users"],
+      async onQueryStarted(payload, { dispatch, getState, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (Array.isArray(data?.data)) dispatch(setUsersData(data?.data));
+          else dispatch(setUsersData(data?.result));
+        } catch (error) {}
+      },
     }),
     userReset: builder.mutation({
       query: (payload) => ({

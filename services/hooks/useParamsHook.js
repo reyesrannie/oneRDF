@@ -59,7 +59,7 @@ const useParamsHook = () => {
     setParams(() => ({
       status: "active",
       page: 1,
-      per_page: 5,
+      per_page: 10,
       pagination: null,
       sorts: null,
     }));

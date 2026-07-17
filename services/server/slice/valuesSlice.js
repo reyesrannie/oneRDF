@@ -14,6 +14,7 @@ const initialState = {
   unitData: [],
   subUnitData: [],
   locationData: [],
+  usersData: [],
 };
 
 const valuesSlice = createSlice({
@@ -69,6 +70,13 @@ const valuesSlice = createSlice({
         "id",
       );
     },
+    setUsersData: (state, action) => {
+      state.usersData = mergeUniqueByKeyID(
+        state.usersData,
+        action.payload,
+        "id",
+      );
+    },
     resetValues: () => {
       return initialState;
     },
@@ -84,6 +92,7 @@ export const {
   setLocationData,
   setSubUnitData,
   setUnitData,
+  setUsersData,
 } = valuesSlice.actions;
 
 export default valuesSlice.reducer;

@@ -32,3 +32,12 @@ export function mergeUniqueByKeyID(array1, array2, key) {
 
   return Array.from(map.values());
 }
+
+export const handleScroll = (e, fn) => {
+  const listboxNode = e.currentTarget;
+  const { scrollTop, scrollHeight, clientHeight } = listboxNode;
+
+  if (scrollTop + clientHeight >= scrollHeight - 1) {
+    fn();
+  }
+};
