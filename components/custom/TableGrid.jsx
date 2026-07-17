@@ -173,6 +173,18 @@ const TableGrid = ({
                           )}
                         </Typography>
                       )}
+                      {head?.type === "dateTime" && (
+                        <Typography
+                          color="text.secondary"
+                          sx={{
+                            fontSize: "12px",
+                          }}
+                        >
+                          {moment(new Date(i[head?.value])).format(
+                            "MMM DD, YYYY hh:mm A",
+                          )}
+                        </Typography>
+                      )}
                       {head?.type === "parent" && (
                         <Typography
                           color="text.secondary"

@@ -1,40 +1,40 @@
 import { Box, Checkbox, Stack, Typography, useMediaQuery } from "@mui/material";
 import React, { useState } from "react";
-import AppSearch from "../../components/custom/AppSearch";
+import AppSearch from "../../../components/custom/AppSearch";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetModal,
   setUser,
   setUserData,
-} from "../../services/server/slice/modalSlice";
-import CardList from "../../components/custom/CardList";
-import useParamsHook from "../../services/hooks/useParamsHook";
-import { useUserResetMutation } from "../../services/server/api/usersAPI";
-import MobileLoading from "../../components/custom/MobileLoading";
-import NoDataFound from "../../components/custom/NoDataFound";
-import TableGrid from "../../components/custom/TableGrid";
-import MenuPopper from "../../components/custom/MenuPopper";
-import AppPrompt from "../../components/custom/AppPrompt";
-import warning from "../../assets/svg/warning.svg";
-import { singleError } from "../../services/functions/errorResponse";
+} from "../../../services/server/slice/modalSlice";
+import CardList from "../../../components/custom/CardList";
+import useParamsHook from "../../../services/hooks/useParamsHook";
+import { useUserResetMutation } from "../../../services/server/api/usersAPI";
+import MobileLoading from "../../../components/custom/MobileLoading";
+import NoDataFound from "../../../components/custom/NoDataFound";
+import TableGrid from "../../../components/custom/TableGrid";
+import MenuPopper from "../../../components/custom/MenuPopper";
+import AppPrompt from "../../../components/custom/AppPrompt";
+import warning from "../../../assets/svg/warning.svg";
+import { singleError } from "../../../services/functions/errorResponse";
 import { enqueueSnackbar } from "notistack";
 import {
   resetPrompt,
   setArchive,
   setReset,
-} from "../../services/server/slice/promptSlice";
-import CustomPagination from "../../components/custom/CustomPagination";
-import BreadCrumbs from "../../components/custom/BreadCrumbs";
+} from "../../../services/server/slice/promptSlice";
+import CustomPagination from "../../../components/custom/CustomPagination";
+import BreadCrumbs from "../../../components/custom/BreadCrumbs";
 
-import MenuOptions from "../../components/custom/MenuOptions";
+import MenuOptions from "../../../components/custom/MenuOptions";
 
 import {
   useArchiveAuditMutation,
   useAuditQuery,
-} from "../../services/server/api/auditTrail";
-import UserModal from "../../components/modal/user/UserModal";
+} from "../../../services/server/api/auditTrail";
+import UserModal from "../../../components/modal/user/UserModal";
 
-const AuditTrail = () => {
+const AuditUser = () => {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorE2, setAnchorE2] = useState(null);
@@ -112,19 +112,7 @@ const AuditTrail = () => {
   ];
 
   return (
-    <Box padding={2}>
-      <Stack display={"flex"} flexDirection={"column"}>
-        <BreadCrumbs />
-        <Stack
-          display={"flex"}
-          flexDirection={"row"}
-          justifyContent="space-between"
-        >
-          <Typography fontSize={"18px"} fontWeight={600}>
-            Audit Trail
-          </Typography>
-        </Stack>
-      </Stack>
+    <Stack>
       <Stack display={"flex"} flexDirection={"column"}>
         <Stack
           display={"flex"}
@@ -133,7 +121,7 @@ const AuditTrail = () => {
           alignItems={"center"}
         >
           <Typography color="primary" fontSize={"18px"} fontWeight={600}>
-            Audit
+            User
           </Typography>
           <Stack flexDirection={"row"} gap={2}>
             <AppSearch onSearch={onSearchData} />
@@ -253,8 +241,8 @@ const AuditTrail = () => {
         isLoading={loadingArchive}
       /> */}
       <UserModal />
-    </Box>
+    </Stack>
   );
 };
 
-export default AuditTrail;
+export default AuditUser;

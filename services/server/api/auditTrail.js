@@ -11,6 +11,15 @@ export const auditAPI = serverAPI.injectEndpoints({
       }),
       providesTags: ["Audit"],
     }),
+    auditLogins: builder.query({
+      transformResponse: (response) => response?.data,
+      query: (payload) => ({
+        url: `/audit_logins`,
+        method: "GET",
+        params: payload,
+      }),
+      providesTags: ["AuditLogins"],
+    }),
     addAudit: builder.mutation({
       query: (payload) => ({
         url: "/audit",
@@ -40,6 +49,7 @@ export const auditAPI = serverAPI.injectEndpoints({
 
 export const {
   useAuditQuery,
+  useAuditLoginsQuery,
   useAddAuditMutation,
   useUpdateAuditMutation,
   useArchiveAuditMutation,

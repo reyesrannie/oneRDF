@@ -116,7 +116,6 @@ const Sync = lazy(() => import("../../screens/syncing/Sync"));
 const SyncOneCharging = lazy(
   () => import("../../screens/syncing/charging/SyncOneCharging"),
 );
-const AuditTrail = lazy(() => import("../../screens/audit/AuditTrail"));
 const Supplier = lazy(() => import("../../screens/supplier/Supplier"));
 const SupplierListing = lazy(
   () => import("../../screens/supplier/supplier-listing/SupplierListing"),
@@ -133,6 +132,9 @@ const ItemListing = lazy(
 );
 const Uom = lazy(() => import("../../screens/item-listing/uom/Uom"));
 const Item = lazy(() => import("../../screens/item-listing/item/Item"));
+const Audit = lazy(() => import("../../screens/audit/Audit"));
+const AuditUser = lazy(() => import("../../screens/audit/user/AuditUser"));
+const Logins = lazy(() => import("../../screens/audit/logins/Logins"));
 
 const SystemNavigation = () => {
   const user = useSelector((state) => state.auth.userData);
@@ -519,8 +521,26 @@ const SystemNavigation = () => {
       title: "Audit",
       icon: <PermContactCalendarOutlinedIcon />,
       route: "/audit",
-      element: <AuditTrail />,
-      permission: ["audit_trail"],
+      element: <Audit />,
+      permission: ["audit_user"],
+      children: [
+        {
+          segment: "user",
+          title: "User",
+          icon: <PermContactCalendarOutlinedIcon />,
+          element: <AuditUser />,
+          route: "/audit/user",
+          permission: ["audit_user"],
+        },
+        {
+          segment: "logins",
+          title: "Logins",
+          icon: <PermContactCalendarOutlinedIcon />,
+          element: <Logins />,
+          route: "/audit/logins",
+          permission: ["audit_login"],
+        },
+      ],
     },
   ];
 

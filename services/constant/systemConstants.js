@@ -88,7 +88,10 @@ const userRoles = [
   },
   {
     name: "Audit",
-    child: [{ name: "Audit Trail", value: "audit_trail" }],
+    child: [
+      { name: "Audit User", value: "audit_user" },
+      { name: "Audit Login", value: "audit_login" },
+    ],
   },
 ];
 
