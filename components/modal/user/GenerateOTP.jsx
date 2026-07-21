@@ -114,7 +114,7 @@ const GenerateOTP = ({ open, handleClose, userId }) => {
     const payload = {
       requested_by_id: data?.requested_by_id?.id,
       user_id: userData?.id,
-      expires_at: data?.expires_at?.toISOString(),
+      expires_at: data?.expires_at?.format("YYYY-MM-DD HH:mm:ss"),
     };
 
     try {
