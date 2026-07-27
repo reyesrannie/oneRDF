@@ -59,7 +59,7 @@ const Login = () => {
         dispatch(setChangePass(true));
       } else {
         enqueueSnackbar(res?.message, { variant: "success" });
-        loginUser(res?.data, submitData?.password);
+        // loginUser(res?.data, submitData?.password);
         const defaultRoute = getFirstAccessibleRoute(
           navigation,
           res?.data?.access_permission,

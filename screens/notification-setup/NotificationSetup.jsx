@@ -10,7 +10,6 @@ import {
   setUser,
   setUserData,
 } from "../../services/server/slice/modalSlice";
-import UserModal from "../../components/modal/UserModal";
 import CardList from "../../components/custom/CardList";
 import useParamsHook from "../../services/hooks/useParamsHook";
 import { useUserResetMutation } from "../../services/server/api/usersAPI";

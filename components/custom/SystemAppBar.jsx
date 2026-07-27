@@ -442,7 +442,7 @@ const SystemAppBar = () => {
         </MenuItem>
         <MenuItem
           onClick={() => dispatch(setChangePass(true))}
-          disabled={isLoading}
+          disabled={isLoading || userData?.is_otp}
         >
           <ListItemIcon>
             <VpnKeyOutlinedIcon />
